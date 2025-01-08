@@ -176,7 +176,7 @@ namespace Quasar.Client.Messages
         {
             if (NativeMethodsHelper.IsScreensaverActive())
                 NativeMethodsHelper.DisableScreensaver();
-
+            
             NativeMethodsHelper.DoKeyPress(message.Key, message.KeyDown);
         }
 

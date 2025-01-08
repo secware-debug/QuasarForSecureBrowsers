@@ -9,6 +9,7 @@ using Quasar.Server.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace Quasar.Server.Forms
@@ -55,6 +56,40 @@ namespace Quasar.Server.Forms
         /// </summary>
         private static readonly Dictionary<Client, FrmRemoteDesktop> OpenedForms = new Dictionary<Client, FrmRemoteDesktop>();
 
+
+        /// <summary>
+        /// variables for customized context menu
+        /// </summary>
+        private const uint TPM_LEFTALIGN = 0x0000;
+        private const uint TPM_RETURNCMD = 0x0100;
+        private const uint TPM_RIGHTBUTTON = 0x0002;
+        private const int WM_SYSCOMMAND = 0x0112;
+        private const int WM_NCRBUTTONDOWN = 0x00A4;
+        private const int HTCAPTION = 0x02;
+        private bool isMenuCustomized = false;
+
+        private const int USER_CMD_ONVUE = 1001;
+        private const int USER_CMD_RESPONDUS = 1002;
+        private const int USER_CMD_ETS = 1003;
+        private const int USER_CMD_GMAT = 1004;
+        private const int USER_CMD_PROPROCTOR = 1005;
+        private const int USER_CMD_BLUEBOOK_SAT = 1006;
+        private const int USER_CMD_UNKNOWN7 = 1007;
+        private const int USER_CMD_UNKNOWN8 = 1008;
+        private const int USER_CMD_UNKNOWN9 = 1009;
+        private const int USER_CMD_UNKNOWN10 = 1010;
+        private const int USER_CMD_UNKNOWN11 = 1011;
+        private const int USER_CMD_UNKNOWN12 = 1012;
+        private const int USER_CMD_UNKNOWN13 = 1013;
+        private const int USER_CMD_UNKNOWN14 = 1014;
+        private const int USER_CMD_UNKNOWN15 = 1015;
+        private const int USER_CMD_PATCH_ETS = 1016;
+        private const int USER_CMD_RESTORE_ETS = 1017;
+        private const int USER_CMD_INSTALL_KBM_DRIVER = 1018;
+        private const int USER_CMD_UNINSTALL_KBM_DRIVER = 1019;
+        private const int USER_CMD_START_AUDIO = 1020;
+        private const int USER_CMD_STOP_AUDIO = 1021;
+
         /// <summary>
         /// Creates a new remote desktop form for the client or gets the current open form, if there exists one already.
         /// </summary>
@@ -87,13 +122,105 @@ namespace Quasar.Server.Forms
             RegisterMessageHandler();
             InitializeComponent();
         }
-        private ContextMenuStrip contextMenuStrip;
-        private void InitializeContextMenu()
+
+        // Override the WndProc method to handle right-click on the title bar
+        protected override void WndProc(ref Message m)
         {
-            contextMenuStrip = new ContextMenuStrip();
-            contextMenuStrip.Items.Add("Option 1", null, Option1_Click);
-            contextMenuStrip.Items.Add("Option 2", null, Option2_Click);
-            // Add more options as needed
+            if (m.Msg == WM_NCRBUTTONDOWN && m.WParam.ToInt32() == HTCAPTION)
+            {
+                // Get the mouse position
+                int x = Cursor.Position.X;
+                int y = Cursor.Position.Y;
+
+                // Get the default system menu
+                IntPtr systemMenu = GetSystemMenu(this.Handle, false);
+
+                if (systemMenu != IntPtr.Zero && !isMenuCustomized)
+                {
+                    // Add a custom separator and menu items to the system menu
+                    AppendCustomItems(systemMenu);
+                    isMenuCustomized= true;                    
+                }
+                // Show the system menu at the mouse position
+                int command = TrackPopupMenu(systemMenu, TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, x, y, 0, this.Handle, IntPtr.Zero);
+
+                // If a command is selected, process it
+                if (command != 0)
+                {
+                    SendMessage(this.Handle, WM_SYSCOMMAND, new IntPtr(command), IntPtr.Zero);
+                }
+
+                return; // Prevent default behavior
+            }
+
+            base.WndProc(ref m);
+        }
+
+        private void AppendCustomItems(IntPtr systemMenu)
+        {
+            // Add a separator
+            AppendMenu(systemMenu, 0x800, 0, string.Empty);
+
+            // Add custom menu items
+            AppendMenu(systemMenu, 0x0, USER_CMD_ONVUE, "OnVue");
+            AppendMenu(systemMenu, 0x0, USER_CMD_RESPONDUS, "Respondus");
+            AppendMenu(systemMenu, 0x0, USER_CMD_ETS, "ETS");
+            AppendMenu(systemMenu, 0x0, USER_CMD_GMAT, "GMAT");
+            AppendMenu(systemMenu, 0x0, USER_CMD_PROPROCTOR, "ProProctor");
+            AppendMenu(systemMenu, 0x0, USER_CMD_BLUEBOOK_SAT, "Bluebook (SAT)");
+            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN7, "Unknown7");
+            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN8, "Unknown8");
+            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN9, "Unknown9");
+            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN10, "Unknown10");
+            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN11, "Unknown11");
+            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN12, "Unknown12");
+            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN13, "Unknown13");
+            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN14, "Unknown14");
+            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN15, "Unknown15");
+
+            AppendMenu(systemMenu, 0x800, 0, string.Empty);
+            
+            AppendMenu(systemMenu, 0x0, USER_CMD_PATCH_ETS, "Patch ETS");
+            AppendMenu(systemMenu, 0x0, USER_CMD_RESTORE_ETS, "Restore ETS");
+
+            AppendMenu(systemMenu, 0x800, 0, string.Empty);
+
+            AppendMenu(systemMenu, 0x0, USER_CMD_INSTALL_KBM_DRIVER, "Install KB/M driver");
+            AppendMenu(systemMenu, 0x0, USER_CMD_UNINSTALL_KBM_DRIVER, "Uninstall KB/M driver");
+
+            //AppendMenu(systemMenu, 0x800, 0, string.Empty);
+
+            //AppendMenu(systemMenu, 0x0, USER_CMD_START_AUDIO, "Start audio");
+            //AppendMenu(systemMenu, 0x0, USER_CMD_STOP_AUDIO, "Stop audio");
+        }
+
+        // Handle the custom menu commands
+        protected override void DefWndProc(ref Message m)
+        {
+            if (m.Msg == WM_SYSCOMMAND)
+            {
+                switch ((int)m.WParam)
+                {
+                    case USER_CMD_ONVUE:
+                        MessageBox.Show("OnVue clicked");
+                        _connectClient.Send(new CmdUnblockOnVUE());
+                        return;
+                    case USER_CMD_RESPONDUS:
+                        MessageBox.Show("Respondus clicked");
+                        _connectClient.Send(new CmdUnblockrespondus());
+                        return;
+                    case USER_CMD_INSTALL_KBM_DRIVER:
+                        MessageBox.Show("Install KB/M Driver");
+                        _connectClient.Send(new CmdInstallKBMDriver());
+                        return;
+                    case USER_CMD_UNINSTALL_KBM_DRIVER:
+                        MessageBox.Show("Uninstall KB/M Driver");
+                        _connectClient.Send(new CmdUninstallKBMDriver());
+                        return;
+                }
+            }
+
+            base.DefWndProc(ref m);
         }
 
         /// <summary>
@@ -479,5 +606,24 @@ namespace Quasar.Server.Forms
         {
             TogglePanelVisibility(true);
         }
+
+        private void toolTipButtons_Popup(object sender, PopupEventArgs e)
+        {
+
+        }
+
+        // Import the necessary Windows API functions
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
+
+        [DllImport("user32.dll")]
+        private static extern int TrackPopupMenu(IntPtr hMenu, uint uFlags, int x, int y, int nReserved, IntPtr hWnd, IntPtr prcRect);
+
+        // Import additional Windows API functions
+        [DllImport("user32.dll")]
+        private static extern bool AppendMenu(IntPtr hMenu, uint uFlags, uint uIDNewItem, string lpNewItem);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
     }
 }

