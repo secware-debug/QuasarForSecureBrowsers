@@ -20,5 +20,8 @@ namespace Quasar.Common.Messages
 
         [ProtoMember(5)]
         public int MonitorIndex { get; set; }
+
+        [ProtoMember(6)]
+        public RemoteDesktopMode mode { get; set; }
     }
 }

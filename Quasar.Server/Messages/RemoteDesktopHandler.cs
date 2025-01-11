@@ -169,7 +169,7 @@ namespace Quasar.Server.Messages
         /// <param name="x">The X-coordinate inside the <see cref="LocalResolution"/>.</param>
         /// <param name="y">The Y-coordinate inside the <see cref="LocalResolution"/>.</param>
         /// <param name="displayIndex">The display to execute the mouse event on.</param>
-        public void SendMouseEvent(MouseAction mouseAction, bool isMouseDown, int x, int y, int displayIndex)
+        public void SendMouseEvent(MouseAction mouseAction, bool isMouseDown, int x, int y, int displayIndex, RemoteDesktopMode mode)
         {
             lock (_syncLock)
             {
@@ -178,9 +178,10 @@ namespace Quasar.Server.Messages
                     Action = mouseAction,
                     IsMouseDown = isMouseDown,
                     // calculate remote width & height
-                    X = x * _codec.Resolution.Width / LocalResolution.Width,
-                    Y = y * _codec.Resolution.Height / LocalResolution.Height,
-                    MonitorIndex = displayIndex
+                    X = (int)(x * (float)_codec.Resolution.Width / LocalResolution.Width),
+                    Y = (int)(y * (float)_codec.Resolution.Height / LocalResolution.Height),
+                    MonitorIndex = displayIndex,
+                    mode = mode
                 });
             }
         }
@@ -190,9 +191,9 @@ namespace Quasar.Server.Messages
         /// </summary>
         /// <param name="keyCode">The pressed key.</param>
         /// <param name="keyDown">Indicates whether it's a keydown or keyup event.</param>
-        public void SendKeyboardEvent(byte keyCode, bool keyDown)
+        public void SendKeyboardEvent(byte keyCode, bool keyDown, RemoteDesktopMode mode)
         {
-            _client.Send(new DoKeyboardEvent {Key = keyCode, KeyDown = keyDown});
+            _client.Send(new DoKeyboardEvent {Key = keyCode, KeyDown = keyDown, mode = mode});
         }
 
         private void Execute(ISender client, GetDesktopResponse message)

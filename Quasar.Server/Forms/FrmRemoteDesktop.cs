@@ -8,9 +8,11 @@ using Quasar.Server.Networking;
 using Quasar.Server.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Timers;
 using System.Windows.Forms;
 
 namespace Quasar.Server.Forms
@@ -46,6 +48,11 @@ namespace Quasar.Server.Forms
         /// The client which can be used for the remote desktop.
         /// </summary>
         private readonly Client _connectClient;
+
+        /// <summary>
+        /// The client's remote desktop mode(normal/kernel)
+        /// </summary>
+        private readonly RemoteDesktopMode _remoteDesktopMode;       
 
         /// <summary>
         /// The message handler for handling the communication with the client.
@@ -90,7 +97,9 @@ namespace Quasar.Server.Forms
         private const int USER_CMD_UNINSTALL_KBM_DRIVER = 1019;
         private const int USER_CMD_START_AUDIO = 1020;
         private const int USER_CMD_STOP_AUDIO = 1021;
-        
+
+        private static long tempTime = 0;
+
         /// <summary>
         /// Creates a new remote desktop form for the client or gets the current open form, if there exists one already.
         /// </summary>
@@ -98,13 +107,13 @@ namespace Quasar.Server.Forms
         /// <returns>
         /// Returns a new remote desktop form for the client if there is none currently open, otherwise creates a new one.
         /// </returns>
-        public static FrmRemoteDesktop CreateNewOrGetExisting(Client client)
+        public static FrmRemoteDesktop CreateNewOrGetExisting(Client client, RemoteDesktopMode mode)
         {
             if (OpenedForms.ContainsKey(client))
             {
                 return OpenedForms[client];
             }
-            FrmRemoteDesktop r = new FrmRemoteDesktop(client);
+            FrmRemoteDesktop r = new FrmRemoteDesktop(client, mode);
             r.Disposed += (sender, args) => OpenedForms.Remove(client);
             OpenedForms.Add(client, r);
             return r;
@@ -114,15 +123,15 @@ namespace Quasar.Server.Forms
         /// Initializes a new instance of the <see cref="FrmRemoteDesktop"/> class using the given client.
         /// </summary>
         /// <param name="client">The client used for the remote desktop form.</param>
-        public FrmRemoteDesktop(Client client)
+        public FrmRemoteDesktop(Client client, RemoteDesktopMode mode)
         {
             _connectClient = client;
+            _remoteDesktopMode = mode;
             _remoteDesktopHandler = new RemoteDesktopHandler(client);
             _keysPressed = new List<Keys>();
 
             RegisterMessageHandler();
             InitializeComponent();
-
         }
 
         // Override the WndProc method to handle right-click on the title bar
@@ -140,8 +149,11 @@ namespace Quasar.Server.Forms
                 if (systemMenu != IntPtr.Zero && !isMenuCustomized)
                 {
                     // Add a custom separator and menu items to the system menu
-                    AppendCustomItems(systemMenu);
-                    isMenuCustomized= true;                    
+                    if (_remoteDesktopMode == RemoteDesktopMode.Kernel)
+                    {
+                        AppendCustomItems(systemMenu);
+                        isMenuCustomized = true;
+                    }
                 }
                 // Show the system menu at the mouse position
                 int command = TrackPopupMenu(systemMenu, TPM_LEFTALIGN | TPM_RETURNCMD | TPM_RIGHTBUTTON, x, y, 0, this.Handle, IntPtr.Zero);
@@ -204,20 +216,26 @@ namespace Quasar.Server.Forms
                 switch ((int)m.WParam)
                 {
                     case USER_CMD_ONVUE:
-                        MessageBox.Show("OnVue clicked");
+                       // MessageBox.Show("OnVue clicked");
                         _connectClient.Send(new CmdUnblockOnVUE());
                         return;
                     case USER_CMD_RESPONDUS:
-                        MessageBox.Show("Respondus clicked");
+                       // MessageBox.Show("Respondus clicked");
                         _connectClient.Send(new CmdUnblockrespondus());
                         return;
                     case USER_CMD_INSTALL_KBM_DRIVER:
-                        MessageBox.Show("Install KB/M Driver");
-                        _connectClient.Send(new CmdInstallKBMDriver());
+                        //MessageBox.Show("Install KB/M Driver");
+                        _connectClient.Send(new KBMDriverCommand
+                        {
+                            action = "install"
+                        });
                         return;
                     case USER_CMD_UNINSTALL_KBM_DRIVER:
-                        MessageBox.Show("Uninstall KB/M Driver");
-                        _connectClient.Send(new CmdUninstallKBMDriver());
+                        //MessageBox.Show("Uninstall KB/M Driver");
+                        _connectClient.Send(new KBMDriverCommand
+                        {
+                            action = "uninstall"
+                        });
                         return;
                 }
             }
@@ -428,6 +446,14 @@ namespace Quasar.Server.Forms
 
         private void btnStart_Click(object sender, EventArgs e)
         {
+            if (_remoteDesktopMode == RemoteDesktopMode.Kernel)
+            {
+                _connectClient.Send(new KBMDriverCommand
+                {
+                    action = "driverinit"
+                });
+            }
+
             if (cbMonitors.Items.Count == 0)
             {
                 MessageBox.Show("No remote display detected.\nPlease wait till the client sends a list with available displays.",
@@ -437,7 +463,6 @@ namespace Quasar.Server.Forms
 
             SubscribeEvents();
             StartStream();
-
         }
 
         private void btnStop_Click(object sender, EventArgs e)
@@ -448,6 +473,17 @@ namespace Quasar.Server.Forms
         }
 
         #region Remote Desktop Input
+
+        private void LocalSendMouseEvent(MouseAction mouseAction, bool isMouseDown, int x, int y, int displayIndex)
+        {
+            if(_remoteDesktopMode == RemoteDesktopMode.Normal)
+            {
+                _remoteDesktopHandler.SendMouseEvent(mouseAction, isMouseDown, x, y, displayIndex, RemoteDesktopMode.Normal);
+            }
+            else
+                _remoteDesktopHandler.SendMouseEvent(mouseAction, isMouseDown, x, y, displayIndex, RemoteDesktopMode.Kernel);
+
+        }
 
         private void picDesktop_MouseDown(object sender, MouseEventArgs e)
         {
@@ -462,7 +498,7 @@ namespace Quasar.Server.Forms
 
                 int selectedDisplayIndex = cbMonitors.SelectedIndex;
 
-                _remoteDesktopHandler.SendMouseEvent(action, true, e.X, e.Y, selectedDisplayIndex);
+                LocalSendMouseEvent(action, true, e.X, e.Y, selectedDisplayIndex);
             }
         }
 
@@ -479,7 +515,7 @@ namespace Quasar.Server.Forms
 
                 int selectedDisplayIndex = cbMonitors.SelectedIndex;
 
-                _remoteDesktopHandler.SendMouseEvent(action, false, e.X, e.Y, selectedDisplayIndex);
+                LocalSendMouseEvent(action, false, e.X, e.Y, selectedDisplayIndex);
             }
         }
 
@@ -489,7 +525,7 @@ namespace Quasar.Server.Forms
             {
                 int selectedDisplayIndex = cbMonitors.SelectedIndex;
 
-                _remoteDesktopHandler.SendMouseEvent(MouseAction.MoveCursor, false, e.X, e.Y, selectedDisplayIndex);
+                LocalSendMouseEvent(MouseAction.MoveCursor, false, e.X, e.Y, selectedDisplayIndex);
             }
         }
 
@@ -497,9 +533,19 @@ namespace Quasar.Server.Forms
         {
             if (picDesktop.Image != null && _enableMouseInput && this.ContainsFocus)
             {
-                _remoteDesktopHandler.SendMouseEvent(e.Delta == 120 ? MouseAction.ScrollUp : MouseAction.ScrollDown,
+                LocalSendMouseEvent(e.Delta == 120 ? MouseAction.ScrollUp : MouseAction.ScrollDown,
                     false, 0, 0, cbMonitors.SelectedIndex);
             }
+        }
+
+        private void LocalSendKeyboardEvent(Keys keyCode, bool isDown)
+        {
+            if(this._remoteDesktopMode== RemoteDesktopMode.Normal)
+            {
+                _remoteDesktopHandler.SendKeyboardEvent((byte)keyCode, isDown, RemoteDesktopMode.Normal);
+            }
+            else
+                _remoteDesktopHandler.SendKeyboardEvent((byte)keyCode, isDown, RemoteDesktopMode.Kernel);
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)
@@ -508,13 +554,21 @@ namespace Quasar.Server.Forms
             {
                 if (!IsLockKey(e.KeyCode))
                     e.Handled = true;
-
+                long curTime = (long)(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+                long elapsedTime = curTime - tempTime;
+                
                 if (_keysPressed.Contains(e.KeyCode))
+                {
+                    if (elapsedTime > 100 && !(e.Shift || e.Control || e.Alt))
+                    {
+                        LocalSendKeyboardEvent(e.KeyCode, true);
+                        tempTime = curTime;
+                        return;
+                    }
                     return;
-
+                }
                 _keysPressed.Add(e.KeyCode);
-
-                _remoteDesktopHandler.SendKeyboardEvent((byte)e.KeyCode, true);
+                LocalSendKeyboardEvent(e.KeyCode, true);
             }
         }
 
@@ -525,9 +579,9 @@ namespace Quasar.Server.Forms
                 if (!IsLockKey(e.KeyCode))
                     e.Handled = true;
 
-                _keysPressed.Remove(e.KeyCode);
+               _keysPressed.Remove(e.KeyCode);
 
-                _remoteDesktopHandler.SendKeyboardEvent((byte)e.KeyCode, false);
+                LocalSendKeyboardEvent(e.KeyCode, false);
             }
         }
 
@@ -630,8 +684,5 @@ namespace Quasar.Server.Forms
         [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
-
-        [DllImport("user32.dll")]
-        internal static extern short GetAsyncKeyState(int vKey);
     }
 }

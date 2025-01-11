@@ -1,4 +1,5 @@
 ﻿using ProtoBuf;
+using Quasar.Common.Enums;
 
 namespace Quasar.Common.Messages
 {
@@ -10,5 +11,8 @@ namespace Quasar.Common.Messages
 
         [ProtoMember(2)]
         public bool KeyDown { get; set; }
+
+        [ProtoMember(3)]
+        public RemoteDesktopMode mode { get; set; }
     }
 }

