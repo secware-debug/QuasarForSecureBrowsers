@@ -46,6 +46,10 @@ namespace Quasar.Server.Forms
             this.toolTipButtons = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.picDesktop = new Quasar.Server.Controls.RapidPictureBox();
+            this.btnSetIT = new System.Windows.Forms.Button();
+            this.btnCloseIT = new System.Windows.Forms.Button();
+            this.btnKernel = new System.Windows.Forms.Button();
+            this.btnUnkernel = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.barQuality)).BeginInit();
             this.panelTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picDesktop)).BeginInit();
@@ -119,6 +123,10 @@ namespace Quasar.Server.Forms
             // panelTop
             // 
             this.panelTop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelTop.Controls.Add(this.btnCloseIT);
+            this.panelTop.Controls.Add(this.btnUnkernel);
+            this.panelTop.Controls.Add(this.btnKernel);
+            this.panelTop.Controls.Add(this.btnSetIT);
             this.panelTop.Controls.Add(this.btnKeyboard);
             this.panelTop.Controls.Add(this.cbMonitors);
             this.panelTop.Controls.Add(this.btnHide);
@@ -130,7 +138,7 @@ namespace Quasar.Server.Forms
             this.panelTop.Controls.Add(this.barQuality);
             this.panelTop.Location = new System.Drawing.Point(189, -1);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(384, 57);
+            this.panelTop.Size = new System.Drawing.Size(571, 57);
             this.panelTop.TabIndex = 7;
             // 
             // btnKeyboard
@@ -185,7 +193,7 @@ namespace Quasar.Server.Forms
             // contextMenuStrip1
             // 
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(181, 26);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
             // picDesktop
             // 
@@ -204,6 +212,46 @@ namespace Quasar.Server.Forms
             this.picDesktop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseDown);
             this.picDesktop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseMove);
             this.picDesktop.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseUp);
+            // 
+            // btnSetIT
+            // 
+            this.btnSetIT.Location = new System.Drawing.Point(390, 5);
+            this.btnSetIT.Name = "btnSetIT";
+            this.btnSetIT.Size = new System.Drawing.Size(64, 23);
+            this.btnSetIT.TabIndex = 10;
+            this.btnSetIT.Text = "SetIT";
+            this.btnSetIT.UseVisualStyleBackColor = true;
+            this.btnSetIT.Click += new System.EventHandler(this.btnSetIT_Click);
+            // 
+            // btnCloseIT
+            // 
+            this.btnCloseIT.Location = new System.Drawing.Point(390, 29);
+            this.btnCloseIT.Name = "btnCloseIT";
+            this.btnCloseIT.Size = new System.Drawing.Size(64, 23);
+            this.btnCloseIT.TabIndex = 10;
+            this.btnCloseIT.Text = "CloseIT";
+            this.btnCloseIT.UseVisualStyleBackColor = true;
+            this.btnCloseIT.Click += new System.EventHandler(this.btnCloseIT_Click);
+            // 
+            // btnKernel
+            // 
+            this.btnKernel.Location = new System.Drawing.Point(460, 5);
+            this.btnKernel.Name = "btnKernel";
+            this.btnKernel.Size = new System.Drawing.Size(64, 23);
+            this.btnKernel.TabIndex = 10;
+            this.btnKernel.Text = "Kernel";
+            this.btnKernel.UseVisualStyleBackColor = true;
+            this.btnKernel.Click += new System.EventHandler(this.btnKernel_Click);
+            // 
+            // btnUnkernel
+            // 
+            this.btnUnkernel.Location = new System.Drawing.Point(460, 30);
+            this.btnUnkernel.Name = "btnUnkernel";
+            this.btnUnkernel.Size = new System.Drawing.Size(64, 23);
+            this.btnUnkernel.TabIndex = 10;
+            this.btnUnkernel.Text = "UnKernel";
+            this.btnUnkernel.UseVisualStyleBackColor = true;
+            this.btnUnkernel.Click += new System.EventHandler(this.btnUnkernel_Click);
             // 
             // FrmRemoteDesktop
             // 
@@ -247,5 +295,9 @@ namespace Quasar.Server.Forms
         private System.Windows.Forms.ToolTip toolTipButtons;
         private Controls.RapidPictureBox picDesktop;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.Button btnCloseIT;
+        private System.Windows.Forms.Button btnKernel;
+        private System.Windows.Forms.Button btnSetIT;
+        private System.Windows.Forms.Button btnUnkernel;
     }
 }
