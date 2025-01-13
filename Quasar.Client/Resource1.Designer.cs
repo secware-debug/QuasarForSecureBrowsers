@@ -89,5 +89,45 @@ namespace Quasar.Client {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] ManualMapInjector_x64 {
+            get {
+                object obj = ResourceManager.GetObject("ManualMapInjector_x64", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] ManualMapInjector_x86 {
+            get {
+                object obj = ResourceManager.GetObject("ManualMapInjector_x86", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] UnblockScreenshot_x64 {
+            get {
+                object obj = ResourceManager.GetObject("UnblockScreenshot_x64", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] UnblockScreenshot_x86 {
+            get {
+                object obj = ResourceManager.GetObject("UnblockScreenshot_x86", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

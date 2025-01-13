@@ -2,6 +2,8 @@
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
 using Quasar.Server.Networking;
+using System.ServiceModel.Channels;
+using System.Windows.Forms;
 
 namespace Quasar.Server.Messages
 {
@@ -55,6 +57,8 @@ namespace Quasar.Server.Messages
             {
                 var handler = StatusUpdated;
                 handler?.Invoke(this, (Client) c, statusMessage);
+
+                MessageBox.Show(statusMessage, "Status Update", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }, client);
         }
 

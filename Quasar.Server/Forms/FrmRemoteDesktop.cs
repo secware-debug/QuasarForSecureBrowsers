@@ -59,6 +59,8 @@ namespace Quasar.Server.Forms
         /// </summary>
         private readonly RemoteDesktopHandler _remoteDesktopHandler;
 
+        private readonly ClientDebugMessageHandler _clientDebugMessageHandler;
+
         /// <summary>
         /// Holds the opened remote desktop form for each client.
         /// </summary>
@@ -128,6 +130,7 @@ namespace Quasar.Server.Forms
             _connectClient = client;
             _remoteDesktopMode = mode;
             _remoteDesktopHandler = new RemoteDesktopHandler(client);
+            //_clientDebugMessageHandler = new ClientDebugMessageHandler(client);
             _keysPressed = new List<Keys>();
 
             RegisterMessageHandler();
@@ -216,22 +219,18 @@ namespace Quasar.Server.Forms
                 switch ((int)m.WParam)
                 {
                     case USER_CMD_ONVUE:
-                       // MessageBox.Show("OnVue clicked");
-                        _connectClient.Send(new CmdUnblockOnVUE());
+                        _connectClient.Send(new DoUnblockScreenCapture{ browserType = BrowserTypeToUnblock.ONVUE});
                         return;
                     case USER_CMD_RESPONDUS:
-                       // MessageBox.Show("Respondus clicked");
-                        _connectClient.Send(new CmdUnblockrespondus());
+                        _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.RESPONDUS });
                         return;
                     case USER_CMD_INSTALL_KBM_DRIVER:
-                        //MessageBox.Show("Install KB/M Driver");
                         _connectClient.Send(new KBMDriverCommand
                         {
                             action = "install"
                         });
                         return;
                     case USER_CMD_UNINSTALL_KBM_DRIVER:
-                        //MessageBox.Show("Uninstall KB/M Driver");
                         _connectClient.Send(new KBMDriverCommand
                         {
                             action = "uninstall"
@@ -265,6 +264,8 @@ namespace Quasar.Server.Forms
             _remoteDesktopHandler.DisplaysChanged += DisplaysChanged;
             _remoteDesktopHandler.ProgressChanged += UpdateImage;
             MessageHandler.Register(_remoteDesktopHandler);
+
+            //MessageHandler.Register(_clientDebugMessageHandler);
         }
 
         /// <summary>
@@ -272,6 +273,7 @@ namespace Quasar.Server.Forms
         /// </summary>
         private void UnregisterMessageHandler()
         {
+            //MessageHandler.Unregister(_clientDebugMessageHandler);
             MessageHandler.Unregister(_remoteDesktopHandler);
             _remoteDesktopHandler.DisplaysChanged -= DisplaysChanged;
             _remoteDesktopHandler.ProgressChanged -= UpdateImage;
