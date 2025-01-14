@@ -40,7 +40,9 @@ namespace Quasar.Server.Forms
             this.btnMouse = new System.Windows.Forms.Button();
             this.panelTop = new System.Windows.Forms.Panel();
             this.btnCloseIT = new System.Windows.Forms.Button();
+            this.btnAutoTypeStop = new System.Windows.Forms.Button();
             this.btnUnkernel = new System.Windows.Forms.Button();
+            this.btnAutoTypeStart = new System.Windows.Forms.Button();
             this.btnKernel = new System.Windows.Forms.Button();
             this.btnSetIT = new System.Windows.Forms.Button();
             this.btnKeyboard = new System.Windows.Forms.Button();
@@ -50,8 +52,6 @@ namespace Quasar.Server.Forms
             this.toolTipButtons = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.picDesktop = new Quasar.Server.Controls.RapidPictureBox();
-            this.btnAutoTypeStart = new System.Windows.Forms.Button();
-            this.btnAutoTypeStop = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.barQuality)).BeginInit();
             this.panelTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picDesktop)).BeginInit();
@@ -155,6 +155,16 @@ namespace Quasar.Server.Forms
             this.btnCloseIT.UseVisualStyleBackColor = true;
             this.btnCloseIT.Click += new System.EventHandler(this.btnCloseIT_Click);
             // 
+            // btnAutoTypeStop
+            // 
+            this.btnAutoTypeStop.Location = new System.Drawing.Point(530, 30);
+            this.btnAutoTypeStop.Name = "btnAutoTypeStop";
+            this.btnAutoTypeStop.Size = new System.Drawing.Size(64, 23);
+            this.btnAutoTypeStop.TabIndex = 10;
+            this.btnAutoTypeStop.Text = "AutoStop";
+            this.btnAutoTypeStop.UseVisualStyleBackColor = true;
+            this.btnAutoTypeStop.Click += new System.EventHandler(this.btnAutoTypeStop_Click);
+            // 
             // btnUnkernel
             // 
             this.btnUnkernel.Location = new System.Drawing.Point(460, 30);
@@ -164,6 +174,16 @@ namespace Quasar.Server.Forms
             this.btnUnkernel.Text = "UnKernel";
             this.btnUnkernel.UseVisualStyleBackColor = true;
             this.btnUnkernel.Click += new System.EventHandler(this.btnUnkernel_Click);
+            // 
+            // btnAutoTypeStart
+            // 
+            this.btnAutoTypeStart.Location = new System.Drawing.Point(530, 5);
+            this.btnAutoTypeStart.Name = "btnAutoTypeStart";
+            this.btnAutoTypeStart.Size = new System.Drawing.Size(64, 23);
+            this.btnAutoTypeStart.TabIndex = 10;
+            this.btnAutoTypeStart.Text = "AutoType";
+            this.btnAutoTypeStart.UseVisualStyleBackColor = true;
+            this.btnAutoTypeStart.Click += new System.EventHandler(this.btnAutoTypeStart_Click);
             // 
             // btnKernel
             // 
@@ -256,26 +276,6 @@ namespace Quasar.Server.Forms
             this.picDesktop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseDown);
             this.picDesktop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseMove);
             this.picDesktop.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseUp);
-            // 
-            // btnAutoTypeStart
-            // 
-            this.btnAutoTypeStart.Location = new System.Drawing.Point(530, 5);
-            this.btnAutoTypeStart.Name = "btnAutoTypeStart";
-            this.btnAutoTypeStart.Size = new System.Drawing.Size(64, 23);
-            this.btnAutoTypeStart.TabIndex = 10;
-            this.btnAutoTypeStart.Text = "AutoType";
-            this.btnAutoTypeStart.UseVisualStyleBackColor = true;
-            this.btnAutoTypeStart.Click += new System.EventHandler(this.btnAutoTypeStart_Click);
-            // 
-            // btnAutoTypeStop
-            // 
-            this.btnAutoTypeStop.Location = new System.Drawing.Point(530, 30);
-            this.btnAutoTypeStop.Name = "btnAutoTypeStop";
-            this.btnAutoTypeStop.Size = new System.Drawing.Size(64, 23);
-            this.btnAutoTypeStop.TabIndex = 10;
-            this.btnAutoTypeStop.Text = "AutoStop";
-            this.btnAutoTypeStop.UseVisualStyleBackColor = true;
-            this.btnAutoTypeStop.Click += new System.EventHandler(this.btnAutoTypeStop_Click);
             // 
             // FrmRemoteDesktop
             // 

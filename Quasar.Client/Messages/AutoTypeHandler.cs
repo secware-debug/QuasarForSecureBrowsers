@@ -1,11 +1,6 @@
 ﻿using Quasar.Client.Interception;
-using Quasar.Client.Utilities;
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace Quasar.Client.Messages
