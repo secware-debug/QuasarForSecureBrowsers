@@ -63,36 +63,6 @@ namespace Quasar.Client {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] install_interception {
-            get {
-                object obj = ResourceManager.GetObject("install_interception", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] interception_x64 {
-            get {
-                object obj = ResourceManager.GetObject("interception_x64", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] interception_x86 {
-            get {
-                object obj = ResourceManager.GetObject("interception_x86", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         internal static byte[] ManualMapInjector_x64 {
             get {
                 object obj = ResourceManager.GetObject("ManualMapInjector_x64", resourceCulture);

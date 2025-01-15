@@ -19,6 +19,7 @@ using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 using System.Linq;
+using Microsoft.Win32;
 
 namespace Quasar.Server.Forms
 {

