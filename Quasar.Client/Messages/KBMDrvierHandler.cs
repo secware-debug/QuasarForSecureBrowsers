@@ -44,8 +44,6 @@ namespace Quasar.Client.Messages
                         break;
                 }
             }).Start();
-            
-           // client.Send(new SetStatus { Message = "Successfully displayed MessageBox" });
         }
 
         private void InstallDriver(ISender client)
@@ -59,7 +57,7 @@ namespace Quasar.Client.Messages
 
             if (alreadyInstalled)
             {
-                client.Send(new SetStatus { Message = "KB/M driver is already installed!" });
+                client.Send(new NotifyMessageToServer { Message = "KB/M driver is already installed!" });
                 return;
             }
             string tempText = "";
@@ -68,7 +66,7 @@ namespace Quasar.Client.Messages
             tempText += "--------\n";
             if (stderr.Length > 0)
                 tempText += stderr;
-            client.Send(new SetStatus { Message = tempText });
+            client.Send(new NotifyMessageToServer { Message = tempText });
             return;
         }
 
@@ -83,7 +81,7 @@ namespace Quasar.Client.Messages
             //InterceptionHelper.UninstallInterception(out flag11, out text23, out text24);
             if (flag11)
             {
-                client.Send(new SetStatus { Message = "Driver is currently not installed!" });
+                client.Send(new NotifyMessageToServer { Message = "Driver is currently not installed!" });
                 return;
             }
             string text25 = "";
@@ -96,7 +94,7 @@ namespace Quasar.Client.Messages
             {
                 text25 += text24;
             }
-            client.Send(new SetStatus { Message = text25 });
+            client.Send(new NotifyMessageToServer { Message = text25 });
 
             return;
         }

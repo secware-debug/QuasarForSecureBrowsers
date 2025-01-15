@@ -6,6 +6,7 @@ using Quasar.Server.Networking;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Windows.Forms;
 
 namespace Quasar.Server.Messages
 {
@@ -87,6 +88,25 @@ namespace Quasar.Server.Messages
             }, value);
         }
 
+
+        /// <summary>
+        /// Client keyboard&mouse Driver Installation state event handler
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="value"></param>
+        public delegate void ClientDriverStateEventHandler(object sender, int value);
+
+        public event ClientDriverStateEventHandler ClientDriverStateChanged;
+
+        private void OnKBMDriverChanged(int value)
+        {
+            SynchronizationContext.Post(val =>
+            {
+                var handler = ClientDriverStateChanged;
+                handler?.Invoke(this, (int)val);
+            }, value);
+        }
+
         /// <summary>
         /// The client which is associated with this remote desktop handler.
         /// </summary>
@@ -107,7 +127,7 @@ namespace Quasar.Server.Messages
         }
 
         /// <inheritdoc />
-        public override bool CanExecute(IMessage message) => message is GetDesktopResponse || message is GetMonitorsResponse;
+        public override bool CanExecute(IMessage message) => message is GetDesktopResponse || message is GetMonitorsResponse || message is NotifyMessageToServer;
 
         /// <inheritdoc />
         public override bool CanExecuteFrom(ISender sender) => _client.Equals(sender);
@@ -123,6 +143,10 @@ namespace Quasar.Server.Messages
                 case GetMonitorsResponse m:
                     Execute(sender, m);
                     break;
+                case NotifyMessageToServer n:
+                    Execute(sender, n);
+                    break;
+
             }
         }
 
@@ -224,6 +248,25 @@ namespace Quasar.Server.Messages
         private void Execute(ISender client, GetMonitorsResponse message)
         {
             OnDisplaysChanged(message.Number);
+        }
+
+        private void Execute(ISender client, NotifyMessageToServer message)
+        {
+            if(message.Message == "KB/M driver is not installed!")
+            {
+                OnKBMDriverChanged(7);
+                return;
+            }
+            if(message.Message == "KB/M driver is installed now")
+            {
+                OnKBMDriverChanged(15);
+                return;
+            }
+
+            SynchronizationContext.Post(c =>
+            {
+                MessageBox.Show(message.Message, "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }, client);
         }
 
         /// <summary>

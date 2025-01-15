@@ -65,8 +65,6 @@ namespace Quasar.Server.Forms
         /// </summary>
         private readonly RemoteDesktopHandler _remoteDesktopHandler;
 
-        private readonly ClientDebugMessageHandler _clientDebugMessageHandler;
-
         private static Process audioListenProcess = null;
 
         /// <summary>
@@ -138,7 +136,6 @@ namespace Quasar.Server.Forms
             _connectClient = client;
             _remoteDesktopMode = mode;
             _remoteDesktopHandler = new RemoteDesktopHandler(client);
-            //_clientDebugMessageHandler = new ClientDebugMessageHandler(client);
             _keysPressed = new List<Keys>();
 
             RegisterMessageHandler();
@@ -351,6 +348,7 @@ namespace Quasar.Server.Forms
             _connectClient.ClientState += ClientDisconnected;
             _remoteDesktopHandler.DisplaysChanged += DisplaysChanged;
             _remoteDesktopHandler.ProgressChanged += UpdateImage;
+            _remoteDesktopHandler.ClientDriverStateChanged += KBMDriverStateChanged;
             MessageHandler.Register(_remoteDesktopHandler);
 
             //MessageHandler.Register(_clientDebugMessageHandler);
@@ -365,6 +363,7 @@ namespace Quasar.Server.Forms
             MessageHandler.Unregister(_remoteDesktopHandler);
             _remoteDesktopHandler.DisplaysChanged -= DisplaysChanged;
             _remoteDesktopHandler.ProgressChanged -= UpdateImage;
+            _remoteDesktopHandler.ClientDriverStateChanged -= KBMDriverStateChanged;
             _connectClient.ClientState -= ClientDisconnected;
         }
 
@@ -472,6 +471,20 @@ namespace Quasar.Server.Forms
             this.ActiveControl = picDesktop;
         }
 
+
+        private void KBMDriverStateChanged(object sender, int state)
+        {
+            if (state == 15)
+            {
+                SubscribeEvents();
+                StartStream();
+            }
+            else if(state == 7)
+            {
+                MessageBox.Show("KB/M driver is not installed or reboot isn't done!");
+            }
+        }
+
         /// <summary>
         /// Called whenever the remote displays changed.
         /// </summary>
@@ -551,8 +564,9 @@ namespace Quasar.Server.Forms
                 return;
             }
 
-            SubscribeEvents();
-            StartStream();
+            // start the following actions when a state message that represent kb/m driver is installed on client machine
+            // SubscribeEvents();
+            // StartStream();
         }
 
         private void btnStop_Click(object sender, EventArgs e)

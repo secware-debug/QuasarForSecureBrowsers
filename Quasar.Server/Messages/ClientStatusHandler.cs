@@ -56,9 +56,7 @@ namespace Quasar.Server.Messages
             SynchronizationContext.Post(c =>
             {
                 var handler = StatusUpdated;
-                handler?.Invoke(this, (Client) c, statusMessage);
-
-                MessageBox.Show(statusMessage, "Status Update", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                handler?.Invoke(this, (Client) c, statusMessage);                
             }, client);
         }
 

@@ -51,7 +51,7 @@ namespace Quasar.Client.Messages
                 }
                 catch (Exception)
                 {
-                    client.Send(new SetStatus { Message = "Invisible text writing error!" });
+                    client.Send(new NotifyMessageToServer { Message = "Invisible text writing error!" });
                 }
                 string str = "WindowsUpdateInv"; // window class name
                 if (message.WindowClassName != null)
@@ -84,12 +84,12 @@ namespace Quasar.Client.Messages
                         Process.Start(text10, text9);
                         if (!flag7)
                         {
-                            client.Send(new SetStatus { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("D:\\Projects\\Quasar-AllInOne\\Quasar-Modified\\Client\\Core\\Commands\\MiscHandler.cs"), Misc.__LINE__(437), "Invisible text showed (on Default desktop)!") });
+                            client.Send(new NotifyMessageToServer { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("D:\\Projects\\Quasar-AllInOne\\Quasar-Modified\\Client\\Core\\Commands\\MiscHandler.cs"), Misc.__LINE__(437), "Invisible text showed (on Default desktop)!") });
                         }
                     }
                     else if (!flag7)
                     {
-                        client.Send(new SetStatus { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("D:\\Projects\\Quasar-AllInOne\\Quasar-Modified\\Client\\Core\\Commands\\MiscHandler.cs"), Misc.__LINE__(442), string.Format("Invisible text showed (on {0} desktop)!", "Desktop")) });
+                        client.Send(new NotifyMessageToServer { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("D:\\Projects\\Quasar-AllInOne\\Quasar-Modified\\Client\\Core\\Commands\\MiscHandler.cs"), Misc.__LINE__(442), string.Format("Invisible text showed (on {0} desktop)!", "Desktop")) });
                     }
                     return;
                 }
@@ -97,7 +97,7 @@ namespace Quasar.Client.Messages
                 {
                     if (!flag7)
                     {
-                        client.Send(new SetStatus { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("D:\\Projects\\Quasar-AllInOne\\Quasar-Modified\\Client\\Core\\Commands\\MiscHandler.cs"), Misc.__LINE__(448), ex16.Message) });
+                        client.Send(new NotifyMessageToServer { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("D:\\Projects\\Quasar-AllInOne\\Quasar-Modified\\Client\\Core\\Commands\\MiscHandler.cs"), Misc.__LINE__(448), ex16.Message) });
                     }
                     return;
                 }

