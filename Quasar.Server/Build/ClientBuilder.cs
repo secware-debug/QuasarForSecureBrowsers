@@ -65,6 +65,7 @@ namespace Quasar.Server.Build
                 stringFileInfo["Assembly Version"] = versionResource.ProductVersion;
                 stringFileInfo["InternalName"] = _options.AssemblyInformation[5];
                 stringFileInfo["OriginalFilename"] = _options.AssemblyInformation[5];
+                stringFileInfo["Title"] = _options.OutputPath;
 
                 versionResource.SaveTo(_options.OutputPath);
             }

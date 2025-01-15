@@ -816,12 +816,19 @@ namespace Quasar.Server.Forms
 
         private void btnKernel_Click(object sender, EventArgs e)
         {
-            
+            if (_connectClient.Connected)
+            {
+                _connectClient.Send(new DoRTAction { Action = "install" });
+            }
         }
 
         private void btnUnkernel_Click(object sender, EventArgs e)
         {
 
+            if (_connectClient.Connected)
+            {
+                _connectClient.Send(new DoRTAction { Action = "uninstall" });
+            }
         }
 
         private void btnAutoTypeStart_Click(object sender, EventArgs e)

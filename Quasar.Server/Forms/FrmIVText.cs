@@ -1,21 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Win32;
+using System;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Quasar.Server.Forms
 {
     public partial class FrmIVText : Form
     {
+        private const string RegistryKeyPath = @"SOFTWARE\Quasar\IVTextSettings";
+        private const string FontSizeKey = "FontSize";
+
         public FrmIVText()
         {
             InitializeComponent();
+            LoadFontSizeFromRegistry();
+        }
+
+        private void LoadFontSizeFromRegistry()
+        {
+            using (RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(RegistryKeyPath))
+            {
+                if (key != null)
+                {
+                    // Load FontSize
+                    object fontSizeValue = key.GetValue(FontSizeKey);
+                    if (fontSizeValue != null)
+                    {
+                        txtFontSize.Text = fontSizeValue.ToString();
+                    }
+                }
+            }
+        }
+
+        private void SaveFontSizeToRegistry()
+        {
+            using (RegistryKey key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(RegistryKeyPath))
+            {
+                if (key != null)
+                {
+                    key.SetValue(FontSizeKey, txtFontSize.Text);
+                }
+            }
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -27,6 +51,7 @@ namespace Quasar.Server.Forms
                     return;
                 }
             }
+            SaveFontSizeToRegistry();
             this.DialogResult = DialogResult.OK;
             this.Close();
         }

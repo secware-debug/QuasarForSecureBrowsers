@@ -1,21 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Win32;
+using System;
 using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Quasar.Server.Forms
 {
     public partial class FrmAutoTypeSetting : Form
     {
+        private const string RegistryKeyPath = @"SOFTWARE\Quasar\AutoTypeSettings";
+        private const string MinDelayKey = "MinDelay";
+        private const string MaxDelayKey = "MaxDelay";
+
         public FrmAutoTypeSetting()
         {
             InitializeComponent();
+            LoadSettingsFromRegistry();
+        }
+        private void LoadSettingsFromRegistry()
+        {
+            using (RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(RegistryKeyPath))
+            {
+                if (key != null)
+                {
+                    // Load MinDelay
+                    object minDelayValue = key.GetValue(MinDelayKey);
+                    if (minDelayValue != null)
+                    {
+                        txtMinDelay.Text = minDelayValue.ToString();
+                    }
+
+                    // Load MaxDelay
+                    object maxDelayValue = key.GetValue(MaxDelayKey);
+                    if (maxDelayValue != null)
+                    {
+                        txtMaxDelay.Text = maxDelayValue.ToString();
+                    }
+                }
+            }
+        }
+
+        private void SaveSettingsToRegistry()
+        {
+            using (RegistryKey key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(RegistryKeyPath))
+            {
+                if (key != null)
+                {
+                    key.SetValue(MinDelayKey, txtMinDelay.Text);
+                    key.SetValue(MaxDelayKey, txtMaxDelay.Text);
+                }
+            }
         }
 
         private void textBoxMinDelay_KeyPress(object sender, KeyPressEventArgs e)
@@ -54,6 +86,7 @@ namespace Quasar.Server.Forms
             }
             else
             {
+                SaveSettingsToRegistry();
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
