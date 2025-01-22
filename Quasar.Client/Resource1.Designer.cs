@@ -63,6 +63,16 @@ namespace Quasar.Client {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] AutoPatchETSStatic {
+            get {
+                object obj = ResourceManager.GetObject("AutoPatchETSStatic", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] ManualMapInjector_x64 {
             get {
                 object obj = ResourceManager.GetObject("ManualMapInjector_x64", resourceCulture);

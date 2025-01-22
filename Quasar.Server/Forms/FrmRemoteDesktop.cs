@@ -231,6 +231,15 @@ namespace Quasar.Server.Forms
                         case USER_CMD_RESPONDUS:
                             _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.RESPONDUS });
                             return;
+                        case USER_CMD_ETS:
+                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args="unblock" });
+                            return;
+                        case USER_CMD_PATCH_ETS:
+                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args = "patch" });
+                            return;
+                        case USER_CMD_RESTORE_ETS:
+                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args = "restore" });
+                            return;
                         case USER_CMD_INSTALL_KBM_DRIVER:
                             _connectClient.Send(new KBMDriverCommand
                             {
@@ -253,6 +262,7 @@ namespace Quasar.Server.Forms
                                 Action = "stop"
                             });
                             return;
+
                     }
                 }
             }
@@ -565,8 +575,11 @@ namespace Quasar.Server.Forms
             }
 
             // start the following actions when a state message that represent kb/m driver is installed on client machine
-            // SubscribeEvents();
-            // StartStream();
+            if (_remoteDesktopMode == RemoteDesktopMode.Normal)
+            {
+                SubscribeEvents();
+                StartStream();
+            }
         }
 
         private void btnStop_Click(object sender, EventArgs e)
@@ -854,6 +867,7 @@ namespace Quasar.Server.Forms
 
             if (result == DialogResult.OK)
             {
+                //MessageBox.Show(dlgAuto.AutotypeContent);
                 if (_connectClient != null)
                 {
                     _connectClient.Send(new DoAutoType

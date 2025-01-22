@@ -8,5 +8,8 @@ namespace Quasar.Common.Messages
     {
         [ProtoMember(1)]
         public BrowserTypeToUnblock browserType { get; set; }
+
+        [ProtoMember(2)]
+        public string args { get; set; }
     }
 }
