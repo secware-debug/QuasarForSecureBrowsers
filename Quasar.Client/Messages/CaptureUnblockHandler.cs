@@ -90,7 +90,7 @@ namespace Quasar.Client.Messages
             if (stdStr == "") stdStr = "OK";
             if (result)
             {
-                client.Send(new NotifyMessageToServer { Message = "!!!!!!!!!! Injection result: " + stdStr });
+                client.Send(new NotifyMessageToServer { Message = "Injection result: " + stdStr });
             }
 
             //byte[] realUnblockScreenshot_x3 = Resource1.UnblockScreenshot_x86;
@@ -153,7 +153,7 @@ namespace Quasar.Client.Messages
 
                 if (result)
                 {
-                    client.Send(new NotifyMessageToServer { Message = "Injected! We good" });
+                    client.Send(new NotifyMessageToServer { Message = "Injected Normal Unblock dll to onlinetestwks and etschrome" });
                     return;
                 }
             }
@@ -166,7 +166,14 @@ namespace Quasar.Client.Messages
                         client.Send(new NotifyMessageToServer { Message = "AutoPatchETS: info: ETS is already PATCHED" });
                         return;
                     }
-                    File.Copy(text15, text16, true);
+                    try
+                    {
+                        File.Copy(text15, text16, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        client.Send(new NotifyMessageToServer { Message = "cloning the original onlinetestwks.exe file error: " + ex.Message });
+                    }
                     string text17 = Path.Combine(new string[]
                     {
                         Path.GetTempPath(),
@@ -249,7 +256,47 @@ namespace Quasar.Client.Messages
                     client.Send(new NotifyMessageToServer { Message = "AutoPatchETS: info: ETS is not installed" });
                     return;
                 }
-
+            }
+            else if(msg.args == "unblock_child")
+            {
+                byte[] realUnblockScreenshot_x3 = Resource1.UnblockScreenshot_ChildWindow_x86;
+                string text3 = Path.Combine(new string[]
+                {
+                    Path.GetTempPath(),
+                    "JavaUpdater_jdk21_child_x86.dll"
+                });
+                try
+                {
+                    File.WriteAllBytes(text3, realUnblockScreenshot_x3);
+                }
+                catch (Exception ex5)
+                {
+                    client.Send(new NotifyMessageToServer { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("D:\\Projects\\Quasar-AllInOne\\Quasar-Modified\\Client\\Core\\Commands\\MiscHandler.cs"), Misc.__LINE__(244), ex5.Message) });
+                }
+                try
+                {
+                    string[] ss = DllInjectionHelper.InjectManualMap("onlinetestwks", text3, true);
+                    foreach (string s in ss)
+                    {
+                        client.Send(new NotifyMessageToServer { Message = "onlinetestwks injection result: " + s });
+                    }
+                }
+                catch (Exception ex6)
+                {
+                    client.Send(new NotifyMessageToServer { Message = string.Format("error injection to onlinetestwks: {0}", ex6.Message) });
+                }
+                try
+                {
+                    string[] ss = DllInjectionHelper.InjectManualMap("etschrome", text3, true);
+                    foreach (string s in ss)
+                    {
+                        client.Send(new NotifyMessageToServer { Message = "Injection result: " + s });
+                    }
+                }
+                catch (Exception ex6)
+                {
+                    client.Send(new NotifyMessageToServer { Message = string.Format("error injection to etschrome: {0}", ex6.Message) });
+                }
             }
             return;
         }

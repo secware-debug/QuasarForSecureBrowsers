@@ -48,7 +48,7 @@ namespace Quasar.Client.Messages
                     {
                         writer.Write(contentStr);
                     }
-                    //File.WriteAllText(text9, contentStr);
+                    // File.WriteAllText(text9, contentStr);
                 }
                 catch (Exception)
                 {
