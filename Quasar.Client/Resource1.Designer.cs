@@ -113,9 +113,39 @@ namespace Quasar.Client {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] UnblockScreenshot_ChildWindow_x64 {
+            get {
+                object obj = ResourceManager.GetObject("UnblockScreenshot_ChildWindow_x64", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] UnblockScreenshot_ChildWindow_x86 {
             get {
                 object obj = ResourceManager.GetObject("UnblockScreenshot_ChildWindow_x86", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] UnblockScreenshot_OnVue_x64 {
+            get {
+                object obj = ResourceManager.GetObject("UnblockScreenshot_OnVue_x64", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] UnblockScreenshot_OnVue_x86 {
+            get {
+                object obj = ResourceManager.GetObject("UnblockScreenshot_OnVue_x86", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -136,6 +166,16 @@ namespace Quasar.Client {
         internal static byte[] UnblockScreenshot_x86 {
             get {
                 object obj = ResourceManager.GetObject("UnblockScreenshot_x86", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] version_OnVue_x64 {
+            get {
+                object obj = ResourceManager.GetObject("version_OnVue_x64", resourceCulture);
                 return ((byte[])(obj));
             }
         }

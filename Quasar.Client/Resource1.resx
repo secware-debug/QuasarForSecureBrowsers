@@ -133,13 +133,25 @@
   <data name="RKAGG" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\RKAGG.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="UnblockScreenshot_ChildWindow_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\UnblockScreenshot_ChildWindow_x64.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="UnblockScreenshot_ChildWindow_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\UnblockScreenshot_ChildWindow_x86.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="UnblockScreenshot_OnVue_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\UnblockScreenshot_OnVue_x64.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="UnblockScreenshot_OnVue_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\UnblockScreenshot_OnVue_x86.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="UnblockScreenshot_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\UnblockScreenshot_x64.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="UnblockScreenshot_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\UnblockScreenshot_x86.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="version_OnVue_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\version_OnVue_x64.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

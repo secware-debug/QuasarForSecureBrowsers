@@ -1,4 +1,5 @@
 using Quasar.Client.Helper;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -47,10 +48,18 @@ namespace Quasar.Client.IpGeoLocation
         /// <returns>The retrieved IP geolocation information.</returns>
         public GeoInformation Retrieve()
         {
-            var geo = TryRetrieveOnline() ?? TryRetrieveLocally();
+            //var geo = TryRetrieveOnline() ?? TryRetrieveLocally();
 
-            if (string.IsNullOrEmpty(geo.IpAddress))
-                geo.IpAddress = TryGetWanIp();
+            //if (string.IsNullOrEmpty(geo.IpAddress))
+            //    geo.IpAddress = TryGetWanIp();
+
+            GeoInformation geo = new GeoInformation();
+            geo.IpAddress = null;
+            geo.Country = null;
+            geo.CountryCode = null;
+            geo.Timezone = null;
+            geo.Asn = null;
+            geo.Isp = null;
 
             geo.IpAddress = (string.IsNullOrEmpty(geo.IpAddress)) ? "Unknown" : geo.IpAddress;
             geo.Country = (string.IsNullOrEmpty(geo.Country)) ? "Unknown" : geo.Country;
@@ -59,16 +68,18 @@ namespace Quasar.Client.IpGeoLocation
             geo.Asn = (string.IsNullOrEmpty(geo.Asn)) ? "Unknown" : geo.Asn;
             geo.Isp = (string.IsNullOrEmpty(geo.Isp)) ? "Unknown" : geo.Isp;
 
-            geo.ImageIndex = 0;
-            for (int i = 0; i < _imageList.Length; i++)
-            {
-                if (_imageList[i] == geo.CountryCode.ToLower())
-                {
-                    geo.ImageIndex = i;
-                    break;
-                }
-            }
-            if (geo.ImageIndex == 0) geo.ImageIndex = 247; // question icon
+            //geo.ImageIndex = 0;
+            //for (int i = 0; i < _imageList.Length; i++)
+            //{
+            //    if (_imageList[i] == geo.CountryCode.ToLower())
+            //    {
+            //        geo.ImageIndex = i;
+            //        break;
+            //    }
+            //}
+            //if (geo.ImageIndex == 0) geo.ImageIndex = 247; // question icon
+
+            geo.ImageIndex = 247;
 
             return geo;
         }

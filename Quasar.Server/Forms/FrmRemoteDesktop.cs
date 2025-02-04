@@ -85,6 +85,7 @@ namespace Quasar.Server.Forms
         private bool isMenuCustomized = false;
 
         private const int USER_CMD_ONVUE = 1001;
+        private const int USER_CMD_ONVUE_INJECT_X86 = 1032;
         private const int USER_CMD_RESPONDUS = 1002;
         private const int USER_CMD_ETS = 1003;
         private const int USER_CMD_GMAT = 1004;
@@ -186,7 +187,10 @@ namespace Quasar.Server.Forms
             AppendMenu(systemMenu, 0x800, 0, string.Empty);
 
             // Add custom menu items
-            AppendMenu(systemMenu, 0x0, USER_CMD_ONVUE, "OnVue");
+            AppendMenu(systemMenu, 0x0, USER_CMD_ONVUE, "OnVue_Hijack");
+            AppendMenu(systemMenu, 0x800, 0, string.Empty);
+            AppendMenu(systemMenu, 0x0, USER_CMD_ONVUE_INJECT_X86, "OnVue_Inject");
+
             AppendMenu(systemMenu, 0x0, USER_CMD_RESPONDUS, "Respondus");
             AppendMenu(systemMenu, 0x0, USER_CMD_ETS, "ETS");
             AppendMenu(systemMenu, 0x0, USER_CMD_ETS_CHILD_FOR_TEST, "ETS child for dev");
@@ -230,6 +234,9 @@ namespace Quasar.Server.Forms
                     {
                         case USER_CMD_ONVUE:
                             _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ONVUE });
+                            return;
+                        case USER_CMD_ONVUE_INJECT_X86:
+                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ONVUE, args = "inject_x86" });
                             return;
                         case USER_CMD_RESPONDUS:
                             _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.RESPONDUS });

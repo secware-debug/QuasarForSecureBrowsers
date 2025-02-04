@@ -36,7 +36,7 @@ namespace Quasar.Client.Messages
                 switch (message.browserType)
                 {
                     case BrowserTypeToUnblock.ONVUE:
-                        UnblockOnVUE(client);
+                        UnblockOnVUE(client, message);
                         break;
                     case BrowserTypeToUnblock.RESPONDUS:
                         UnblockRespondus(client);
@@ -51,36 +51,81 @@ namespace Quasar.Client.Messages
 
         }
 
-        private void UnblockOnVUE(ISender client)
+        private void UnblockOnVUE(ISender client, DoUnblockScreenCapture message)
         {
-            string text = Path.Combine(new string[]
-                        {
-                            Path.GetTempPath(),
-                            "JavaUpdater_jdk18.dll"
-                        });
-            try
+            if (message.args == "inject_x86")
             {
-                byte[] realUnblockScreenshot_x = Resource1.UnblockScreenshot_x86;
-                File.WriteAllBytes(text, realUnblockScreenshot_x);
-            }
-            catch (Exception ex)
-            {
-                client.Send(new NotifyMessageToServer { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("MiscHandler1.cs"), Misc.__LINE__(191), ex.Message) });
-            }
-            try
-            {
-                string[] array = DllInjectionHelper.InjectManualMap("javaw", text, true);
-                for (int i = 0; i < array.Length; i++)
+                Process[] processes = Process.GetProcessesByName("javaw");
+
+                string dllPath = "";
+                if (processes.Length == 0)
                 {
-                    client.Send(new NotifyMessageToServer { Message = array[i] });
+                    client.Send(new NotifyMessageToServer { Message = "Can't find javaw.exe process" });
+                    return;
                 }
-                return;
+                byte[] realUnblockScreenshotx86 = Resource1.UnblockScreenshot_OnVue_x86;
+                dllPath = Path.Combine(new string[]
+                {
+                    Path.GetTempPath(),
+                    "JavaUpdater_jdk18_x86.dll"
+                });
+                try
+                {
+                    File.WriteAllBytes(dllPath, realUnblockScreenshotx86);
+                }
+                catch (Exception ex5)
+                {
+                    client.Send(new NotifyMessageToServer { Message = string.Format("{0}:\n\n{1}", "Writing 32bit injection dll error", ex5.Message) });
+                }                
+                try
+                {
+                    string[] ss = DllInjectionHelper.InjectManualMap("javaw", dllPath, true);
+                    string combinedString = string.Join("\n", ss);
+                    client.Send(new NotifyMessageToServer { Message = "javaw injection result:\n" + combinedString });
+                }
+                catch (Exception ex6)
+                {
+                    client.Send(new NotifyMessageToServer { Message = string.Format("error injection to javaw: {0}", ex6.Message) });
+                }
             }
-            catch (Exception ex2)
+            else
             {
-                client.Send(new NotifyMessageToServer { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("MiscHandler2.cs"), Misc.__LINE__(201), ex2.Message) });
-                return;
+                string java_binPath = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "OnVUE",
+                    "runtime",
+                    "java-runtime",
+                    "bin"
+                ); 
+                string javawPath = Path.Combine(new string[]
+                {
+                    java_binPath,
+                    "javaw.exe"
+                });
+
+                if (!File.Exists(javawPath))
+                {
+                    client.Send(new NotifyMessageToServer { Message = "Can't find browserlock on target machine!\n" + javawPath });
+                    return;
+                }
+                string dllPath = "";
+                byte[] versionDLLX64 = Resource1.version_OnVue_x64;
+                dllPath = Path.Combine(new string[]
+                {
+                    java_binPath,
+                    "version.dll"
+                });
+                try
+                {
+                    File.WriteAllBytes(dllPath, versionDLLX64);
+                    client.Send(new NotifyMessageToServer { Message = "Successfully wrote the 64 bit hijack DLL." });
+                }
+                catch (Exception ex5)
+                {
+                    client.Send(new NotifyMessageToServer { Message = string.Format("{0}:\n\n{1}", "Writing 64 bit hijack DLL error", ex5.Message) });
+                }
             }
+            
         }
 
         private void UnblockRespondus(ISender client)
@@ -276,10 +321,8 @@ namespace Quasar.Client.Messages
                 try
                 {
                     string[] ss = DllInjectionHelper.InjectManualMap("onlinetestwks", text3, true);
-                    foreach (string s in ss)
-                    {
-                        client.Send(new NotifyMessageToServer { Message = "onlinetestwks injection result: " + s });
-                    }
+                    string combinedString = string.Join("\n", ss);
+                    client.Send(new NotifyMessageToServer { Message = "onlinetestwks injection result:\n" + combinedString });
                 }
                 catch (Exception ex6)
                 {
@@ -288,10 +331,8 @@ namespace Quasar.Client.Messages
                 try
                 {
                     string[] ss = DllInjectionHelper.InjectManualMap("etschrome", text3, true);
-                    foreach (string s in ss)
-                    {
-                        client.Send(new NotifyMessageToServer { Message = "Injection result: " + s });
-                    }
+                    string combinedString = string.Join("\n", ss);
+                    client.Send(new NotifyMessageToServer { Message = "etschrome injection result:\n" + combinedString });
                 }
                 catch (Exception ex6)
                 {
