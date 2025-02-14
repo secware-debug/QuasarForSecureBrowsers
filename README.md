@@ -10,14 +10,6 @@ Quasar is a fast and light-weight remote administration tool coded in C#. The us
 
 Please check out the [Getting Started](https://github.com/quasar/Quasar/wiki/Getting-Started) guide.
 
-## Screenshots
-
-![remote-shell](Images/remote-shell.png)
-
-![remote-desktop](Images/remote-desktop.png)
-
-![remote-files](Images/remote-files.png)
-
 ## Features
 * TCP network stream (IPv4 & IPv6 support)
 * Fast network serialization (Protocol Buffers)
