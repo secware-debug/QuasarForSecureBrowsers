@@ -103,29 +103,9 @@ namespace Quasar.Client {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] RKAGG {
+        internal static byte[] RTKH {
             get {
-                object obj = ResourceManager.GetObject("RKAGG", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] UnblockScreenshot_ChildWindow_x64 {
-            get {
-                object obj = ResourceManager.GetObject("UnblockScreenshot_ChildWindow_x64", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] UnblockScreenshot_ChildWindow_x86 {
-            get {
-                object obj = ResourceManager.GetObject("UnblockScreenshot_ChildWindow_x86", resourceCulture);
+                object obj = ResourceManager.GetObject("RTKH", resourceCulture);
                 return ((byte[])(obj));
             }
         }

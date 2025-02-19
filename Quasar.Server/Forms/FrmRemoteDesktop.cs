@@ -107,7 +107,7 @@ namespace Quasar.Server.Forms
         private const int USER_CMD_START_AUDIO = 1020;
         private const int USER_CMD_STOP_AUDIO = 1021;
 
-        private const int USER_CMD_ETS_CHILD_FOR_TEST = 1031;
+        // private const int USER_CMD_ETS_CHILD_FOR_TEST = 1031;
 
         private static long tempTime = 0;
 
@@ -193,7 +193,7 @@ namespace Quasar.Server.Forms
 
             AppendMenu(systemMenu, 0x0, USER_CMD_RESPONDUS, "Respondus");
             AppendMenu(systemMenu, 0x0, USER_CMD_ETS, "ETS");
-            AppendMenu(systemMenu, 0x0, USER_CMD_ETS_CHILD_FOR_TEST, "ETS child for dev");
+            // AppendMenu(systemMenu, 0x0, USER_CMD_ETS_CHILD_FOR_TEST, "ETS child for dev");
             AppendMenu(systemMenu, 0x0, USER_CMD_GMAT, "GMAT");
             AppendMenu(systemMenu, 0x0, USER_CMD_PROPROCTOR, "ProProctor");
             AppendMenu(systemMenu, 0x0, USER_CMD_BLUEBOOK_SAT, "Bluebook (SAT)");
@@ -250,9 +250,9 @@ namespace Quasar.Server.Forms
                         case USER_CMD_RESTORE_ETS:
                             _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args = "restore" });
                             return;
-                        case USER_CMD_ETS_CHILD_FOR_TEST:
-                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args = "unblock_child" });
-                            return;
+                        //case USER_CMD_ETS_CHILD_FOR_TEST:
+                        //    _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args = "unblock_child" });
+                        //    return;
                         case USER_CMD_INSTALL_KBM_DRIVER:
                             _connectClient.Send(new KBMDriverCommand
                             {

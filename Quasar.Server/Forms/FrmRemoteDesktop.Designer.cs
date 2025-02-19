@@ -142,7 +142,7 @@ namespace Quasar.Server.Forms
             this.panelTop.Controls.Add(this.barQuality);
             this.panelTop.Location = new System.Drawing.Point(69, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(700, 57);
+            this.panelTop.Size = new System.Drawing.Size(610, 57);
             this.panelTop.TabIndex = 7;
             // 
             // btnCloseIT

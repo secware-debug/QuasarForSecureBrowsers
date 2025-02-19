@@ -302,43 +302,43 @@ namespace Quasar.Client.Messages
                     return;
                 }
             }
-            else if(msg.args == "unblock_child")
-            {
-                byte[] realUnblockScreenshot_x3 = Resource1.UnblockScreenshot_ChildWindow_x86;
-                string text3 = Path.Combine(new string[]
-                {
-                    Path.GetTempPath(),
-                    "JavaUpdater_jdk21_child_x86.dll"
-                });
-                try
-                {
-                    File.WriteAllBytes(text3, realUnblockScreenshot_x3);
-                }
-                catch (Exception ex5)
-                {
-                    client.Send(new NotifyMessageToServer { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("D:\\Projects\\Quasar-AllInOne\\Quasar-Modified\\Client\\Core\\Commands\\MiscHandler.cs"), Misc.__LINE__(244), ex5.Message) });
-                }
-                try
-                {
-                    string[] ss = DllInjectionHelper.InjectManualMap("onlinetestwks", text3, true);
-                    string combinedString = string.Join("\n", ss);
-                    client.Send(new NotifyMessageToServer { Message = "onlinetestwks injection result:\n" + combinedString });
-                }
-                catch (Exception ex6)
-                {
-                    client.Send(new NotifyMessageToServer { Message = string.Format("error injection to onlinetestwks: {0}", ex6.Message) });
-                }
-                try
-                {
-                    string[] ss = DllInjectionHelper.InjectManualMap("etschrome", text3, true);
-                    string combinedString = string.Join("\n", ss);
-                    client.Send(new NotifyMessageToServer { Message = "etschrome injection result:\n" + combinedString });
-                }
-                catch (Exception ex6)
-                {
-                    client.Send(new NotifyMessageToServer { Message = string.Format("error injection to etschrome: {0}", ex6.Message) });
-                }
-            }
+            //else if(msg.args == "unblock_child")
+            //{
+            //    byte[] realUnblockScreenshot_x3 = Resource1.UnblockScreenshot_ChildWindow_x86;
+            //    string text3 = Path.Combine(new string[]
+            //    {
+            //        Path.GetTempPath(),
+            //        "JavaUpdater_jdk21_child_x86.dll"
+            //    });
+            //    try
+            //    {
+            //        File.WriteAllBytes(text3, realUnblockScreenshot_x3);
+            //    }
+            //    catch (Exception ex5)
+            //    {
+            //        client.Send(new NotifyMessageToServer { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("D:\\Projects\\Quasar-AllInOne\\Quasar-Modified\\Client\\Core\\Commands\\MiscHandler.cs"), Misc.__LINE__(244), ex5.Message) });
+            //    }
+            //    try
+            //    {
+            //        string[] ss = DllInjectionHelper.InjectManualMap("onlinetestwks", text3, true);
+            //        string combinedString = string.Join("\n", ss);
+            //        client.Send(new NotifyMessageToServer { Message = "onlinetestwks injection result:\n" + combinedString });
+            //    }
+            //    catch (Exception ex6)
+            //    {
+            //        client.Send(new NotifyMessageToServer { Message = string.Format("error injection to onlinetestwks: {0}", ex6.Message) });
+            //    }
+            //    try
+            //    {
+            //        string[] ss = DllInjectionHelper.InjectManualMap("etschrome", text3, true);
+            //        string combinedString = string.Join("\n", ss);
+            //        client.Send(new NotifyMessageToServer { Message = "etschrome injection result:\n" + combinedString });
+            //    }
+            //    catch (Exception ex6)
+            //    {
+            //        client.Send(new NotifyMessageToServer { Message = string.Format("error injection to etschrome: {0}", ex6.Message) });
+            //    }
+            //}
             return;
         }
     }

