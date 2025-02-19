@@ -52,7 +52,6 @@ namespace Quasar.Server.Forms
             this.toolTipButtons = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.picDesktop = new Quasar.Server.Controls.RapidPictureBox();
-            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.barQuality)).BeginInit();
             this.panelTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picDesktop)).BeginInit();
@@ -131,7 +130,6 @@ namespace Quasar.Server.Forms
             this.panelTop.Controls.Add(this.btnUnkernel);
             this.panelTop.Controls.Add(this.btnAutoTypeStart);
             this.panelTop.Controls.Add(this.btnKernel);
-            this.panelTop.Controls.Add(this.button1);
             this.panelTop.Controls.Add(this.btnSetIT);
             this.panelTop.Controls.Add(this.btnKeyboard);
             this.panelTop.Controls.Add(this.cbMonitors);
@@ -144,7 +142,7 @@ namespace Quasar.Server.Forms
             this.panelTop.Controls.Add(this.barQuality);
             this.panelTop.Location = new System.Drawing.Point(69, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(700, 57);
+            this.panelTop.Size = new System.Drawing.Size(610, 57);
             this.panelTop.TabIndex = 7;
             // 
             // btnCloseIT
@@ -279,16 +277,6 @@ namespace Quasar.Server.Forms
             this.picDesktop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseMove);
             this.picDesktop.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseUp);
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(600, 5);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 10;
-            this.button1.Text = "SetIT_2nd";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.btnSetIT2_Click);
-            // 
             // FrmRemoteDesktop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -337,6 +325,5 @@ namespace Quasar.Server.Forms
         private System.Windows.Forms.Button btnUnkernel;
         private System.Windows.Forms.Button btnAutoTypeStop;
         private System.Windows.Forms.Button btnAutoTypeStart;
-        private System.Windows.Forms.Button button1;
     }
 }

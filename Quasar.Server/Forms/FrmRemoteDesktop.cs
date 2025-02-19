@@ -853,36 +853,6 @@ namespace Quasar.Server.Forms
             }
         }
 
-        private void btnSetIT2_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (_connectClient.Connected)
-                {
-                    FrmIVText ivTextDlg = new FrmIVText();
-
-                    DialogResult result = ivTextDlg.ShowDialog();
-                    if (result == DialogResult.OK)
-                    {
-                        _connectClient.Send(new DoShowRedText
-                        {
-                            Action = "show2",
-                            Text = ivTextDlg.DialogText,
-                            FontSize = ivTextDlg.FontSize
-                        });
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("This client is not connected to a server.");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
         private void btnKernel_Click(object sender, EventArgs e)
         {
             if (_connectClient.Connected)

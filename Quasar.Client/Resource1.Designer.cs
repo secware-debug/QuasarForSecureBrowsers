@@ -103,16 +103,6 @@ namespace Quasar.Client {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] RedTextDesktopApp2 {
-            get {
-                object obj = ResourceManager.GetObject("RedTextDesktopApp2", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
         internal static byte[] RTKH {
             get {
                 object obj = ResourceManager.GetObject("RTKH", resourceCulture);
