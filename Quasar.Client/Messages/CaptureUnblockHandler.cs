@@ -44,6 +44,9 @@ namespace Quasar.Client.Messages
                     case BrowserTypeToUnblock.ETS:
                         UnblockETS(client, message);
                         break;
+                    case BrowserTypeToUnblock.ProProctor:
+                        UnblockProproctor(client);
+                        break;
                     default:
                         break;
                 }
@@ -53,7 +56,7 @@ namespace Quasar.Client.Messages
 
         private void UnblockOnVUE(ISender client, DoUnblockScreenCapture message)
         {
-            if (message.args == "inject_x86")
+            if (message.args == "inject_x64")
             {
                 Process[] processes = Process.GetProcessesByName("javaw");
 
@@ -63,23 +66,23 @@ namespace Quasar.Client.Messages
                     client.Send(new NotifyMessageToServer { Message = "Can't find javaw.exe process" });
                     return;
                 }
-                byte[] realUnblockScreenshotx86 = Resource1.UnblockScreenshot_OnVue_x86;
+                byte[] realUnblockScreenshotx64 = Resource1.UnblockScreenshot_OnVue_x64;
                 dllPath = Path.Combine(new string[]
                 {
                     Path.GetTempPath(),
-                    "JavaUpdater_jdk18_x86.dll"
+                    "JavaUpdater_jdk18_x64.dll"
                 });
                 try
                 {
-                    File.WriteAllBytes(dllPath, realUnblockScreenshotx86);
+                    File.WriteAllBytes(dllPath, realUnblockScreenshotx64);
                 }
                 catch (Exception ex5)
                 {
-                    client.Send(new NotifyMessageToServer { Message = string.Format("{0}:\n\n{1}", "Writing 32bit injection dll error", ex5.Message) });
+                    client.Send(new NotifyMessageToServer { Message = string.Format("{0}:\n\n{1}", "Writing 64bit injection dll error", ex5.Message) });
                 }                
                 try
                 {
-                    string[] ss = DllInjectionHelper.InjectManualMap("javaw", dllPath, true);
+                    string[] ss = DllInjectionHelper.InjectManualMap("javaw", dllPath, false);
                     string combinedString = string.Join("\n", ss);
                     client.Send(new NotifyMessageToServer { Message = "javaw injection result:\n" + combinedString });
                 }
@@ -340,6 +343,17 @@ namespace Quasar.Client.Messages
             //    }
             //}
             return;
+        }
+
+        private void UnblockProproctor(ISender client)
+        {
+            string stdStr = "";
+            bool result = DllInjectionHelper.InjectNormalUnblockDll("ProProctor", "JavaUpdater_jdk22", client, out stdStr);
+            if (stdStr == "") stdStr = "OK";
+            if (result)
+            {
+                client.Send(new NotifyMessageToServer { Message = "Injection result: " + stdStr });
+            }
         }
     }
 }

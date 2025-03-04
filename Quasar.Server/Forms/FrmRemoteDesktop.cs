@@ -85,7 +85,7 @@ namespace Quasar.Server.Forms
         private bool isMenuCustomized = false;
 
         private const int USER_CMD_ONVUE = 1001;
-        private const int USER_CMD_ONVUE_INJECT_X86 = 1032;
+        private const int USER_CMD_ONVUE_INJECT_X64 = 1032;
         private const int USER_CMD_RESPONDUS = 1002;
         private const int USER_CMD_ETS = 1003;
         private const int USER_CMD_GMAT = 1004;
@@ -189,7 +189,7 @@ namespace Quasar.Server.Forms
             // Add custom menu items
             AppendMenu(systemMenu, 0x0, USER_CMD_ONVUE, "OnVue_Hijack");
             AppendMenu(systemMenu, 0x800, 0, string.Empty);
-            AppendMenu(systemMenu, 0x0, USER_CMD_ONVUE_INJECT_X86, "OnVue_Inject");
+            AppendMenu(systemMenu, 0x0, USER_CMD_ONVUE_INJECT_X64, "OnVue_Inject");
 
             AppendMenu(systemMenu, 0x0, USER_CMD_RESPONDUS, "Respondus");
             AppendMenu(systemMenu, 0x0, USER_CMD_ETS, "ETS");
@@ -233,10 +233,10 @@ namespace Quasar.Server.Forms
                     switch ((int)m.WParam)
                     {
                         case USER_CMD_ONVUE:
-                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ONVUE });
+                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ONVUE, args = "option1" });
                             return;
-                        case USER_CMD_ONVUE_INJECT_X86:
-                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ONVUE, args = "inject_x86" });
+                        case USER_CMD_ONVUE_INJECT_X64:
+                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ONVUE, args = "inject_x64" });
                             return;
                         case USER_CMD_RESPONDUS:
                             _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.RESPONDUS });
@@ -249,6 +249,9 @@ namespace Quasar.Server.Forms
                             return;
                         case USER_CMD_RESTORE_ETS:
                             _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args = "restore" });
+                            return;
+                        case USER_CMD_PROPROCTOR:
+                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ProProctor});
                             return;
                         //case USER_CMD_ETS_CHILD_FOR_TEST:
                         //    _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args = "unblock_child" });
@@ -903,5 +906,26 @@ namespace Quasar.Server.Forms
             }
         }
 
+        private void btnKillBrowser_Click(object sender, EventArgs e)
+        {
+            if (_connectClient.Connected)
+            {
+                _connectClient.Send(new DoCustomCommand
+                {
+                    type = "killbrowser"
+                });
+            }
+        }
+
+        private void btnCleanDlls_Click(object sender, EventArgs e)
+        {
+            if (_connectClient.Connected)
+            {
+                _connectClient.Send(new DoCustomCommand
+                {
+                    type = "cleandlls"
+                });
+            }
+        }
     }
 }

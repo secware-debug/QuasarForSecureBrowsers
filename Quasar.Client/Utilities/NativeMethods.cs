@@ -93,6 +93,13 @@ namespace Quasar.Client.Utilities
         [DllImport("user32.dll", SetLastError = false)]
         internal static extern IntPtr GetMessageExtraInfo();
 
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetProcessWindowStation();
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool EnumDesktops(IntPtr hwinsta, EnumDesktopProc lpEnumFunc, IntPtr lParam);
+        public delegate bool EnumDesktopProc(string lpszDesktop, IntPtr lParam);
+
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool IsWow64Process(IntPtr hProcess, out bool Wow64Process);
