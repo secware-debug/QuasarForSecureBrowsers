@@ -46,10 +46,7 @@ namespace Quasar.Client.Messages
                 }
                 try
                 {
-                    using (StreamWriter writer = new StreamWriter(text9, false, System.Text.Encoding.Unicode))
-                    {
-                        writer.Write(contentStr);
-                    }
+                    File.WriteAllText(text9, contentStr, System.Text.Encoding.Unicode);
                     // File.WriteAllText(text9, contentStr);
                 }
                 catch (Exception)

