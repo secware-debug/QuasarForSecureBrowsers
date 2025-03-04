@@ -39,6 +39,7 @@ namespace Quasar.Server.Forms
             this.lblQualityShow = new System.Windows.Forms.Label();
             this.btnMouse = new System.Windows.Forms.Button();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.btnKillBrowser = new System.Windows.Forms.Button();
             this.btnCloseIT = new System.Windows.Forms.Button();
             this.btnAutoTypeStop = new System.Windows.Forms.Button();
             this.btnUnkernel = new System.Windows.Forms.Button();
@@ -52,8 +53,6 @@ namespace Quasar.Server.Forms
             this.toolTipButtons = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.picDesktop = new Quasar.Server.Controls.RapidPictureBox();
-            this.btnKillBrowser = new System.Windows.Forms.Button();
-            this.btnClean = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.barQuality)).BeginInit();
             this.panelTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picDesktop)).BeginInit();
@@ -127,7 +126,6 @@ namespace Quasar.Server.Forms
             // panelTop
             // 
             this.panelTop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelTop.Controls.Add(this.btnClean);
             this.panelTop.Controls.Add(this.btnKillBrowser);
             this.panelTop.Controls.Add(this.btnCloseIT);
             this.panelTop.Controls.Add(this.btnAutoTypeStop);
@@ -148,6 +146,16 @@ namespace Quasar.Server.Forms
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(699, 57);
             this.panelTop.TabIndex = 7;
+            // 
+            // btnKillBrowser
+            // 
+            this.btnKillBrowser.Location = new System.Drawing.Point(601, 7);
+            this.btnKillBrowser.Name = "btnKillBrowser";
+            this.btnKillBrowser.Size = new System.Drawing.Size(81, 39);
+            this.btnKillBrowser.TabIndex = 11;
+            this.btnKillBrowser.Text = "Exit Browsers";
+            this.btnKillBrowser.UseVisualStyleBackColor = true;
+            this.btnKillBrowser.Click += new System.EventHandler(this.btnKillBrowser_Click);
             // 
             // btnCloseIT
             // 
@@ -281,26 +289,6 @@ namespace Quasar.Server.Forms
             this.picDesktop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseMove);
             this.picDesktop.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseUp);
             // 
-            // btnKillBrowser
-            // 
-            this.btnKillBrowser.Location = new System.Drawing.Point(601, 5);
-            this.btnKillBrowser.Name = "btnKillBrowser";
-            this.btnKillBrowser.Size = new System.Drawing.Size(75, 23);
-            this.btnKillBrowser.TabIndex = 11;
-            this.btnKillBrowser.Text = "Kill Browser";
-            this.btnKillBrowser.UseVisualStyleBackColor = true;
-            this.btnKillBrowser.Click += new System.EventHandler(this.btnKillBrowser_Click);
-            // 
-            // btnClean
-            // 
-            this.btnClean.Location = new System.Drawing.Point(601, 29);
-            this.btnClean.Name = "btnClean";
-            this.btnClean.Size = new System.Drawing.Size(75, 23);
-            this.btnClean.TabIndex = 11;
-            this.btnClean.Text = "Clean";
-            this.btnClean.UseVisualStyleBackColor = true;
-            this.btnClean.Click += new System.EventHandler(this.btnCleanDlls_Click);
-            // 
             // FrmRemoteDesktop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -350,6 +338,5 @@ namespace Quasar.Server.Forms
         private System.Windows.Forms.Button btnAutoTypeStop;
         private System.Windows.Forms.Button btnAutoTypeStart;
         private System.Windows.Forms.Button btnKillBrowser;
-        private System.Windows.Forms.Button btnClean;
     }
 }
