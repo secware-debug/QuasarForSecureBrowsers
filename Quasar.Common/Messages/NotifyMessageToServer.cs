@@ -11,6 +11,9 @@ namespace Quasar.Common.Messages
     public class NotifyMessageToServer : IMessage
     {
         [ProtoMember(1)]
+        public string Type { get; set; }
+
+        [ProtoMember(2)]
         public string Message { get; set; }
     }
 }

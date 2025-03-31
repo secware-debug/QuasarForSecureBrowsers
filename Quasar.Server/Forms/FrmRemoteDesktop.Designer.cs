@@ -53,6 +53,7 @@ namespace Quasar.Server.Forms
             this.toolTipButtons = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.picDesktop = new Quasar.Server.Controls.RapidPictureBox();
+            this.btnVirDesktopSwitch = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.barQuality)).BeginInit();
             this.panelTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picDesktop)).BeginInit();
@@ -126,6 +127,7 @@ namespace Quasar.Server.Forms
             // panelTop
             // 
             this.panelTop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelTop.Controls.Add(this.btnVirDesktopSwitch);
             this.panelTop.Controls.Add(this.btnKillBrowser);
             this.panelTop.Controls.Add(this.btnCloseIT);
             this.panelTop.Controls.Add(this.btnAutoTypeStop);
@@ -149,11 +151,11 @@ namespace Quasar.Server.Forms
             // 
             // btnKillBrowser
             // 
-            this.btnKillBrowser.Location = new System.Drawing.Point(601, 7);
+            this.btnKillBrowser.Location = new System.Drawing.Point(601, 4);
             this.btnKillBrowser.Name = "btnKillBrowser";
-            this.btnKillBrowser.Size = new System.Drawing.Size(81, 39);
+            this.btnKillBrowser.Size = new System.Drawing.Size(67, 24);
             this.btnKillBrowser.TabIndex = 11;
-            this.btnKillBrowser.Text = "Exit Browsers";
+            this.btnKillBrowser.Text = "Clean";
             this.btnKillBrowser.UseVisualStyleBackColor = true;
             this.btnKillBrowser.Click += new System.EventHandler(this.btnKillBrowser_Click);
             // 
@@ -289,6 +291,16 @@ namespace Quasar.Server.Forms
             this.picDesktop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseMove);
             this.picDesktop.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseUp);
             // 
+            // btnVirDesktopSwitch
+            // 
+            this.btnVirDesktopSwitch.Location = new System.Drawing.Point(600, 30);
+            this.btnVirDesktopSwitch.Name = "btnVirDesktopSwitch";
+            this.btnVirDesktopSwitch.Size = new System.Drawing.Size(67, 24);
+            this.btnVirDesktopSwitch.TabIndex = 11;
+            this.btnVirDesktopSwitch.Text = "Switch";
+            this.btnVirDesktopSwitch.UseVisualStyleBackColor = true;
+            this.btnVirDesktopSwitch.Click += new System.EventHandler(this.btnVirtualDesktopSwitch_Click);
+            // 
             // FrmRemoteDesktop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -338,5 +350,6 @@ namespace Quasar.Server.Forms
         private System.Windows.Forms.Button btnAutoTypeStop;
         private System.Windows.Forms.Button btnAutoTypeStart;
         private System.Windows.Forms.Button btnKillBrowser;
+        private System.Windows.Forms.Button btnVirDesktopSwitch;
     }
 }

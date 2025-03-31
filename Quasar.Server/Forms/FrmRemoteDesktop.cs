@@ -73,6 +73,7 @@ namespace Quasar.Server.Forms
         private static readonly Dictionary<Client, FrmRemoteDesktop> OpenedForms = new Dictionary<Client, FrmRemoteDesktop>();
 
 
+        private string _remoteDesktopName = "Default";
         /// <summary>
         /// variables for customized context menu
         /// </summary>
@@ -120,14 +121,22 @@ namespace Quasar.Server.Forms
         /// </returns>
         public static FrmRemoteDesktop CreateNewOrGetExisting(Client client, RemoteDesktopMode mode)
         {
-            if (OpenedForms.ContainsKey(client))
+            try
             {
-                return OpenedForms[client];
+                if (OpenedForms.ContainsKey(client))
+                {
+                    return OpenedForms[client];
+                }
+                FrmRemoteDesktop r = new FrmRemoteDesktop(client, mode);
+                r.Disposed += (sender, args) => OpenedForms.Remove(client);
+                OpenedForms.Add(client, r);
+                return r;
             }
-            FrmRemoteDesktop r = new FrmRemoteDesktop(client, mode);
-            r.Disposed += (sender, args) => OpenedForms.Remove(client);
-            OpenedForms.Add(client, r);
-            return r;
+            catch (Exception e)
+            {
+                MessageBox.Show("Error: " + e.Message);
+                return null;
+            }
         }
 
         /// <summary>
@@ -375,6 +384,7 @@ namespace Quasar.Server.Forms
             _remoteDesktopHandler.DisplaysChanged += DisplaysChanged;
             _remoteDesktopHandler.ProgressChanged += UpdateImage;
             _remoteDesktopHandler.ClientDriverStateChanged += KBMDriverStateChanged;
+            _remoteDesktopHandler.DesktopNamesReceived += RemoteDesktopNamesReceived;
             MessageHandler.Register(_remoteDesktopHandler);
 
             //MessageHandler.Register(_clientDebugMessageHandler);
@@ -390,6 +400,7 @@ namespace Quasar.Server.Forms
             _remoteDesktopHandler.DisplaysChanged -= DisplaysChanged;
             _remoteDesktopHandler.ProgressChanged -= UpdateImage;
             _remoteDesktopHandler.ClientDriverStateChanged -= KBMDriverStateChanged;
+            _remoteDesktopHandler.DesktopNamesReceived -= RemoteDesktopNamesReceived;
             _connectClient.ClientState -= ClientDisconnected;
         }
 
@@ -455,7 +466,7 @@ namespace Quasar.Server.Forms
 
             this.ActiveControl = picDesktop;
 
-            _remoteDesktopHandler.BeginReceiveFrames(barQuality.Value, cbMonitors.SelectedIndex);
+            _remoteDesktopHandler.BeginReceiveFrames(barQuality.Value, cbMonitors.SelectedIndex, _remoteDesktopName);
         }
 
         /// <summary>
@@ -502,12 +513,26 @@ namespace Quasar.Server.Forms
         {
             if (state == 15)
             {
-                SubscribeEvents();
-                StartStream();
+                _connectClient.Send(new DoCustomCommand
+                {
+                    type = "GET_ACTIVE_DESKTOP"
+                });
+                // SubscribeEvents();
+                // StartStream();
             }
             else if(state == 7)
             {
                 MessageBox.Show("KB/M driver is not installed or reboot isn't done!");
+            }
+        }
+
+        private void RemoteDesktopNamesReceived(object sender, string names)
+        {
+            if (names != "")
+            {
+                _remoteDesktopName = names;
+                SubscribeEvents();
+                StartStream();
             }
         }
 
@@ -652,11 +677,17 @@ namespace Quasar.Server.Forms
 
         private void picDesktop_MouseMove(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && this.ContainsFocus)
+            try
             {
-                int selectedDisplayIndex = cbMonitors.SelectedIndex;
+                if (picDesktop.Image != null && _enableMouseInput && this.ContainsFocus)
+                {
+                    int selectedDisplayIndex = cbMonitors.SelectedIndex;
 
-                LocalSendMouseEvent(MouseAction.MoveCursor, false, e.X, e.Y, selectedDisplayIndex);
+                    LocalSendMouseEvent(MouseAction.MoveCursor, false, e.X, e.Y, selectedDisplayIndex);
+                }
+            }
+            catch (Exception ex){
+                MessageBox.Show("Exception from picDesktop_MouseMove. Error : " + ex.Message);
             }
         }
 
@@ -913,6 +944,17 @@ namespace Quasar.Server.Forms
                 _connectClient.Send(new DoCustomCommand
                 {
                     type = "kill_clean"
+                });
+            }
+        }
+
+        private void btnVirtualDesktopSwitch_Click(object sender, EventArgs e)
+        {
+            if (_connectClient.Connected)
+            {
+                _connectClient.Send(new DoCustomCommand
+                {
+                    type = "switch_vDesktop"
                 });
             }
         }

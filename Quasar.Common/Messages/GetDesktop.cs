@@ -13,5 +13,8 @@ namespace Quasar.Common.Messages
 
         [ProtoMember(3)]
         public int DisplayIndex { get; set; }
+
+        [ProtoMember(4)]
+        public string DesktopName { get; set; }
     }
 }

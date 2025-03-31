@@ -27,7 +27,9 @@
       <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
       <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2, PerMonitor</dpiAwareness>
       <longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
-    </windowsSettings>
+	  <!-- Target Windows 10 -->
+	  <maxVersionTested Id="10.0.18362.0" />
+	</windowsSettings>
   </application>
   <dependency>
     <dependentAssembly>

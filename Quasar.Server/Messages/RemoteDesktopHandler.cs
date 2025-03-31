@@ -35,6 +35,12 @@ namespace Quasar.Server.Messages
         /// </summary>
         private Size _localResolution;
 
+
+        /// <summary>
+        /// The local remtoe desktop name string value
+        /// </summary>
+        private string _remoteDesktopName = "Default";
+
         /// <summary>
         /// The local resolution in width x height. It indicates to which resolution the received frame should be resized.
         /// </summary>
@@ -108,6 +114,24 @@ namespace Quasar.Server.Messages
         }
 
         /// <summary>
+        /// Client keyboard&mouse Driver Installation state event handler
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="value"></param>
+        public delegate void GetDesktopNamesEventHandler(object sender, string value);
+
+        public event GetDesktopNamesEventHandler DesktopNamesReceived;
+
+        private void OnDesktopNamesReceived(string value)
+        {
+            SynchronizationContext.Post(val =>
+            {
+                var handler = DesktopNamesReceived;
+                handler?.Invoke(this, (string)val);
+            }, value);
+        }
+
+        /// <summary>
         /// The client which is associated with this remote desktop handler.
         /// </summary>
         private readonly Client _client;
@@ -155,14 +179,15 @@ namespace Quasar.Server.Messages
         /// </summary>
         /// <param name="quality">The quality of the remote desktop frames.</param>
         /// <param name="display">The display to receive frames from.</param>
-        public void BeginReceiveFrames(int quality, int display)
-        {
+        public void BeginReceiveFrames(int quality, int display, string desktopName)
+        {            
             lock (_syncLock)
             {
                 IsStarted = true;
                 _codec?.Dispose();
                 _codec = null;
-                _client.Send(new GetDesktop { CreateNew = true, Quality = quality, DisplayIndex = display });
+                _remoteDesktopName = desktopName;
+                _client.Send(new GetDesktop { CreateNew = true, Quality = quality, DisplayIndex = display, DesktopName =  desktopName});
             }
         }
 
@@ -197,16 +222,25 @@ namespace Quasar.Server.Messages
         {
             lock (_syncLock)
             {
-                _client.Send(new DoMouseEvent
+                try
                 {
-                    Action = mouseAction,
-                    IsMouseDown = isMouseDown,
-                    // calculate remote width & height
-                    X = (int)(x * (float)_codec.Resolution.Width / LocalResolution.Width),
-                    Y = (int)(y * (float)_codec.Resolution.Height / LocalResolution.Height),
-                    MonitorIndex = displayIndex,
-                    mode = mode
-                });
+                    _client.Send(new DoMouseEvent
+                    {
+                        Action = mouseAction,
+                        IsMouseDown = isMouseDown,
+                        // calculate remote width & height
+                        X = (int)(x * (float)_codec.Resolution.Width / LocalResolution.Width),
+                        Y = (int)(y * (float)_codec.Resolution.Height / LocalResolution.Height),
+                        MonitorIndex = displayIndex,
+                        mode = mode
+                    });
+                }
+                catch (Exception ex)
+                {
+                    //MessageBox.Show("Exception is occured from SendMouseEvent Handler. Error: " + ex.Message);
+                    //MessageBox.Show($"MouseAction: {mouseAction}, IsMouseDown: {isMouseDown}, X: {x}, Y: {y}, MonitorIndex: {displayIndex}, Mode: {mode}, \n" +
+                    //    $"Codec width: {_codec.Resolution.Width}, Local width: {LocalResolution.Width}");
+                }
             }
         }
 
@@ -241,7 +275,7 @@ namespace Quasar.Server.Messages
                 
                 message.Image = null;
 
-                client.Send(new GetDesktop {Quality = message.Quality, DisplayIndex = message.Monitor});
+                client.Send(new GetDesktop {Quality = message.Quality, DisplayIndex = message.Monitor, DesktopName = _remoteDesktopName});
             }
         }
 
@@ -252,14 +286,22 @@ namespace Quasar.Server.Messages
 
         private void Execute(ISender client, NotifyMessageToServer message)
         {
-            if(message.Message == "KB/M driver is not installed!")
+            if (message.Type == "kbm_drv")
             {
-                OnKBMDriverChanged(7);
-                return;
+                if (message.Message == "KBMDRVNI")
+                {
+                    OnKBMDriverChanged(7);
+                    return;
+                }
+                else if (message.Message == "KBMDRVICUR")
+                {
+                    OnKBMDriverChanged(15);
+                    return;
+                }
             }
-            if(message.Message == "KB/M driver is installed now")
+            else if(message.Type == "cur_dsk")
             {
-                OnKBMDriverChanged(15);
+                OnDesktopNamesReceived(message.Message);
                 return;
             }
 
