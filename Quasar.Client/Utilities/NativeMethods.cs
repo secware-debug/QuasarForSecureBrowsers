@@ -85,6 +85,12 @@ namespace Quasar.Client.Utilities
         internal static extern bool DeleteDC([In] IntPtr hdc);
 
         [DllImport("user32.dll")]
+        public static extern IntPtr GetDC(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+        [DllImport("user32.dll")]
         internal static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
 
         [DllImport("user32.dll")]
@@ -202,6 +208,12 @@ namespace Quasar.Client.Utilities
         internal static extern IntPtr OpenDesktop(
             string hDesktop, int flags, bool inherit,
             uint desiredAccess);
+
+        [DllImport("user32.dll")]
+        internal static extern IntPtr OpenInputDesktop(uint dwFlags, bool fInherit, uint dwDesiredAccess);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool SetThreadDesktop(IntPtr hDesktop);
 
         [DllImport("user32.dll")]
         internal static extern bool CloseDesktop(

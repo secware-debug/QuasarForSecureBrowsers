@@ -245,14 +245,17 @@ namespace Quasar.Client.Networking
 
         //Interception holders
 
-        // Token: 0x04000273 RID: 627
         public IntPtr interceptionCtx;
 
-        // Token: 0x04000274 RID: 628
         public int interceptionKID;
 
-        // Token: 0x04000275 RID: 629
         public int interceptionMID;
+
+        // current desktop data holders
+
+        public string curDesktopName = "NULL";
+
+        public IntPtr curDesktop = new IntPtr(0);
 
         /// <summary>
         /// The mutex prevents multiple simultaneous write operations on the <see cref="_stream"/>.
