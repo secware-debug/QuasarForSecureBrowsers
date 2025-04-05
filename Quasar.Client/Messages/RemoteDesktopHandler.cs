@@ -84,12 +84,13 @@ namespace Quasar.Client.Messages
                         CloseDesktop(clientRef.curDesktop);
                     }
                     IntPtr hDesktop = OpenDesktop(message.DesktopName, 0U, false, GENERIC_ALL);
-                    if(hDesktop != IntPtr.Zero)
+                    if (hDesktop != IntPtr.Zero)
                     {
                         clientRef.curDesktop = hDesktop;
-                        client.Send(new NotifyMessageToServer { Message = $"Desktop is changed from {clientRef.curDesktopName} to {message.DesktopName}" });
+                        clientRef.curDesktopName = message.DesktopName;
+                        client.Send(new NotifyMessageToServer { Message = $"Desktop is changed to {message.DesktopName}" });
                     }
-                    clientRef.curDesktopName = message.DesktopName;
+                    else return;
                 }
                 if(clientRef.curDesktop != IntPtr.Zero) SetThreadDesktop(clientRef.curDesktop);
             }

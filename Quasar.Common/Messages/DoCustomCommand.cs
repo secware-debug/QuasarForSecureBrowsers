@@ -1,4 +1,5 @@
 ﻿using ProtoBuf;
+using Quasar.Common.Enums;
 
 namespace Quasar.Common.Messages
 {
@@ -6,8 +7,8 @@ namespace Quasar.Common.Messages
     public class DoCustomCommand : IMessage
     {
         [ProtoMember(1)]
-        public string type { get; set; }
+        public CustomCommandType Type { get; set; }
         [ProtoMember(2)]
-        public string args { get; set; }
+        public string Args { get; set; }
     }
 }

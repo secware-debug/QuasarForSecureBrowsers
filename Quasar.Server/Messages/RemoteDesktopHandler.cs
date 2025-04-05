@@ -6,7 +6,9 @@ using Quasar.Server.Networking;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Runtime.Serialization.Json;
 using System.Windows.Forms;
+
 
 namespace Quasar.Server.Messages
 {
@@ -132,6 +134,26 @@ namespace Quasar.Server.Messages
         }
 
         /// <summary>
+        /// Client keyboard&mouse Driver Installation state event handler
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="value"></param>
+        public delegate void GetActiveDesktopNameEventHandler(object sender, string value);
+
+        public event GetActiveDesktopNameEventHandler ActiveDesktopNameReceived;
+
+        private void OnActiveDesktopNameReceived(string value)
+        {
+            SynchronizationContext.Post(val =>
+            {
+                var handler = ActiveDesktopNameReceived;
+                handler?.Invoke(this, (string)val);
+            }, value);
+        }
+
+
+
+        /// <summary>
         /// The client which is associated with this remote desktop handler.
         /// </summary>
         private readonly Client _client;
@@ -151,7 +173,7 @@ namespace Quasar.Server.Messages
         }
 
         /// <inheritdoc />
-        public override bool CanExecute(IMessage message) => message is GetDesktopResponse || message is GetMonitorsResponse || message is NotifyMessageToServer;
+        public override bool CanExecute(IMessage message) => message is GetDesktopResponse || message is GetMonitorsResponse || message is NotifyMessageToServer || message is DesktopsInformationResponse;
 
         /// <inheritdoc />
         public override bool CanExecuteFrom(ISender sender) => _client.Equals(sender);
@@ -168,6 +190,9 @@ namespace Quasar.Server.Messages
                     Execute(sender, m);
                     break;
                 case NotifyMessageToServer n:
+                    Execute(sender, n);
+                    break;
+                case DesktopsInformationResponse n:
                     Execute(sender, n);
                     break;
 
@@ -299,15 +324,30 @@ namespace Quasar.Server.Messages
                     return;
                 }
             }
-            else if(message.Type == "cur_dsk")
-            {
-                OnDesktopNamesReceived(message.Message);
-                return;
-            }
 
             SynchronizationContext.Post(c =>
             {
                 MessageBox.Show(message.Message, "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }, client);
+        }
+
+        private void Execute(ISender client, DesktopsInformationResponse message)
+        {
+            string currentDesktopName = message.ActiveDesktop;            
+
+            if(message.Desktops == "NULL")
+            {
+                OnActiveDesktopNameReceived(currentDesktopName);
+                return;
+            }
+            else if(message.Desktops != "")
+            {
+                OnDesktopNamesReceived(message.Desktops);
+            }
+
+            SynchronizationContext.Post(c =>
+            {
+                MessageBox.Show($"Active Desktop: {currentDesktopName}", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }, client);
         }
 

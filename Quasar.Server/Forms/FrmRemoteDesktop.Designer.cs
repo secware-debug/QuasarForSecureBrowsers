@@ -39,6 +39,8 @@ namespace Quasar.Server.Forms
             this.lblQualityShow = new System.Windows.Forms.Label();
             this.btnMouse = new System.Windows.Forms.Button();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.checkBoxCustomDesktop = new System.Windows.Forms.CheckBox();
+            this.btnRefreshDesktop = new System.Windows.Forms.Button();
             this.btnKillBrowser = new System.Windows.Forms.Button();
             this.btnCloseIT = new System.Windows.Forms.Button();
             this.btnAutoTypeStop = new System.Windows.Forms.Button();
@@ -47,13 +49,13 @@ namespace Quasar.Server.Forms
             this.btnKernel = new System.Windows.Forms.Button();
             this.btnSetIT = new System.Windows.Forms.Button();
             this.btnKeyboard = new System.Windows.Forms.Button();
+            this.cmbBoxDesktops = new System.Windows.Forms.ComboBox();
             this.cbMonitors = new System.Windows.Forms.ComboBox();
             this.btnHide = new System.Windows.Forms.Button();
             this.btnShow = new System.Windows.Forms.Button();
             this.toolTipButtons = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.picDesktop = new Quasar.Server.Controls.RapidPictureBox();
-            this.btnVirDesktopSwitch = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.barQuality)).BeginInit();
             this.panelTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picDesktop)).BeginInit();
@@ -127,7 +129,8 @@ namespace Quasar.Server.Forms
             // panelTop
             // 
             this.panelTop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelTop.Controls.Add(this.btnVirDesktopSwitch);
+            this.panelTop.Controls.Add(this.checkBoxCustomDesktop);
+            this.panelTop.Controls.Add(this.btnRefreshDesktop);
             this.panelTop.Controls.Add(this.btnKillBrowser);
             this.panelTop.Controls.Add(this.btnCloseIT);
             this.panelTop.Controls.Add(this.btnAutoTypeStop);
@@ -136,6 +139,7 @@ namespace Quasar.Server.Forms
             this.panelTop.Controls.Add(this.btnKernel);
             this.panelTop.Controls.Add(this.btnSetIT);
             this.panelTop.Controls.Add(this.btnKeyboard);
+            this.panelTop.Controls.Add(this.cmbBoxDesktops);
             this.panelTop.Controls.Add(this.cbMonitors);
             this.panelTop.Controls.Add(this.btnHide);
             this.panelTop.Controls.Add(this.lblQualityShow);
@@ -146,12 +150,33 @@ namespace Quasar.Server.Forms
             this.panelTop.Controls.Add(this.barQuality);
             this.panelTop.Location = new System.Drawing.Point(69, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(699, 57);
+            this.panelTop.Size = new System.Drawing.Size(831, 57);
             this.panelTop.TabIndex = 7;
+            // 
+            // checkBoxCustomDesktop
+            // 
+            this.checkBoxCustomDesktop.AutoSize = true;
+            this.checkBoxCustomDesktop.Location = new System.Drawing.Point(684, 8);
+            this.checkBoxCustomDesktop.Name = "checkBoxCustomDesktop";
+            this.checkBoxCustomDesktop.Size = new System.Drawing.Size(79, 17);
+            this.checkBoxCustomDesktop.TabIndex = 12;
+            this.checkBoxCustomDesktop.Text = "Customize";
+            this.checkBoxCustomDesktop.UseVisualStyleBackColor = true;
+            this.checkBoxCustomDesktop.CheckedChanged += new System.EventHandler(this.checkBoxCustomDesktop_CheckedChanged);
+            // 
+            // btnRefreshDesktop
+            // 
+            this.btnRefreshDesktop.Location = new System.Drawing.Point(765, 3);
+            this.btnRefreshDesktop.Name = "btnRefreshDesktop";
+            this.btnRefreshDesktop.Size = new System.Drawing.Size(57, 24);
+            this.btnRefreshDesktop.TabIndex = 11;
+            this.btnRefreshDesktop.Text = "Refresh";
+            this.btnRefreshDesktop.UseVisualStyleBackColor = true;
+            this.btnRefreshDesktop.Click += new System.EventHandler(this.btnVirtualDesktopRefresh_Clicked);
             // 
             // btnKillBrowser
             // 
-            this.btnKillBrowser.Location = new System.Drawing.Point(601, 4);
+            this.btnKillBrowser.Location = new System.Drawing.Point(604, 7);
             this.btnKillBrowser.Name = "btnKillBrowser";
             this.btnKillBrowser.Size = new System.Drawing.Size(67, 24);
             this.btnKillBrowser.TabIndex = 11;
@@ -231,6 +256,16 @@ namespace Quasar.Server.Forms
             this.btnKeyboard.UseVisualStyleBackColor = true;
             this.btnKeyboard.Click += new System.EventHandler(this.btnKeyboard_Click);
             // 
+            // cmbBoxDesktops
+            // 
+            this.cmbBoxDesktops.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbBoxDesktops.FormattingEnabled = true;
+            this.cmbBoxDesktops.Location = new System.Drawing.Point(684, 30);
+            this.cmbBoxDesktops.Name = "cmbBoxDesktops";
+            this.cmbBoxDesktops.Size = new System.Drawing.Size(138, 21);
+            this.cmbBoxDesktops.TabIndex = 8;
+            this.cmbBoxDesktops.TabStop = false;
+            // 
             // cbMonitors
             // 
             this.cbMonitors.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -273,7 +308,6 @@ namespace Quasar.Server.Forms
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
-            // picDesktop
             // 
             this.picDesktop.BackColor = System.Drawing.Color.Black;
             this.picDesktop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -290,22 +324,12 @@ namespace Quasar.Server.Forms
             this.picDesktop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseDown);
             this.picDesktop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseMove);
             this.picDesktop.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseUp);
-            // 
-            // btnVirDesktopSwitch
-            // 
-            this.btnVirDesktopSwitch.Location = new System.Drawing.Point(600, 30);
-            this.btnVirDesktopSwitch.Name = "btnVirDesktopSwitch";
-            this.btnVirDesktopSwitch.Size = new System.Drawing.Size(67, 24);
-            this.btnVirDesktopSwitch.TabIndex = 11;
-            this.btnVirDesktopSwitch.Text = "Switch";
-            this.btnVirDesktopSwitch.UseVisualStyleBackColor = true;
-            this.btnVirDesktopSwitch.Click += new System.EventHandler(this.btnVirtualDesktopSwitch_Click);
-            // 
+            //
             // FrmRemoteDesktop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(907, 562);
+            this.ClientSize = new System.Drawing.Size(973, 562);
             this.Controls.Add(this.btnShow);
             this.Controls.Add(this.panelTop);
             this.Controls.Add(this.picDesktop);
@@ -350,6 +374,8 @@ namespace Quasar.Server.Forms
         private System.Windows.Forms.Button btnAutoTypeStop;
         private System.Windows.Forms.Button btnAutoTypeStart;
         private System.Windows.Forms.Button btnKillBrowser;
-        private System.Windows.Forms.Button btnVirDesktopSwitch;
+        private System.Windows.Forms.ComboBox cmbBoxDesktops;
+        private System.Windows.Forms.Button btnRefreshDesktop;
+        private System.Windows.Forms.CheckBox checkBoxCustomDesktop;
     }
 }
