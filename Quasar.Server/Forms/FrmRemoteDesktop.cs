@@ -10,16 +10,12 @@ using Quasar.Server.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.IO;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Timers;
 using System.Windows.Forms;
 using System.Linq;
-using Microsoft.Win32;
 
 namespace Quasar.Server.Forms
 {
@@ -152,6 +148,9 @@ namespace Quasar.Server.Forms
 
             RegisterMessageHandler();
             InitializeComponent();
+
+            cmbBoxDesktops.Enabled = false;
+            btnRefreshDesktop.Enabled = false;
         }
 
         // Override the WndProc method to handle right-click on the title bar
@@ -385,6 +384,7 @@ namespace Quasar.Server.Forms
             _remoteDesktopHandler.ProgressChanged += UpdateImage;
             _remoteDesktopHandler.ClientDriverStateChanged += KBMDriverStateChanged;
             _remoteDesktopHandler.DesktopNamesReceived += RemoteDesktopNamesReceived;
+            _remoteDesktopHandler.ActiveDesktopNameReceived += RemoteActiveDesktopNameReceived;
             MessageHandler.Register(_remoteDesktopHandler);
 
             //MessageHandler.Register(_clientDebugMessageHandler);
@@ -401,6 +401,7 @@ namespace Quasar.Server.Forms
             _remoteDesktopHandler.ProgressChanged -= UpdateImage;
             _remoteDesktopHandler.ClientDriverStateChanged -= KBMDriverStateChanged;
             _remoteDesktopHandler.DesktopNamesReceived -= RemoteDesktopNamesReceived;
+            _remoteDesktopHandler.ActiveDesktopNameReceived -= RemoteActiveDesktopNameReceived;
             _connectClient.ClientState -= ClientDisconnected;
         }
 
@@ -465,7 +466,6 @@ namespace Quasar.Server.Forms
             picDesktop.SetFrameUpdatedEvent(frameCounter_FrameUpdated);
 
             this.ActiveControl = picDesktop;
-
             _remoteDesktopHandler.BeginReceiveFrames(barQuality.Value, cbMonitors.SelectedIndex, _remoteDesktopName);
         }
 
@@ -512,13 +512,19 @@ namespace Quasar.Server.Forms
         private void KBMDriverStateChanged(object sender, int state)
         {
             if (state == 15)
-            {
-                _connectClient.Send(new DoCustomCommand
+            {                
+                if (checkBoxCustomDesktop.Checked)
                 {
-                    type = "GET_ACTIVE_DESKTOP"
-                });
-                // SubscribeEvents();
-                // StartStream();
+                    SubscribeEvents();
+                    StartStream();
+                }
+                else
+                {
+                    _connectClient.Send(new DoCustomCommand
+                    {
+                        Type = CustomCommandType.GET_ACTIVE_DESKTOP
+                    });
+                }
             }
             else if(state == 7)
             {
@@ -530,7 +536,21 @@ namespace Quasar.Server.Forms
         {
             if (names != "")
             {
-                _remoteDesktopName = names;
+                cmbBoxDesktops.Items.Clear();
+                string[] namesArray = names.Split('|');
+                foreach(string name in namesArray)
+                {
+                    cmbBoxDesktops.Items.Add(name);
+                }
+                cmbBoxDesktops.SelectedIndex = 0;
+            }
+        }
+
+        private void RemoteActiveDesktopNameReceived(object sender, string name)
+        {
+            if (name != "")
+            {
+                _remoteDesktopName = name;
                 SubscribeEvents();
                 StartStream();
             }
@@ -600,6 +620,19 @@ namespace Quasar.Server.Forms
 
         private void btnStart_Click(object sender, EventArgs e)
         {
+            if(checkBoxCustomDesktop.Checked)
+            {
+                string str = cmbBoxDesktops.SelectedItem?.ToString();
+                if (str == null)
+                {
+                    MessageBox.Show("Please set customized desktop name!");
+                    return;
+                }
+                else
+                {
+                    _remoteDesktopName = str;
+                }
+            }
             if (_remoteDesktopMode == RemoteDesktopMode.Kernel)
             {
                 _connectClient.Send(new KBMDriverCommand
@@ -943,21 +976,27 @@ namespace Quasar.Server.Forms
             {
                 _connectClient.Send(new DoCustomCommand
                 {
-                    type = "kill_clean"
+                    Type = CustomCommandType.KILL_AND_CLEAN
                 });
             }
         }
 
-        private void btnVirtualDesktopSwitch_Click(object sender, EventArgs e)
+        private void btnVirtualDesktopRefresh_Clicked(object sender, EventArgs e)
         {
             if (_connectClient.Connected)
             {
                 _connectClient.Send(new DoCustomCommand
                 {
-                    type = "switch_vDesktop"
+                    Type = CustomCommandType.GET_DESKTOPS
                 });
             }
         }
 
+        private void checkBoxCustomDesktop_CheckedChanged(object sender, EventArgs e)
+        {
+            bool isChecked = checkBoxCustomDesktop.Checked;
+            cmbBoxDesktops.Enabled = isChecked;
+            btnRefreshDesktop.Enabled = isChecked;
+        }
     }
 }
