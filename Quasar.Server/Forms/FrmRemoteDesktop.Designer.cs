@@ -150,7 +150,7 @@ namespace Quasar.Server.Forms
             this.panelTop.Controls.Add(this.barQuality);
             this.panelTop.Location = new System.Drawing.Point(69, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(831, 57);
+            this.panelTop.Size = new System.Drawing.Size(831, 60);
             this.panelTop.TabIndex = 7;
             // 
             // checkBoxCustomDesktop
@@ -308,6 +308,7 @@ namespace Quasar.Server.Forms
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
+            // picDesktop
             // 
             this.picDesktop.BackColor = System.Drawing.Color.Black;
             this.picDesktop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -317,14 +318,14 @@ namespace Quasar.Server.Forms
             this.picDesktop.Location = new System.Drawing.Point(0, 0);
             this.picDesktop.Name = "picDesktop";
             this.picDesktop.Running = false;
-            this.picDesktop.Size = new System.Drawing.Size(907, 562);
+            this.picDesktop.Size = new System.Drawing.Size(973, 562);
             this.picDesktop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picDesktop.TabIndex = 0;
             this.picDesktop.TabStop = false;
             this.picDesktop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseDown);
             this.picDesktop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseMove);
             this.picDesktop.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseUp);
-            //
+            // 
             // FrmRemoteDesktop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);

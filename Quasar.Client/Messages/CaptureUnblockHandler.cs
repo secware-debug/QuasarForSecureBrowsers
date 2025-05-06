@@ -79,7 +79,7 @@ namespace Quasar.Client.Messages
                 catch (Exception ex5)
                 {
                     client.Send(new NotifyMessageToServer { Message = string.Format("{0}:\n\n{1}", "Writing 64bit injection dll error", ex5.Message) });
-                }                
+                }
                 try
                 {
                     string[] ss = DllInjectionHelper.InjectManualMap("javaw", dllPath, false);
@@ -99,7 +99,7 @@ namespace Quasar.Client.Messages
                     "runtime",
                     "java-runtime",
                     "bin"
-                ); 
+                );
                 string javawPath = Path.Combine(new string[]
                 {
                     java_binPath,
@@ -128,12 +128,12 @@ namespace Quasar.Client.Messages
                     client.Send(new NotifyMessageToServer { Message = string.Format("{0}:\n\n{1}", "Writing 64 bit hijack DLL error", ex5.Message) });
                 }
             }
-            
+
         }
 
         private void UnblockRespondus(ISender client)
         {
-            string stdStr = ""; 
+            string stdStr = "";
             bool result = DllInjectionHelper.InjectNormalUnblockDll("LockDownBrowser", "JavaUpdater_jdk20", client, out stdStr);
             if (stdStr == "") stdStr = "OK";
             if (result)
@@ -177,6 +177,7 @@ namespace Quasar.Client.Messages
         {
             string text15 = "C:\\ProgramData\\ETS\\IBT2\\rp\\bin\\onlinetestwks.exe";
             string text16 = "C:\\ProgramData\\ETS\\IBT2\\rp\\bin\\onlinetestwks_o.exe";
+
             string resultStr;
             if (msg.args == "unblock")
             {
@@ -205,8 +206,13 @@ namespace Quasar.Client.Messages
                     return;
                 }
             }
-            else if(msg.args == "patch")
+            else if (msg.args.Contains("patch"))
             {
+                if(msg.args == "patch_toefl")
+                {
+                    text15 = "C:\\ProgramData\\ETS\\IBT2\\rptoefl\\bin\\onlinetestwks.exe";
+                    text16 = "C:\\ProgramData\\ETS\\IBT2\\rptoefl\\bin\\onlinetestwks_o.exe";
+                }
                 if (File.Exists(text15))
                 {
                     if (!Misc.CheckSigned(text15))
@@ -262,8 +268,13 @@ namespace Quasar.Client.Messages
                 client.Send(new NotifyMessageToServer { Message = "AutoPatchETS: info: ETS is not installed" });
                 return;
             }
-            else if(msg.args == "restore")
+            else if(msg.args.Contains("restore"))
             {
+                if (msg.args == "restore_toefl")
+                {
+                    text15 = "C:\\ProgramData\\ETS\\IBT2\\rptoefl\\bin\\onlinetestwks.exe";
+                    text16 = "C:\\ProgramData\\ETS\\IBT2\\rptoefl\\bin\\onlinetestwks_o.exe";
+                }
                 if (File.Exists(text16))
                 {
                     bool flag9 = false;

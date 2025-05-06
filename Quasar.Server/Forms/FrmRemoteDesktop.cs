@@ -103,6 +103,8 @@ namespace Quasar.Server.Forms
         private const int USER_CMD_UNINSTALL_KBM_DRIVER = 1019;
         private const int USER_CMD_START_AUDIO = 1020;
         private const int USER_CMD_STOP_AUDIO = 1021;
+        private const int USER_CMD_PATCH_ETS_TOEFL = 1022;
+        private const int USER_CMD_RESTORE_ETS_TOEFL = 1023;
 
         // private const int USER_CMD_ETS_CHILD_FOR_TEST = 1031;
 
@@ -219,6 +221,8 @@ namespace Quasar.Server.Forms
             
             AppendMenu(systemMenu, 0x0, USER_CMD_PATCH_ETS, "Patch ETS");
             AppendMenu(systemMenu, 0x0, USER_CMD_RESTORE_ETS, "Restore ETS");
+            AppendMenu(systemMenu, 0x0, USER_CMD_PATCH_ETS_TOEFL, "Patch ETS(TOEFL)");
+            AppendMenu(systemMenu, 0x0, USER_CMD_RESTORE_ETS_TOEFL, "Restore ETS(TOEFL)");
 
             AppendMenu(systemMenu, 0x800, 0, string.Empty);
 
@@ -253,10 +257,16 @@ namespace Quasar.Server.Forms
                             _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args="unblock" });
                             return;
                         case USER_CMD_PATCH_ETS:
-                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args = "patch" });
+                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args = "patch_rp" });
                             return;
                         case USER_CMD_RESTORE_ETS:
-                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args = "restore" });
+                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args = "restore_rp" });
+                            return;
+                        case USER_CMD_PATCH_ETS_TOEFL:
+                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args = "patch_toefl" });
+                            return;
+                        case USER_CMD_RESTORE_ETS_TOEFL:
+                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args = "restore_toefl" });
                             return;
                         case USER_CMD_PROPROCTOR:
                             _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ProProctor});
@@ -615,7 +625,7 @@ namespace Quasar.Server.Forms
             _remoteDesktopHandler.LocalResolution = picDesktop.Size;
             panelTop.Left = (this.Width - panelTop.Width) / 2;
             btnShow.Left = (this.Width - btnShow.Width) / 2;
-            btnHide.Left = (panelTop.Width - btnHide.Width) / 2;
+            //btnHide.Left = (panelTop.Width - btnHide.Width) / 2;
         }
 
         private void btnStart_Click(object sender, EventArgs e)
