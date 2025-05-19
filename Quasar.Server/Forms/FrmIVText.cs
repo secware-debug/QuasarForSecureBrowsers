@@ -8,14 +8,16 @@ namespace Quasar.Server.Forms
     {
         private const string RegistryKeyPath = @"SOFTWARE\Quasar\IVTextSettings";
         private const string FontSizeKey = "FontSize";
+        private const string IsSavedKey = "TextSaved";
+        private const string SavedTextKey = "SavedText";
 
         public FrmIVText()
         {
             InitializeComponent();
-            LoadFontSizeFromRegistry();
+            LoadSettings();
         }
 
-        private void LoadFontSizeFromRegistry()
+        private void LoadSettings()
         {
             using (RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(RegistryKeyPath))
             {
@@ -27,17 +29,46 @@ namespace Quasar.Server.Forms
                     {
                         txtFontSize.Text = fontSizeValue.ToString();
                     }
+
+                    // Load IsSaved state
+                    object isSavedValue = key.GetValue(IsSavedKey);
+                    if (isSavedValue != null && bool.TryParse(isSavedValue.ToString(), out bool isSaved))
+                    {
+                        chkTextSave.Checked = isSaved;
+
+                        if (isSaved)
+                        {
+                            object savedTextValue = key.GetValue(SavedTextKey);
+                            if (savedTextValue != null)
+                            {
+                                txtContent.Text = savedTextValue.ToString();
+                            }
+                        }
+                        else
+                        {
+                            txtContent.Text = string.Empty;
+                        }
+                    }
                 }
             }
         }
 
-        private void SaveFontSizeToRegistry()
+        private void SaveSettings()
         {
             using (RegistryKey key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(RegistryKeyPath))
             {
                 if (key != null)
                 {
                     key.SetValue(FontSizeKey, txtFontSize.Text);
+                    if (chkTextSave.Checked) { 
+                        key.SetValue(IsSavedKey, true);
+                        key.SetValue(SavedTextKey, txtContent.Text);
+                    }
+                    else
+                    {
+                        key.SetValue(IsSavedKey, false);
+                        key.SetValue(SavedTextKey, "");
+                    }
                 }
             }
         }
@@ -51,7 +82,7 @@ namespace Quasar.Server.Forms
                     return;
                 }
             }
-            SaveFontSizeToRegistry();
+            SaveSettings();
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
@@ -83,6 +114,11 @@ namespace Quasar.Server.Forms
                     e.Handled = true;
                 }
             }
+        }
+
+        private void chkTextSave_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

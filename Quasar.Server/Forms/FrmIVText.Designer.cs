@@ -33,11 +33,12 @@
             this.txtContent = new System.Windows.Forms.TextBox();
             this.txtFontSize = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.chkTextSave = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(617, 114);
+            this.btnOk.Location = new System.Drawing.Point(616, 101);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(75, 23);
             this.btnOk.TabIndex = 0;
@@ -47,7 +48,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(617, 143);
+            this.btnCancel.Location = new System.Drawing.Point(616, 130);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 0;
@@ -81,11 +82,23 @@
             this.label1.TabIndex = 3;
             this.label1.Text = "Font Size";
             // 
+            // chkTextSave
+            // 
+            this.chkTextSave.AutoSize = true;
+            this.chkTextSave.Location = new System.Drawing.Point(626, 164);
+            this.chkTextSave.Name = "chkTextSave";
+            this.chkTextSave.Size = new System.Drawing.Size(51, 17);
+            this.chkTextSave.TabIndex = 4;
+            this.chkTextSave.Text = "Save";
+            this.chkTextSave.UseVisualStyleBackColor = true;
+            this.chkTextSave.CheckedChanged += new System.EventHandler(this.chkTextSave_CheckedChanged);
+            // 
             // FrmIVText
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(704, 233);
+            this.Controls.Add(this.chkTextSave);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.txtFontSize);
             this.Controls.Add(this.txtContent);
@@ -105,5 +118,6 @@
         private System.Windows.Forms.TextBox txtContent;
         private System.Windows.Forms.TextBox txtFontSize;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox chkTextSave;
     }
 }

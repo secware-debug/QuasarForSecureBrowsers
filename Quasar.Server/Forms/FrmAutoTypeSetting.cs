@@ -9,6 +9,8 @@ namespace Quasar.Server.Forms
         private const string RegistryKeyPath = @"SOFTWARE\Quasar\AutoTypeSettings";
         private const string MinDelayKey = "MinDelay";
         private const string MaxDelayKey = "MaxDelay";
+        private const string IsSavedKey = "ContentSaved";
+        private const string SavedTextKey = "SavedContent";
 
         public FrmAutoTypeSetting()
         {
@@ -34,6 +36,26 @@ namespace Quasar.Server.Forms
                     {
                         txtMaxDelay.Text = maxDelayValue.ToString();
                     }
+
+                    // Load IsSaved state
+                    object isSavedValue = key.GetValue(IsSavedKey);
+                    if (isSavedValue != null && bool.TryParse(isSavedValue.ToString(), out bool isSaved))
+                    {
+                        chkContentSave.Checked = isSaved;
+
+                        if (isSaved)
+                        {
+                            object savedTextValue = key.GetValue(SavedTextKey);
+                            if (savedTextValue != null)
+                            {
+                                txtContent.Text = savedTextValue.ToString();
+                            }
+                        }
+                        else
+                        {
+                            txtContent.Text = string.Empty;
+                        }
+                    }
                 }
             }
         }
@@ -46,6 +68,16 @@ namespace Quasar.Server.Forms
                 {
                     key.SetValue(MinDelayKey, txtMinDelay.Text);
                     key.SetValue(MaxDelayKey, txtMaxDelay.Text);
+                    if (chkContentSave.Checked)
+                    {
+                        key.SetValue(IsSavedKey, true);
+                        key.SetValue(SavedTextKey, txtContent.Text);
+                    }
+                    else
+                    {
+                        key.SetValue(IsSavedKey, false);
+                        key.SetValue(SavedTextKey, "");
+                    }
                 }
             }
         }
@@ -118,5 +150,9 @@ namespace Quasar.Server.Forms
             get { return int.Parse(txtMaxDelay.Text); }
         }
 
+        private void chkContentSave_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

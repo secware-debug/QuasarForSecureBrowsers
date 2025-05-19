@@ -36,6 +36,7 @@
             this.txtMinDelay = new System.Windows.Forms.TextBox();
             this.btnStart = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.chkContentSave = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -86,7 +87,6 @@
             this.txtMaxDelay.TabIndex = 0;
             this.txtMaxDelay.Text = "160";
             this.txtMaxDelay.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxMaxDelay_KeyPress);
-
             // 
             // txtMinDelay
             // 
@@ -117,11 +117,23 @@
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
+            // chkContentSave
+            // 
+            this.chkContentSave.AutoSize = true;
+            this.chkContentSave.Location = new System.Drawing.Point(750, 321);
+            this.chkContentSave.Name = "chkContentSave";
+            this.chkContentSave.Size = new System.Drawing.Size(51, 17);
+            this.chkContentSave.TabIndex = 3;
+            this.chkContentSave.Text = "Save";
+            this.chkContentSave.UseVisualStyleBackColor = true;
+            this.chkContentSave.CheckedChanged += new System.EventHandler(this.chkContentSave_CheckedChanged);
+            // 
             // FrmAutoTypeSetting
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(842, 450);
+            this.Controls.Add(this.chkContentSave);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnStart);
             this.Controls.Add(this.groupBox1);
@@ -145,5 +157,6 @@
         private System.Windows.Forms.TextBox txtMinDelay;
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.CheckBox chkContentSave;
     }
 }
