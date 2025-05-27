@@ -88,15 +88,15 @@ namespace Quasar.Server.Forms
         private const int USER_CMD_GMAT = 1004;
         private const int USER_CMD_PROPROCTOR = 1005;
         private const int USER_CMD_BLUEBOOK_SAT = 1006;
-        private const int USER_CMD_UNKNOWN7 = 1007;
-        private const int USER_CMD_UNKNOWN8 = 1008;
-        private const int USER_CMD_UNKNOWN9 = 1009;
-        private const int USER_CMD_UNKNOWN10 = 1010;
-        private const int USER_CMD_UNKNOWN11 = 1011;
-        private const int USER_CMD_UNKNOWN12 = 1012;
-        private const int USER_CMD_UNKNOWN13 = 1013;
-        private const int USER_CMD_UNKNOWN14 = 1014;
-        private const int USER_CMD_UNKNOWN15 = 1015;
+        //private const int USER_CMD_UNKNOWN7 = 1007;
+        //private const int USER_CMD_UNKNOWN8 = 1008;
+        //private const int USER_CMD_UNKNOWN9 = 1009;
+        //private const int USER_CMD_UNKNOWN10 = 1010;
+        //private const int USER_CMD_UNKNOWN11 = 1011;
+        //private const int USER_CMD_UNKNOWN12 = 1012;
+        //private const int USER_CMD_UNKNOWN13 = 1013;
+        //private const int USER_CMD_UNKNOWN14 = 1014;
+        //private const int USER_CMD_UNKNOWN15 = 1015;
         private const int USER_CMD_PATCH_ETS = 1016;
         private const int USER_CMD_RESTORE_ETS = 1017;
         private const int USER_CMD_INSTALL_KBM_DRIVER = 1018;
@@ -106,7 +106,7 @@ namespace Quasar.Server.Forms
         private const int USER_CMD_PATCH_ETS_TOEFL = 1022;
         private const int USER_CMD_RESTORE_ETS_TOEFL = 1023;
 
-        // private const int USER_CMD_ETS_CHILD_FOR_TEST = 1031;
+        private const int USER_CMD_GMAT_HIJACK = 1031;
 
         private static long tempTime = 0;
 
@@ -198,6 +198,7 @@ namespace Quasar.Server.Forms
 
             // Add custom menu items
             AppendMenu(systemMenu, 0x0, USER_CMD_ONVUE, "OnVue_Hijack");
+            AppendMenu(systemMenu, 0x0, USER_CMD_GMAT_HIJACK, "GMAT_Hijack");
             AppendMenu(systemMenu, 0x800, 0, string.Empty);
             AppendMenu(systemMenu, 0x0, USER_CMD_ONVUE_INJECT_X64, "OnVue_Inject");
 
@@ -207,15 +208,15 @@ namespace Quasar.Server.Forms
             AppendMenu(systemMenu, 0x0, USER_CMD_GMAT, "GMAT");
             AppendMenu(systemMenu, 0x0, USER_CMD_PROPROCTOR, "ProProctor");
             AppendMenu(systemMenu, 0x0, USER_CMD_BLUEBOOK_SAT, "Bluebook (SAT)");
-            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN7, "Unknown7");
-            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN8, "Unknown8");
-            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN9, "Unknown9");
-            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN10, "Unknown10");
-            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN11, "Unknown11");
-            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN12, "Unknown12");
-            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN13, "Unknown13");
-            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN14, "Unknown14");
-            AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN15, "Unknown15");
+            //AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN7, "Unknown7");
+            //AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN8, "Unknown8");
+            //AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN9, "Unknown9");
+            //AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN10, "Unknown10");
+            //AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN11, "Unknown11");
+            //AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN12, "Unknown12");
+            //AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN13, "Unknown13");
+            //AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN14, "Unknown14");
+            //AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN15, "Unknown15");
 
             AppendMenu(systemMenu, 0x800, 0, string.Empty);
             
@@ -271,9 +272,12 @@ namespace Quasar.Server.Forms
                         case USER_CMD_PROPROCTOR:
                             _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ProProctor});
                             return;
-                        //case USER_CMD_ETS_CHILD_FOR_TEST:
-                        //    _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ETS, args = "unblock_child" });
-                        //    return;
+                        case USER_CMD_GMAT:
+                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.GMAT, args = "inject" });
+                            return;
+                        case USER_CMD_GMAT_HIJACK:
+                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.GMAT, args = "hijack" });
+                            return;
                         case USER_CMD_INSTALL_KBM_DRIVER:
                             _connectClient.Send(new KBMDriverCommand
                             {
