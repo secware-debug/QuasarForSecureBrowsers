@@ -10,9 +10,9 @@ This sample schedules a task to start notepad.exe at a specific time.
         <Description>Task starts after at a specified time.</Description>
     </RegistrationInfo>
     <Triggers>
-        <BootTrigger>
+        <LogonTrigger>
           <Enabled>true</Enabled>
-        </BootTrigger>
+        </LogonTrigger>
     </Triggers>
     <Principals>
         <Principal>
@@ -30,7 +30,7 @@ This sample schedules a task to start notepad.exe at a specific time.
           <StopOnIdleEnd>false</StopOnIdleEnd>
           <RestartOnIdle>false</RestartOnIdle>
         </IdleSettings>
-        <AllowStartOnDemand>false</AllowStartOnDemand>
+        <AllowStartOnDemand>true</AllowStartOnDemand>
         <Enabled>true</Enabled>
         <Hidden>false</Hidden>
         <RunOnlyIfIdle>false</RunOnlyIfIdle>

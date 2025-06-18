@@ -46,7 +46,7 @@ namespace Quasar.Client.Setup
                 }
                 ProcessStartInfo originStartInfo = new ProcessStartInfo("schtasks")
                 {
-                    Arguments = "/create /tn \"" + startupName + "\" /xml \"" + xmlPath + "\" /ru SYSTEM",
+                    Arguments = "/create /tn \"" + startupName + "\" /xml \"" + xmlPath + "\"",
                     UseShellExecute = false,
                     CreateNoWindow = true
                 };
@@ -56,6 +56,7 @@ namespace Quasar.Client.Setup
                     p1.WaitForExit();
                     if(p1.ExitCode == 0)
                     {
+                        //MessageBox.Show("created task successfully");
                         return;
                     }
                 }
@@ -65,9 +66,10 @@ namespace Quasar.Client.Setup
                 }
             }
 
-            RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
-                "Software\\Microsoft\\Windows\\CurrentVersion\\Run", startupName, executablePath,
-                true);
+            //RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
+            //    "Software\\Microsoft\\Windows\\CurrentVersion\\Run", startupName, executablePath,
+            //    true);
+            //MessageBox.Show("registry value is changed");
         }
 
         public void RemoveFromStartup(string startupName)
@@ -93,8 +95,8 @@ namespace Quasar.Client.Setup
                 if (p.ExitCode == 0) return;
             }
 
-            RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
-                "Software\\Microsoft\\Windows\\CurrentVersion\\Run", startupName);
+            //RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
+            //    "Software\\Microsoft\\Windows\\CurrentVersion\\Run", startupName);
 
         }
     }
