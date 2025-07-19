@@ -39,9 +39,11 @@ namespace Quasar.Server.Forms
             this.lblQualityShow = new System.Windows.Forms.Label();
             this.btnMouse = new System.Windows.Forms.Button();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnCustomerKeyBd = new System.Windows.Forms.Button();
+            this.btnCustomerMouse = new System.Windows.Forms.Button();
             this.checkBoxCustomDesktop = new System.Windows.Forms.CheckBox();
             this.btnRefreshDesktop = new System.Windows.Forms.Button();
-            this.btnKillBrowser = new System.Windows.Forms.Button();
             this.btnCloseIT = new System.Windows.Forms.Button();
             this.btnAutoTypeStop = new System.Windows.Forms.Button();
             this.btnUnkernel = new System.Windows.Forms.Button();
@@ -56,8 +58,10 @@ namespace Quasar.Server.Forms
             this.toolTipButtons = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.picDesktop = new Quasar.Server.Controls.RapidPictureBox();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.barQuality)).BeginInit();
             this.panelTop.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picDesktop)).BeginInit();
             this.SuspendLayout();
             // 
@@ -129,9 +133,9 @@ namespace Quasar.Server.Forms
             // panelTop
             // 
             this.panelTop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelTop.Controls.Add(this.groupBox1);
             this.panelTop.Controls.Add(this.checkBoxCustomDesktop);
             this.panelTop.Controls.Add(this.btnRefreshDesktop);
-            this.panelTop.Controls.Add(this.btnKillBrowser);
             this.panelTop.Controls.Add(this.btnCloseIT);
             this.panelTop.Controls.Add(this.btnAutoTypeStop);
             this.panelTop.Controls.Add(this.btnUnkernel);
@@ -150,13 +154,50 @@ namespace Quasar.Server.Forms
             this.panelTop.Controls.Add(this.barQuality);
             this.panelTop.Location = new System.Drawing.Point(69, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(831, 60);
+            this.panelTop.Size = new System.Drawing.Size(836, 60);
             this.panelTop.TabIndex = 7;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
+            this.groupBox1.Controls.Add(this.btnCustomerKeyBd);
+            this.groupBox1.Controls.Add(this.btnCustomerMouse);
+            this.groupBox1.Location = new System.Drawing.Point(374, 2);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(79, 52);
+            this.groupBox1.TabIndex = 13;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Customer";
+            this.groupBox1.Enter += new System.EventHandler(this.groupBox1_Enter);
+            // 
+            // btnCustomerKeyBd
+            // 
+            this.btnCustomerKeyBd.Image = global::Quasar.Server.Properties.Resources.keyboard_add;
+            this.btnCustomerKeyBd.Location = new System.Drawing.Point(45, 16);
+            this.btnCustomerKeyBd.Name = "btnCustomerKeyBd";
+            this.btnCustomerKeyBd.Size = new System.Drawing.Size(28, 28);
+            this.btnCustomerKeyBd.TabIndex = 17;
+            this.btnCustomerKeyBd.TabStop = false;
+            this.toolTipButtons.SetToolTip(this.btnCustomerKeyBd, "Disable customer\'s keyboard input.");
+            this.btnCustomerKeyBd.UseVisualStyleBackColor = true;
+            this.btnCustomerKeyBd.Click += new System.EventHandler(this.btnCustomerKeyBd_Click);
+            // 
+            // btnCustomerMouse
+            // 
+            this.btnCustomerMouse.Image = global::Quasar.Server.Properties.Resources.mouse_add;
+            this.btnCustomerMouse.Location = new System.Drawing.Point(10, 16);
+            this.btnCustomerMouse.Name = "btnCustomerMouse";
+            this.btnCustomerMouse.Size = new System.Drawing.Size(28, 28);
+            this.btnCustomerMouse.TabIndex = 16;
+            this.btnCustomerMouse.TabStop = false;
+            this.toolTipButtons.SetToolTip(this.btnCustomerMouse, "Disable customer\'s mouse input.");
+            this.btnCustomerMouse.UseVisualStyleBackColor = true;
+            this.btnCustomerMouse.Click += new System.EventHandler(this.btnCustomerMouse_Click);
             // 
             // checkBoxCustomDesktop
             // 
             this.checkBoxCustomDesktop.AutoSize = true;
-            this.checkBoxCustomDesktop.Location = new System.Drawing.Point(684, 8);
+            this.checkBoxCustomDesktop.Location = new System.Drawing.Point(687, 8);
             this.checkBoxCustomDesktop.Name = "checkBoxCustomDesktop";
             this.checkBoxCustomDesktop.Size = new System.Drawing.Size(79, 17);
             this.checkBoxCustomDesktop.TabIndex = 12;
@@ -166,7 +207,7 @@ namespace Quasar.Server.Forms
             // 
             // btnRefreshDesktop
             // 
-            this.btnRefreshDesktop.Location = new System.Drawing.Point(765, 3);
+            this.btnRefreshDesktop.Location = new System.Drawing.Point(768, 3);
             this.btnRefreshDesktop.Name = "btnRefreshDesktop";
             this.btnRefreshDesktop.Size = new System.Drawing.Size(57, 24);
             this.btnRefreshDesktop.TabIndex = 11;
@@ -174,19 +215,9 @@ namespace Quasar.Server.Forms
             this.btnRefreshDesktop.UseVisualStyleBackColor = true;
             this.btnRefreshDesktop.Click += new System.EventHandler(this.btnVirtualDesktopRefresh_Clicked);
             // 
-            // btnKillBrowser
-            // 
-            this.btnKillBrowser.Location = new System.Drawing.Point(604, 7);
-            this.btnKillBrowser.Name = "btnKillBrowser";
-            this.btnKillBrowser.Size = new System.Drawing.Size(67, 24);
-            this.btnKillBrowser.TabIndex = 11;
-            this.btnKillBrowser.Text = "Clean";
-            this.btnKillBrowser.UseVisualStyleBackColor = true;
-            this.btnKillBrowser.Click += new System.EventHandler(this.btnKillBrowser_Click);
-            // 
             // btnCloseIT
             // 
-            this.btnCloseIT.Location = new System.Drawing.Point(390, 29);
+            this.btnCloseIT.Location = new System.Drawing.Point(463, 29);
             this.btnCloseIT.Name = "btnCloseIT";
             this.btnCloseIT.Size = new System.Drawing.Size(64, 23);
             this.btnCloseIT.TabIndex = 10;
@@ -196,7 +227,7 @@ namespace Quasar.Server.Forms
             // 
             // btnAutoTypeStop
             // 
-            this.btnAutoTypeStop.Location = new System.Drawing.Point(530, 30);
+            this.btnAutoTypeStop.Location = new System.Drawing.Point(603, 30);
             this.btnAutoTypeStop.Name = "btnAutoTypeStop";
             this.btnAutoTypeStop.Size = new System.Drawing.Size(64, 23);
             this.btnAutoTypeStop.TabIndex = 10;
@@ -206,7 +237,7 @@ namespace Quasar.Server.Forms
             // 
             // btnUnkernel
             // 
-            this.btnUnkernel.Location = new System.Drawing.Point(460, 30);
+            this.btnUnkernel.Location = new System.Drawing.Point(533, 30);
             this.btnUnkernel.Name = "btnUnkernel";
             this.btnUnkernel.Size = new System.Drawing.Size(64, 23);
             this.btnUnkernel.TabIndex = 10;
@@ -216,7 +247,7 @@ namespace Quasar.Server.Forms
             // 
             // btnAutoTypeStart
             // 
-            this.btnAutoTypeStart.Location = new System.Drawing.Point(530, 5);
+            this.btnAutoTypeStart.Location = new System.Drawing.Point(603, 5);
             this.btnAutoTypeStart.Name = "btnAutoTypeStart";
             this.btnAutoTypeStart.Size = new System.Drawing.Size(64, 23);
             this.btnAutoTypeStart.TabIndex = 10;
@@ -226,7 +257,7 @@ namespace Quasar.Server.Forms
             // 
             // btnKernel
             // 
-            this.btnKernel.Location = new System.Drawing.Point(460, 5);
+            this.btnKernel.Location = new System.Drawing.Point(533, 5);
             this.btnKernel.Name = "btnKernel";
             this.btnKernel.Size = new System.Drawing.Size(64, 23);
             this.btnKernel.TabIndex = 10;
@@ -236,7 +267,7 @@ namespace Quasar.Server.Forms
             // 
             // btnSetIT
             // 
-            this.btnSetIT.Location = new System.Drawing.Point(390, 5);
+            this.btnSetIT.Location = new System.Drawing.Point(463, 5);
             this.btnSetIT.Name = "btnSetIT";
             this.btnSetIT.Size = new System.Drawing.Size(64, 23);
             this.btnSetIT.TabIndex = 10;
@@ -260,7 +291,7 @@ namespace Quasar.Server.Forms
             // 
             this.cmbBoxDesktops.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbBoxDesktops.FormattingEnabled = true;
-            this.cmbBoxDesktops.Location = new System.Drawing.Point(684, 30);
+            this.cmbBoxDesktops.Location = new System.Drawing.Point(687, 30);
             this.cmbBoxDesktops.Name = "cmbBoxDesktops";
             this.cmbBoxDesktops.Size = new System.Drawing.Size(138, 21);
             this.cmbBoxDesktops.TabIndex = 8;
@@ -278,7 +309,7 @@ namespace Quasar.Server.Forms
             // 
             // btnHide
             // 
-            this.btnHide.Location = new System.Drawing.Point(310, 34);
+            this.btnHide.Location = new System.Drawing.Point(308, 35);
             this.btnHide.Name = "btnHide";
             this.btnHide.Size = new System.Drawing.Size(54, 19);
             this.btnHide.TabIndex = 7;
@@ -318,7 +349,7 @@ namespace Quasar.Server.Forms
             this.picDesktop.Location = new System.Drawing.Point(0, 0);
             this.picDesktop.Name = "picDesktop";
             this.picDesktop.Running = false;
-            this.picDesktop.Size = new System.Drawing.Size(973, 562);
+            this.picDesktop.Size = new System.Drawing.Size(1050, 562);
             this.picDesktop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picDesktop.TabIndex = 0;
             this.picDesktop.TabStop = false;
@@ -330,7 +361,7 @@ namespace Quasar.Server.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(973, 562);
+            this.ClientSize = new System.Drawing.Size(1050, 562);
             this.Controls.Add(this.btnShow);
             this.Controls.Add(this.panelTop);
             this.Controls.Add(this.picDesktop);
@@ -347,6 +378,7 @@ namespace Quasar.Server.Forms
             ((System.ComponentModel.ISupportInitialize)(this.barQuality)).EndInit();
             this.panelTop.ResumeLayout(false);
             this.panelTop.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picDesktop)).EndInit();
             this.ResumeLayout(false);
 
@@ -374,9 +406,12 @@ namespace Quasar.Server.Forms
         private System.Windows.Forms.Button btnUnkernel;
         private System.Windows.Forms.Button btnAutoTypeStop;
         private System.Windows.Forms.Button btnAutoTypeStart;
-        private System.Windows.Forms.Button btnKillBrowser;
         private System.Windows.Forms.ComboBox cmbBoxDesktops;
         private System.Windows.Forms.Button btnRefreshDesktop;
         private System.Windows.Forms.CheckBox checkBoxCustomDesktop;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.Button btnCustomerKeyBd;
+        private System.Windows.Forms.Button btnCustomerMouse;
     }
 }

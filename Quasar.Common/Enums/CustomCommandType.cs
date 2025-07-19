@@ -4,7 +4,9 @@
     {
         GET_DESKTOPS,
         GET_ACTIVE_DESKTOP,
-        KILL_AND_CLEAN
-
+        DISABLE_CST_MOUSE,
+        ENABLE_CST_MOUSE,
+        DISABLE_CST_KEYBOARD,
+        ENABLE_CST_KEYBOARD,
     }
 }

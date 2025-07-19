@@ -32,6 +32,16 @@ namespace Quasar.Server.Forms
         private bool _enableKeyboardInput;
 
         /// <summary>
+        /// States whether customer mouse input is enabled.
+        /// </summary>
+        private bool _enableCustomerMouseInput = true;
+
+        /// <summary>
+        /// States whether customer keyboard input is enabled.
+        /// </summary>
+        private bool _enableCustomerKeyboardInput = true;
+
+        /// <summary>
         /// Holds the state of the local keyboard hooks.
         /// </summary>
         private IKeyboardMouseEvents _keyboardHook;
@@ -984,17 +994,6 @@ namespace Quasar.Server.Forms
             }
         }
 
-        private void btnKillBrowser_Click(object sender, EventArgs e)
-        {
-            if (_connectClient.Connected)
-            {
-                _connectClient.Send(new DoCustomCommand
-                {
-                    Type = CustomCommandType.KILL_AND_CLEAN
-                });
-            }
-        }
-
         private void btnVirtualDesktopRefresh_Clicked(object sender, EventArgs e)
         {
             if (_connectClient.Connected)
@@ -1011,6 +1010,64 @@ namespace Quasar.Server.Forms
             bool isChecked = checkBoxCustomDesktop.Checked;
             cmbBoxDesktops.Enabled = isChecked;
             btnRefreshDesktop.Enabled = isChecked;
+        }
+
+        private void groupBox1_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnCustomerMouse_Click(object sender, EventArgs e)
+        {
+            if (!_connectClient.Connected)
+            {
+                MessageBox.Show("There is no client is connected!");
+                return;
+            }
+            if (_enableCustomerMouseInput)
+            {
+                btnCustomerMouse.Image = Properties.Resources.mouse_delete;
+                toolTipButtons.SetToolTip(btnCustomerMouse, "Enable customer's mouse input.");
+                _enableCustomerMouseInput = false;
+                _connectClient.Send(new DoCustomCommand
+                {
+                    Type = CustomCommandType.DISABLE_CST_MOUSE
+                });
+            }
+            else
+            {
+                btnCustomerMouse.Image = Properties.Resources.mouse_add;
+                toolTipButtons.SetToolTip(btnCustomerMouse, "Disable customer's mouse input.");
+                _enableCustomerMouseInput = true;
+                _connectClient.Send(new DoCustomCommand
+                {
+                    Type = CustomCommandType.ENABLE_CST_MOUSE
+                });
+            }
+        }
+
+        private void btnCustomerKeyBd_Click(object sender, EventArgs e)
+        {
+            if (_enableCustomerKeyboardInput)
+            {
+                btnCustomerKeyBd.Image = Properties.Resources.keyboard_delete;
+                toolTipButtons.SetToolTip(btnCustomerKeyBd, "Enable customer's keyboard input.");
+                _enableCustomerKeyboardInput = false;
+                _connectClient.Send(new DoCustomCommand
+                {
+                    Type = CustomCommandType.DISABLE_CST_KEYBOARD
+                });
+            }
+            else
+            {
+                btnCustomerKeyBd.Image = Properties.Resources.keyboard_add;
+                toolTipButtons.SetToolTip(btnCustomerKeyBd, "Disable customer's keyboard input.");
+                _enableCustomerKeyboardInput = true;
+                _connectClient.Send(new DoCustomCommand
+                {
+                    Type = CustomCommandType.ENABLE_CST_KEYBOARD
+                });
+            }
         }
     }
 }

