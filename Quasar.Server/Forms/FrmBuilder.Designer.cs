@@ -125,6 +125,8 @@ namespace Quasar.Server.Forms
             this.line10 = new Quasar.Server.Controls.Line();
             this.label14 = new System.Windows.Forms.Label();
             this.chkKeylogger = new System.Windows.Forms.CheckBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.txtHotkeyValue = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).BeginInit();
             this.contextMenuStrip.SuspendLayout();
@@ -141,7 +143,7 @@ namespace Quasar.Server.Forms
             // 
             // btnBuild
             // 
-            this.btnBuild.Location = new System.Drawing.Point(402, 390);
+            this.btnBuild.Location = new System.Drawing.Point(402, 406);
             this.btnBuild.Name = "btnBuild";
             this.btnBuild.Size = new System.Drawing.Size(121, 23);
             this.btnBuild.TabIndex = 1;
@@ -235,7 +237,7 @@ namespace Quasar.Server.Forms
             this.builderTabs.Multiline = true;
             this.builderTabs.Name = "builderTabs";
             this.builderTabs.SelectedIndex = 0;
-            this.builderTabs.Size = new System.Drawing.Size(535, 384);
+            this.builderTabs.Size = new System.Drawing.Size(535, 397);
             this.builderTabs.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.builderTabs.TabIndex = 0;
             // 
@@ -353,7 +355,7 @@ namespace Quasar.Server.Forms
             this.lblTag.AutoSize = true;
             this.lblTag.Location = new System.Drawing.Point(17, 43);
             this.lblTag.Name = "lblTag";
-            this.lblTag.Size = new System.Drawing.Size(61, 13);
+            this.lblTag.Size = new System.Drawing.Size(60, 13);
             this.lblTag.TabIndex = 2;
             this.lblTag.Text = "Client Tag:";
             // 
@@ -552,7 +554,7 @@ namespace Quasar.Server.Forms
             this.lblDelay.AutoSize = true;
             this.lblDelay.Location = new System.Drawing.Point(17, 182);
             this.lblDelay.Name = "lblDelay";
-            this.lblDelay.Size = new System.Drawing.Size(200, 13);
+            this.lblDelay.Size = new System.Drawing.Size(199, 13);
             this.lblDelay.TabIndex = 9;
             this.lblDelay.Text = "Time to wait between reconnect tries:";
             // 
@@ -580,7 +582,9 @@ namespace Quasar.Server.Forms
             this.installationPage.Controls.Add(this.lblInstallName);
             this.installationPage.Controls.Add(this.rbProgramFiles);
             this.installationPage.Controls.Add(this.txtInstallName);
+            this.installationPage.Controls.Add(this.txtHotkeyValue);
             this.installationPage.Controls.Add(this.txtRegistryKeyName);
+            this.installationPage.Controls.Add(this.label13);
             this.installationPage.Controls.Add(this.lblExtension);
             this.installationPage.Controls.Add(this.lblRegistryKeyName);
             this.installationPage.Controls.Add(this.chkStartup);
@@ -594,7 +598,7 @@ namespace Quasar.Server.Forms
             this.installationPage.Location = new System.Drawing.Point(140, 4);
             this.installationPage.Name = "installationPage";
             this.installationPage.Padding = new System.Windows.Forms.Padding(3);
-            this.installationPage.Size = new System.Drawing.Size(391, 376);
+            this.installationPage.Size = new System.Drawing.Size(391, 389);
             this.installationPage.TabIndex = 1;
             this.installationPage.Text = "Installation Settings";
             // 
@@ -1021,7 +1025,7 @@ namespace Quasar.Server.Forms
             this.lblTrademarks.AutoSize = true;
             this.lblTrademarks.Location = new System.Drawing.Point(17, 159);
             this.lblTrademarks.Name = "lblTrademarks";
-            this.lblTrademarks.Size = new System.Drawing.Size(68, 13);
+            this.lblTrademarks.Size = new System.Drawing.Size(67, 13);
             this.lblTrademarks.TabIndex = 9;
             this.lblTrademarks.Text = "Trademarks:";
             // 
@@ -1106,12 +1110,29 @@ namespace Quasar.Server.Forms
             this.chkKeylogger.UseVisualStyleBackColor = true;
             this.chkKeylogger.CheckedChanged += new System.EventHandler(this.chkKeylogger_CheckedChanged);
             // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(17, 355);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(70, 13);
+            this.label13.TabIndex = 16;
+            this.label13.Text = "Hide Hotkey";
+            // 
+            // txtHotkeyValue
+            // 
+            this.txtHotkeyValue.Location = new System.Drawing.Point(182, 352);
+            this.txtHotkeyValue.Name = "txtHotkeyValue";
+            this.txtHotkeyValue.Size = new System.Drawing.Size(201, 22);
+            this.txtHotkeyValue.TabIndex = 17;
+            this.txtHotkeyValue.TextChanged += new System.EventHandler(this.HasChangedSetting);
+            // 
             // FrmBuilder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(535, 424);
+            this.ClientSize = new System.Drawing.Size(535, 438);
             this.Controls.Add(this.builderTabs);
             this.Controls.Add(this.btnBuild);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -1239,5 +1260,7 @@ namespace Quasar.Server.Forms
         private Line line2;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox txtHotkeyValue;
+        private System.Windows.Forms.Label label13;
     }
 }

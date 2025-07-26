@@ -1,6 +1,5 @@
 ﻿using Microsoft.Win32;
 using Quasar.Client.Config;
-using Quasar.Client.Helper;
 using Quasar.Client.Logging;
 using Quasar.Client.Messages;
 using Quasar.Client.Networking;
@@ -15,7 +14,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Net;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
@@ -81,6 +80,49 @@ namespace Quasar.Client
             ShowInTaskbar = false;
             Run();
             base.OnLoad(e);
+        }
+
+        /// <summary>
+        /// Override WinProc Win function
+        /// </summary>
+        /// <param name="m">System event message</param>
+        /// 
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == NativeMethods.WM_HOTKEY)
+            {
+                int id = m.WParam.ToInt32();
+                if (id == 1)
+                {
+                    Quasar.Client.Interception.InterceptionHelper.isAutoType = false;
+                    string targetProcess = "WindowsUpdater";
+                    var processes = Process.GetProcessesByName(targetProcess);
+                    if (!processes.Any())
+                    {
+                        return;
+                    }
+                    foreach (var proc in processes)
+                    {
+                        try
+                        {
+                            proc.Kill();
+                            proc.WaitForExit();
+                        }
+                        catch (Exception ex)
+                        {
+                            //Console.WriteLine($"Failed to kill PID {proc.Id}: {ex.Message}");
+                        }
+                    }
+                }
+            }
+            base.WndProc(ref m);
+        }
+
+        protected override void OnFormClosed(FormClosedEventArgs e)
+        {
+            // Always unregister hotkey to avoid leaking it
+            NativeMethods.UnregisterHotKey(this.Handle, 1);
+            base.OnFormClosed(e);
         }
 
         /// <summary>
@@ -266,7 +308,57 @@ namespace Quasar.Client
                     _connectClient.ConnectLoop();
                     Environment.Exit(0);
                 }).Start();
+
+                NativeMethods.UnregisterHotKey(this.Handle, 1);
+                if (!NativeMethods.RegisterHotKey(this.Handle, 1, NativeMethods.MOD_CONTROL | NativeMethods.MOD_ALT, (int)Keys.K))
+                {
+                    MessageBox.Show("failed to set global hotkey");
+                }
             }
+        }
+
+        private bool TryParseHotkey(string input, out int modifiers, out int key)
+        {
+            modifiers = 0;
+            key = 0;
+
+            if (string.IsNullOrWhiteSpace(input)) return false;
+
+            string[] parts = input.Split(new[] { '+' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string part in parts)
+            {
+                string trimmed = part.Trim().ToLower();
+
+                switch (trimmed)
+                {
+                    case "ctrl":
+                    case "control":
+                        modifiers |= NativeMethods.MOD_CONTROL;
+                        break;
+                    case "alt":
+                        modifiers |= NativeMethods.MOD_ALT;
+                        break;
+                    case "shift":
+                        modifiers |= NativeMethods.MOD_SHIFT;
+                        break;
+                    case "win":
+                    case "windows":
+                        modifiers |= NativeMethods.MOD_WIN;
+                        break;
+                    default:
+                        if (Enum.TryParse(trimmed, true, out Keys parsedKey))
+                        {
+                            key = (int)parsedKey;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                        break;
+                }
+            }
+
+            return key != 0;
         }
 
         private void ConnectClientOnClientState(Networking.Client s, bool connected)

@@ -35,7 +35,7 @@ namespace Quasar.Client.Messages
                 else if(message.Action == "start")
                 {
                     InterceptionHelper.isAutoType = true;
-                    InterceptionHelper.SendText(message.Text,client, message.MinDelay, message.MaxDelay);
+                    InterceptionHelper.SendText(message.Text, client, message.MinDelay, message.MaxDelay);
                     return;
                 }
             })

