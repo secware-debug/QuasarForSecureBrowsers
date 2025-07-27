@@ -42,7 +42,7 @@ namespace Quasar.Client.Setup
                 }
                 catch (Exception ex5)
                 {
-                   // MessageBox.Show($"XML file writing error while creating a task: {ex5.Message}");
+                    // MessageBox.Show($"XML file writing error while creating a task: {ex5.Message}");
                 }
                 ProcessStartInfo originStartInfo = new ProcessStartInfo("schtasks")
                 {
@@ -54,13 +54,13 @@ namespace Quasar.Client.Setup
                 {
                     Process p1 = Process.Start(originStartInfo);
                     p1.WaitForExit();
-                    if(p1.ExitCode == 0)
+                    if (p1.ExitCode == 0)
                     {
                         //MessageBox.Show("created task successfully");
                         return;
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     //MessageBox.Show($"An error occured while starting client task: {ex.Message}");
                 }
@@ -69,7 +69,6 @@ namespace Quasar.Client.Setup
             //RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
             //    "Software\\Microsoft\\Windows\\CurrentVersion\\Run", startupName, executablePath,
             //    true);
-            //MessageBox.Show("registry value is changed");
         }
 
         public void RemoveFromStartup(string startupName)

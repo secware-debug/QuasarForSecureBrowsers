@@ -81,7 +81,9 @@ namespace Quasar.Server.Forms
             this.chkInstall = new System.Windows.Forms.CheckBox();
             this.lblInstallName = new System.Windows.Forms.Label();
             this.txtInstallName = new System.Windows.Forms.TextBox();
+            this.txtHotkeyValue = new System.Windows.Forms.TextBox();
             this.txtRegistryKeyName = new System.Windows.Forms.TextBox();
+            this.label13 = new System.Windows.Forms.Label();
             this.lblExtension = new System.Windows.Forms.Label();
             this.lblRegistryKeyName = new System.Windows.Forms.Label();
             this.chkStartup = new System.Windows.Forms.CheckBox();
@@ -125,8 +127,6 @@ namespace Quasar.Server.Forms
             this.line10 = new Quasar.Server.Controls.Line();
             this.label14 = new System.Windows.Forms.Label();
             this.chkKeylogger = new System.Windows.Forms.CheckBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.txtHotkeyValue = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).BeginInit();
             this.contextMenuStrip.SuspendLayout();
@@ -262,7 +262,7 @@ namespace Quasar.Server.Forms
             this.generalPage.Location = new System.Drawing.Point(140, 4);
             this.generalPage.Name = "generalPage";
             this.generalPage.Padding = new System.Windows.Forms.Padding(3);
-            this.generalPage.Size = new System.Drawing.Size(391, 376);
+            this.generalPage.Size = new System.Drawing.Size(391, 389);
             this.generalPage.TabIndex = 4;
             this.generalPage.Text = "Basic Settings";
             // 
@@ -424,7 +424,7 @@ namespace Quasar.Server.Forms
             this.connectionPage.Location = new System.Drawing.Point(140, 4);
             this.connectionPage.Name = "connectionPage";
             this.connectionPage.Padding = new System.Windows.Forms.Padding(3);
-            this.connectionPage.Size = new System.Drawing.Size(391, 376);
+            this.connectionPage.Size = new System.Drawing.Size(391, 389);
             this.connectionPage.TabIndex = 0;
             this.connectionPage.Text = "Connection Settings";
             // 
@@ -677,6 +677,15 @@ namespace Quasar.Server.Forms
             this.txtInstallName.TextChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
             this.txtInstallName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtInstallname_KeyPress);
             // 
+            // txtHotkeyValue
+            // 
+            this.txtHotkeyValue.Location = new System.Drawing.Point(182, 352);
+            this.txtHotkeyValue.Name = "txtHotkeyValue";
+            this.txtHotkeyValue.ReadOnly = true;
+            this.txtHotkeyValue.Size = new System.Drawing.Size(201, 22);
+            this.txtHotkeyValue.TabIndex = 17;
+            this.txtHotkeyValue.TextChanged += new System.EventHandler(this.HasChangedSetting);
+            // 
             // txtRegistryKeyName
             // 
             this.txtRegistryKeyName.Location = new System.Drawing.Point(182, 324);
@@ -684,6 +693,15 @@ namespace Quasar.Server.Forms
             this.txtRegistryKeyName.Size = new System.Drawing.Size(201, 22);
             this.txtRegistryKeyName.TabIndex = 17;
             this.txtRegistryKeyName.TextChanged += new System.EventHandler(this.HasChangedSetting);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(17, 355);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(70, 13);
+            this.label13.TabIndex = 16;
+            this.label13.Text = "Hide Hotkey";
             // 
             // lblExtension
             // 
@@ -813,7 +831,7 @@ namespace Quasar.Server.Forms
             this.assemblyPage.Controls.Add(this.txtCopyright);
             this.assemblyPage.Location = new System.Drawing.Point(140, 4);
             this.assemblyPage.Name = "assemblyPage";
-            this.assemblyPage.Size = new System.Drawing.Size(391, 376);
+            this.assemblyPage.Size = new System.Drawing.Size(391, 389);
             this.assemblyPage.TabIndex = 2;
             this.assemblyPage.Text = "Assembly Settings";
             // 
@@ -1048,7 +1066,7 @@ namespace Quasar.Server.Forms
             this.monitoringTab.Controls.Add(this.chkKeylogger);
             this.monitoringTab.Location = new System.Drawing.Point(140, 4);
             this.monitoringTab.Name = "monitoringTab";
-            this.monitoringTab.Size = new System.Drawing.Size(391, 376);
+            this.monitoringTab.Size = new System.Drawing.Size(391, 389);
             this.monitoringTab.TabIndex = 3;
             this.monitoringTab.Text = "Monitoring Settings";
             // 
@@ -1109,23 +1127,6 @@ namespace Quasar.Server.Forms
             this.chkKeylogger.Text = "Enable keyboard logging";
             this.chkKeylogger.UseVisualStyleBackColor = true;
             this.chkKeylogger.CheckedChanged += new System.EventHandler(this.chkKeylogger_CheckedChanged);
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(17, 355);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(70, 13);
-            this.label13.TabIndex = 16;
-            this.label13.Text = "Hide Hotkey";
-            // 
-            // txtHotkeyValue
-            // 
-            this.txtHotkeyValue.Location = new System.Drawing.Point(182, 352);
-            this.txtHotkeyValue.Name = "txtHotkeyValue";
-            this.txtHotkeyValue.Size = new System.Drawing.Size(201, 22);
-            this.txtHotkeyValue.TabIndex = 17;
-            this.txtHotkeyValue.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // FrmBuilder
             // 

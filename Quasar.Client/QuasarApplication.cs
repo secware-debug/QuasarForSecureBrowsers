@@ -309,11 +309,15 @@ namespace Quasar.Client
                     Environment.Exit(0);
                 }).Start();
 
-                NativeMethods.UnregisterHotKey(this.Handle, 1);
-                if (!NativeMethods.RegisterHotKey(this.Handle, 1, NativeMethods.MOD_CONTROL | NativeMethods.MOD_ALT, (int)Keys.K))
-                {
-                    MessageBox.Show("failed to set global hotkey");
-                }
+                //string hotkeyvalue = "Ctrl+Alt+K";
+                //string input = hotkeyvalue.Trim();//txtHotkey.Text.Trim();
+                //NativeMethods.UnregisterHotKey(this.Handle, 1);
+                //if (TryParseHotkey(input, out int modifiers, out int vk))
+                //{
+                    bool success = NativeMethods.RegisterHotKey(this.Handle, 1, NativeMethods.MOD_CONTROL|NativeMethods.MOD_ALT, (int)Keys.K);
+                    //bool success = NativeMethods.RegisterHotKey(this.Handle, 1, modifiers, vk);
+
+                //}
             }
         }
 
