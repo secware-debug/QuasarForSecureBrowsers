@@ -121,9 +121,6 @@
   <data name="AutoPatchETSStatic" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\AutoPatchETSStatic.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="InputBlocker" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\InputBlocker.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="ManualMapInjector_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\ManualMapInjector_x64.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
