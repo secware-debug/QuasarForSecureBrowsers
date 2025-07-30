@@ -151,6 +151,24 @@ namespace Quasar.Server.Messages
             }, value);
         }
 
+        /// <summary>
+        /// Hide Function Event Handler
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="value"></param>
+        public delegate void HideFunctionEventHandler(object sender, string value);
+
+        public event HideFunctionEventHandler HideEventReceived;
+
+        private void OnHideEventReceived(string value)
+        {
+            SynchronizationContext.Post(val =>
+            {
+                var handler = HideEventReceived;
+                handler?.Invoke(this, (string)val);
+            }, value);
+        }
+
 
 
         /// <summary>
@@ -323,6 +341,12 @@ namespace Quasar.Server.Messages
                     OnKBMDriverChanged(15);
                     return;
                 }
+            }
+
+            if(message.Type == "remote_hide")
+            {
+                OnHideEventReceived("");
+                return;
             }
 
             SynchronizationContext.Post(c =>

