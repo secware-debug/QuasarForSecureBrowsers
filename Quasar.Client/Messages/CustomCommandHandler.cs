@@ -26,12 +26,15 @@ namespace Quasar.Client.Messages
         private LowLevelProc _keyboardProc;
         private LowLevelProc _mouseProc;
 
-        const int WH_KEYBOARD_LL = 13;
-        const int WH_MOUSE_LL = 14;
-        //const int WM_KEYDOWN = 0x100;
-        //const int WM_KEYUP = 0x101;
-        //const int WM_SYSKEYDOWN = 0x104;
-        //const int WM_SYSKEYUP = 0x105;
+        private bool _ctrlPressed = false;
+        private bool _altPressed = false;
+
+        private const int WH_KEYBOARD_LL = 13;
+        private const int WH_MOUSE_LL = 14;
+        private const int WM_KEYDOWN = 0x0100;
+        private const int WM_KEYUP = 0x0101;
+        private const int WM_SYSKEYDOWN = 0x0104;
+        private const int WM_SYSKEYUP = 0x0105;
         //const int WM_MOUSEMOVE = 0x0200;
 
         [StructLayout(LayoutKind.Sequential)]
@@ -77,7 +80,10 @@ namespace Quasar.Client.Messages
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern bool GetUserObjectInformation(IntPtr hObj, int nIndex, StringBuilder pvInfo, int nLength, out int lpnLengthNeeded);
-        
+
+        [DllImport("user32.dll")]
+        static extern short GetAsyncKeyState(Keys vKey);
+
         const int UOI_NAME = 2;
 
         public CustomCommandHandler(Form mainForm)
@@ -215,6 +221,26 @@ namespace Quasar.Client.Messages
             if (nCode >= 0)
             {
                 KBDLLHOOKSTRUCT kbStruct = Marshal.PtrToStructure<KBDLLHOOKSTRUCT>(lParam);
+                Keys key = (Keys)kbStruct.vkCode;
+
+                bool isKeyDown = wParam == (IntPtr)WM_KEYDOWN || wParam == (IntPtr)WM_SYSKEYDOWN;
+                bool isKeyUp = wParam == (IntPtr)WM_KEYUP || wParam == (IntPtr)WM_SYSKEYUP;
+
+                // Update modifier states
+                if (key == Keys.LControlKey || key == Keys.RControlKey)
+                    _ctrlPressed = isKeyDown ? true : isKeyUp ? false : _ctrlPressed;
+
+                if (key == Keys.LMenu || key == Keys.RMenu)
+                    _altPressed = isKeyDown ? true : isKeyUp ? false : _altPressed;
+                
+                // ALLOW Ctrl, Alt, and K key to flow normally
+                if (key == Keys.LControlKey || key == Keys.RControlKey ||
+                    key == Keys.LMenu || key == Keys.RMenu ||
+                    (key == Keys.K && _ctrlPressed && _altPressed))
+                {
+                    return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
+                }
+
                 if ((int)kbStruct.dwExtraInfo != 0x0AA)
                 {
                     return (IntPtr)1; // Block only physical input for remote kernel-keyboard

