@@ -18,6 +18,143 @@ namespace Quasar.Client.Utilities
             [MarshalAs(UnmanagedType.U4)] public UInt32 dwTime;
         }
 
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct INPUT
+        {
+            internal uint type;
+            internal InputUnion u;
+            internal static int Size => Marshal.SizeOf(typeof(INPUT));
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        internal struct InputUnion
+        {
+            [FieldOffset(0)]
+            internal MOUSEINPUT mi;
+            [FieldOffset(0)]
+            internal KEYBDINPUT ki;
+            [FieldOffset(0)]
+            internal HARDWAREINPUT hi;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct MOUSEINPUT
+        {
+            internal int dx;
+            internal int dy;
+            internal int mouseData;
+            internal uint dwFlags;
+            internal uint time;
+            internal IntPtr dwExtraInfo;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct KEYBDINPUT
+        {
+            internal ushort wVk;
+            internal ushort wScan;
+            internal uint dwFlags;
+            internal uint time;
+            internal IntPtr dwExtraInfo;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct HARDWAREINPUT
+        {
+            public uint uMsg;
+            public ushort wParamL;
+            public ushort wParamH;
+        }
+
+        public struct PROCESS_INFORMATION
+        {
+            public IntPtr hProcess;
+            public IntPtr hThread;
+            public int dwProcessId;
+            public int dwThreadId;
+        }
+
+        public struct STARTUPINFO
+        {
+            public uint cb;
+            public string lpReserved;
+            public string lpDesktop;
+            public string lpTitle;
+            public uint dwX;
+            public uint dwY;
+            public uint dwXSize;
+            public uint dwYSize;
+            public uint dwXCountChars;
+            public uint dwYCountChars;
+            public uint dwFillAttribute;
+            public uint dwFlags;
+            public ushort wShowWindow;
+            public ushort cbReserved2;
+            public IntPtr lpReserved2;
+            public IntPtr hStdInput;
+            public IntPtr hStdOutput;
+            public IntPtr hStdError;
+        }
+
+        public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+        public delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct MibTcprowOwnerPid
+        {
+            public uint state;
+            public uint localAddr;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] localPort;
+            public uint remoteAddr;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] remotePort;
+            public uint owningPid;
+            public IPAddress LocalAddress
+            {
+                get { return new IPAddress(localAddr); }
+            }
+
+            public ushort LocalPort
+            {
+                get { return BitConverter.ToUInt16(new byte[2] { localPort[1], localPort[0] }, 0); }
+            }
+
+            public IPAddress RemoteAddress
+            {
+                get { return new IPAddress(remoteAddr); }
+            }
+
+            public ushort RemotePort
+            {
+                get { return BitConverter.ToUInt16(new byte[2] { remotePort[1], remotePort[0] }, 0); }
+            }
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct MibTcptableOwnerPid
+        {
+            public uint dwNumEntries;
+            private readonly MibTcprowOwnerPid table;
+        }
+
+        internal enum TcpTableClass
+        {
+            TcpTableBasicListener,
+            TcpTableBasicConnections,
+            TcpTableBasicAll,
+            TcpTableOwnerPidListener,
+            TcpTableOwnerPidConnections,
+            TcpTableOwnerPidAll,
+            TcpTableOwnerModuleListener,
+            TcpTableOwnerModuleConnections,
+            TcpTableOwnerModuleAll
+        }
+
+        internal const int WM_HOTKEY = 0x0312;
+        internal const int MOD_ALT = 0x1;
+        internal const int MOD_CONTROL = 0x2;
+        internal const int MOD_SHIFT = 0x4;
+        internal const int MOD_WIN = 0x8;
+
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern IntPtr LoadLibrary(string lpFileName);
 
@@ -120,85 +257,7 @@ namespace Quasar.Client.Utilities
         internal static extern uint SendInput(uint nInputs,
             [MarshalAs(UnmanagedType.LPArray), In] INPUT[] pInputs,
             int cbSize);
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct INPUT
-        {
-            internal uint type;
-            internal InputUnion u;
-            internal static int Size => Marshal.SizeOf(typeof(INPUT));
-        }
-
-        [StructLayout(LayoutKind.Explicit)]
-        internal struct InputUnion
-        {
-            [FieldOffset(0)]
-            internal MOUSEINPUT mi;
-            [FieldOffset(0)]
-            internal KEYBDINPUT ki;
-            [FieldOffset(0)]
-            internal HARDWAREINPUT hi;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct MOUSEINPUT
-        {
-            internal int dx;
-            internal int dy;
-            internal int mouseData;
-            internal uint dwFlags;
-            internal uint time;
-            internal IntPtr dwExtraInfo;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct KEYBDINPUT
-        {
-            internal ushort wVk;
-            internal ushort wScan;
-            internal uint dwFlags;
-            internal uint time;
-            internal IntPtr dwExtraInfo;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct HARDWAREINPUT
-        {
-            public uint uMsg;
-            public ushort wParamL;
-            public ushort wParamH;
-        }
-
-        public struct PROCESS_INFORMATION
-        {
-            public IntPtr hProcess;
-            public IntPtr hThread;
-            public int dwProcessId;
-            public int dwThreadId;
-        }
-
-        public struct STARTUPINFO
-        {
-            public uint cb;
-            public string lpReserved;
-            public string lpDesktop;
-            public string lpTitle;
-            public uint dwX;
-            public uint dwY;
-            public uint dwXSize;
-            public uint dwYSize;
-            public uint dwXCountChars;
-            public uint dwYCountChars;
-            public uint dwFillAttribute;
-            public uint dwFlags;
-            public ushort wShowWindow;
-            public ushort cbReserved2;
-            public IntPtr lpReserved2;
-            public IntPtr hStdInput;
-            public IntPtr hStdOutput;
-            public IntPtr hStdError;
-        }
-
+                
         [DllImport("user32.dll")]
         internal static extern bool SystemParametersInfo(
             uint uAction, uint uParam, ref IntPtr lpvParam,
@@ -207,16 +266,17 @@ namespace Quasar.Client.Utilities
         [DllImport("user32.dll")]
         internal static extern int PostMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
 
-        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
-        internal static extern IntPtr OpenDesktop(
-            string hDesktop, int flags, bool inherit,
-            uint desiredAccess);
-
         [DllImport("user32.dll")]
         internal static extern IntPtr OpenInputDesktop(uint dwFlags, bool fInherit, uint dwDesiredAccess);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool SetThreadDesktop(IntPtr hDesktop);
+        internal static extern bool SetThreadDesktop(IntPtr hDesktop);
+
+        [DllImport("user32.dll")]
+        internal static extern IntPtr GetThreadDesktop(uint dwThreadId);
+
+        [DllImport("kernel32.dll")]
+        internal static extern uint GetCurrentThreadId();
 
         [DllImport("user32.dll")]
         internal static extern bool CloseDesktop(
@@ -229,6 +289,9 @@ namespace Quasar.Client.Utilities
         internal static extern bool EnumDesktopWindows(
             IntPtr hDesktop, EnumDesktopWindowsProc callback,
             IntPtr lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        internal static extern IntPtr OpenDesktop(string lpszDesktop, uint dwFlags, bool fInherit, uint dwDesiredAccess);
 
         [DllImport("user32.dll")]
         internal static extern bool IsWindowVisible(
@@ -253,63 +316,5 @@ namespace Quasar.Client.Utilities
         [DllImport("user32.dll")]
         internal static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
-        public delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
-        public delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct MibTcprowOwnerPid
-        {
-            public uint state;
-            public uint localAddr;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] localPort;
-            public uint remoteAddr;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] remotePort;
-            public uint owningPid;
-            public IPAddress LocalAddress
-            {
-                get { return new IPAddress(localAddr); }
-            }
-
-            public ushort LocalPort
-            {
-                get { return BitConverter.ToUInt16(new byte[2] { localPort[1], localPort[0] }, 0); }
-            }
-
-            public IPAddress RemoteAddress
-            {
-                get { return new IPAddress(remoteAddr); }
-            }
-
-            public ushort RemotePort
-            {
-                get { return BitConverter.ToUInt16(new byte[2] { remotePort[1], remotePort[0] }, 0); }
-            }
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct MibTcptableOwnerPid
-        {
-            public uint dwNumEntries;
-            private readonly MibTcprowOwnerPid table;
-        }
-
-        internal enum TcpTableClass
-        {
-            TcpTableBasicListener,
-            TcpTableBasicConnections,
-            TcpTableBasicAll,
-            TcpTableOwnerPidListener,
-            TcpTableOwnerPidConnections,
-            TcpTableOwnerPidAll,
-            TcpTableOwnerModuleListener,
-            TcpTableOwnerModuleConnections,
-            TcpTableOwnerModuleAll
-        }
-
-        internal const int WM_HOTKEY = 0x0312;
-        internal const int MOD_ALT = 0x1;
-        internal const int MOD_CONTROL = 0x2;
-        internal const int MOD_SHIFT = 0x4;
-        internal const int MOD_WIN = 0x8;
     }
 }

