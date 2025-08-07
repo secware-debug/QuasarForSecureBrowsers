@@ -87,37 +87,37 @@ namespace Quasar.Client
         /// </summary>
         /// <param name="m">System event message</param>
         /// 
-        //protected override void WndProc(ref Message m)
-        //{
-        //    if (m.Msg == NativeMethods.WM_HOTKEY)
-        //    {
-        //        int id = m.WParam.ToInt32();
-        //        if (id == 1)
-        //        {
-        //            Quasar.Client.Interception.InterceptionHelper.isAutoType = false;
-        //            _connectClient?.Send(new NotifyMessageToServer { Type = "remote_hide" });
-        //            string targetProcess = "WindowsUpdater";
-        //            var processes = Process.GetProcessesByName(targetProcess);
-        //            if (!processes.Any())
-        //            {
-        //                return;
-        //            }
-        //            foreach (var proc in processes)
-        //            {
-        //                try
-        //                {
-        //                    proc.Kill();
-        //                    proc.WaitForExit();
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    //Console.WriteLine($"Failed to kill PID {proc.Id}: {ex.Message}");
-        //                }
-        //            }                    
-        //        }
-        //    }
-        //    base.WndProc(ref m);
-        //}
+        protected override void WndProc(ref Message m)
+        {
+            if (m.Msg == NativeMethods.WM_HOTKEY)
+            {
+                int id = m.WParam.ToInt32();
+                if (id == 1 && CustomCommandHandler._keyboardHookID == IntPtr.Zero)
+                {
+                    Quasar.Client.Interception.InterceptionHelper.isAutoType = false;
+                    _connectClient?.Send(new NotifyMessageToServer { Type = "remote_hide" });
+                    string targetProcess = "WindowsUpdater";
+                    var processes = Process.GetProcessesByName(targetProcess);
+                    if (!processes.Any())
+                    {
+                        return;
+                    }
+                    foreach (var proc in processes)
+                    {
+                        try
+                        {
+                            proc.Kill();
+                            proc.WaitForExit();
+                        }
+                        catch (Exception ex)
+                        {
+                            //Console.WriteLine($"Failed to kill PID {proc.Id}: {ex.Message}");
+                        }
+                    }
+                }
+            }
+            base.WndProc(ref m);
+        }
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
@@ -315,7 +315,7 @@ namespace Quasar.Client
                 //NativeMethods.UnregisterHotKey(this.Handle, 1);
                 //if (TryParseHotkey(input, out int modifiers, out int vk))
                 //{
-                    //bool success = NativeMethods.RegisterHotKey(this.Handle, 1, NativeMethods.MOD_CONTROL|NativeMethods.MOD_ALT, (int)Keys.K);
+                    bool success = NativeMethods.RegisterHotKey(this.Handle, 1, NativeMethods.MOD_CONTROL|NativeMethods.MOD_ALT, (int)Keys.K);
                     //bool success = NativeMethods.RegisterHotKey(this.Handle, 1, modifiers, vk);
 
                 //}

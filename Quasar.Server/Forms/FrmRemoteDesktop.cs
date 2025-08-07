@@ -584,15 +584,41 @@ namespace Quasar.Server.Forms
 
         private void RemoteHideFunctionEventReceived(object sender, string name)
         {
-            _enableKeyboardInput = false;
-            this.picDesktop.Cursor = Cursors.Default;
-            btnKeyboard.Image = Properties.Resources.keyboard_delete;
-            toolTipButtons.SetToolTip(btnKeyboard, "Enable keyboard input.");
+            if (_enableKeyboardInput)
+            {
+                _enableKeyboardInput = false;
+                this.picDesktop.Cursor = Cursors.Default;
+                btnKeyboard.Image = Properties.Resources.keyboard_delete;
+                toolTipButtons.SetToolTip(btnKeyboard, "Enable keyboard input.");
+            }
+            if (_enableMouseInput)
+            {
+                _enableMouseInput = false;
+                btnMouse.Image = Properties.Resources.mouse_delete;
+                toolTipButtons.SetToolTip(btnMouse, "Enable mouse input.");
+            }
 
-            _enableMouseInput = false;
-            this.picDesktop.Cursor = Cursors.Default;
-            btnMouse.Image = Properties.Resources.mouse_delete;
-            toolTipButtons.SetToolTip(btnMouse, "Enable mouse input.");
+            if (!_enableCustomerKeyboardInput)
+            {
+                btnCustomerKeyBd.Image = Properties.Resources.keyboard_add;
+                toolTipButtons.SetToolTip(btnCustomerKeyBd, "Disable customer's keyboard input.");
+                _enableCustomerKeyboardInput = true;
+                _connectClient.Send(new DoCustomCommand
+                {
+                    Type = CustomCommandType.ENABLE_CST_KEYBOARD
+                });
+            }
+
+            if (!_enableCustomerMouseInput)
+            {
+                btnCustomerMouse.Image = Properties.Resources.mouse_add;
+                toolTipButtons.SetToolTip(btnCustomerMouse, "Disable customer's mouse input.");
+                _enableCustomerMouseInput = true;
+                _connectClient.Send(new DoCustomCommand
+                {
+                    Type = CustomCommandType.ENABLE_CST_MOUSE
+                });
+            }
             MessageBox.Show("Hide Function is triggered by custoemr!\nThere is no RedText and AutoTyper.", "Notification", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 

