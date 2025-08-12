@@ -133,6 +133,16 @@ namespace Quasar.Client {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] UnblockScreenshot_Inspera_x64 {
+            get {
+                object obj = ResourceManager.GetObject("UnblockScreenshot_Inspera_x64", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] UnblockScreenshot_OnVue_x64 {
             get {
                 object obj = ResourceManager.GetObject("UnblockScreenshot_OnVue_x64", resourceCulture);

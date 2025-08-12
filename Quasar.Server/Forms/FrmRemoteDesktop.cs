@@ -98,7 +98,7 @@ namespace Quasar.Server.Forms
         private const int USER_CMD_GMAT = 1004;
         private const int USER_CMD_PROPROCTOR = 1005;
         private const int USER_CMD_BLUEBOOK_SAT = 1006;
-        //private const int USER_CMD_UNKNOWN7 = 1007;
+        private const int USER_CMD_INSPERA = 1007;
         //private const int USER_CMD_UNKNOWN8 = 1008;
         //private const int USER_CMD_UNKNOWN9 = 1009;
         //private const int USER_CMD_UNKNOWN10 = 1010;
@@ -218,7 +218,7 @@ namespace Quasar.Server.Forms
             AppendMenu(systemMenu, 0x0, USER_CMD_GMAT, "GMAT");
             AppendMenu(systemMenu, 0x0, USER_CMD_PROPROCTOR, "ProProctor");
             AppendMenu(systemMenu, 0x0, USER_CMD_BLUEBOOK_SAT, "Bluebook (SAT)");
-            //AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN7, "Unknown7");
+            AppendMenu(systemMenu, 0x0, USER_CMD_INSPERA, "InsperaExam");
             //AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN8, "Unknown8");
             //AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN9, "Unknown9");
             //AppendMenu(systemMenu, 0x0, USER_CMD_UNKNOWN10, "Unknown10");
@@ -281,6 +281,9 @@ namespace Quasar.Server.Forms
                             return;
                         case USER_CMD_PROPROCTOR:
                             _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.ProProctor});
+                            return;
+                        case USER_CMD_INSPERA:
+                            _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.Inspera });
                             return;
                         case USER_CMD_GMAT:
                             _connectClient.Send(new DoUnblockScreenCapture { browserType = BrowserTypeToUnblock.GMAT, args = "inject" });

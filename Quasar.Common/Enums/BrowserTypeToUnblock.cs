@@ -14,7 +14,7 @@ namespace Quasar.Common.Enums
         GMAT,
         ProProctor,
         Bluebook_SAT,
-        Unknown7,
+        Inspera,
         Unknown8,
         Unknown9,
         Unknown10,

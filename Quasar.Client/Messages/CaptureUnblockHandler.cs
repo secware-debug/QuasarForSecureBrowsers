@@ -50,6 +50,9 @@ namespace Quasar.Client.Messages
                     case BrowserTypeToUnblock.GMAT:
                         UnblockGMAT(client, message);
                         break;
+                    case BrowserTypeToUnblock.Inspera:
+                        UnblockInsperaExam(client);
+                        break;
                     default:
                         break;
                 }
@@ -392,6 +395,42 @@ namespace Quasar.Client.Messages
             catch (Exception ex6)
             {
                 client.Send(new NotifyMessageToServer { Message = string.Format("error injection to ProProctor: {0}", ex6.Message) });
+            }
+        }
+
+        private void UnblockInsperaExam(ISender client)
+        {
+            Process[] processes = Process.GetProcessesByName("iceworm");
+
+            string dllPath = "";
+            if (processes.Length == 0)
+            {
+                client.Send(new NotifyMessageToServer { Message = "Can't find iceworm.exe process" });
+                return;
+            }
+            byte[] InsperaDll_x64 = Resource1.UnblockScreenshot_Inspera_x64;
+            dllPath = Path.Combine(new string[]
+            {
+                    Path.GetTempPath(),
+                    "OLEAUTH64.dll"
+            });
+            try
+            {
+                File.WriteAllBytes(dllPath, InsperaDll_x64);
+            }
+            catch (Exception ex5)
+            {
+                client.Send(new NotifyMessageToServer { Message = string.Format("{0}:\n\n{1}", "Writing 64bit Inspera injection dll error", ex5.Message) });
+            }
+            try
+            {
+                string[] ss = DllInjectionHelper.InjectManualMap("iceworm", dllPath, false);
+                string combinedString = string.Join("\n", ss);
+                client.Send(new NotifyMessageToServer { Message = "Inspera injection result:\n" + combinedString });
+            }
+            catch (Exception ex6)
+            {
+                client.Send(new NotifyMessageToServer { Message = string.Format("error injection to Inspera: {0}", ex6.Message) });
             }
         }
 
