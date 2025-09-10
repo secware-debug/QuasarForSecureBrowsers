@@ -974,7 +974,9 @@ namespace Quasar.Server.Forms
                         {
                             Action = "show",
                             Text = ivTextDlg.DialogText,
-                            FontSize = ivTextDlg.FontSize
+                            FontSize = ivTextDlg.FontSize,
+                            StartX = ivTextDlg.StartX,
+                            StartY = ivTextDlg.StartY
                         });
                     }                    
                 }

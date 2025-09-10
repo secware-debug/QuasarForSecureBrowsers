@@ -34,11 +34,15 @@
             this.txtFontSize = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.chkTextSave = new System.Windows.Forms.CheckBox();
+            this.txtStartX = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtStartY = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnOk
             // 
-            this.btnOk.Location = new System.Drawing.Point(616, 101);
+            this.btnOk.Location = new System.Drawing.Point(616, 153);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(75, 23);
             this.btnOk.TabIndex = 0;
@@ -48,7 +52,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(616, 130);
+            this.btnCancel.Location = new System.Drawing.Point(616, 182);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 0;
@@ -61,12 +65,12 @@
             this.txtContent.Location = new System.Drawing.Point(13, 13);
             this.txtContent.Multiline = true;
             this.txtContent.Name = "txtContent";
-            this.txtContent.Size = new System.Drawing.Size(589, 208);
+            this.txtContent.Size = new System.Drawing.Size(589, 235);
             this.txtContent.TabIndex = 1;
             // 
             // txtFontSize
             // 
-            this.txtFontSize.Location = new System.Drawing.Point(617, 51);
+            this.txtFontSize.Location = new System.Drawing.Point(617, 39);
             this.txtFontSize.Name = "txtFontSize";
             this.txtFontSize.Size = new System.Drawing.Size(75, 20);
             this.txtFontSize.TabIndex = 2;
@@ -76,7 +80,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(619, 33);
+            this.label1.Location = new System.Drawing.Point(619, 21);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(51, 13);
             this.label1.TabIndex = 3;
@@ -85,7 +89,7 @@
             // chkTextSave
             // 
             this.chkTextSave.AutoSize = true;
-            this.chkTextSave.Location = new System.Drawing.Point(626, 164);
+            this.chkTextSave.Location = new System.Drawing.Point(626, 216);
             this.chkTextSave.Name = "chkTextSave";
             this.chkTextSave.Size = new System.Drawing.Size(51, 17);
             this.chkTextSave.TabIndex = 4;
@@ -93,13 +97,53 @@
             this.chkTextSave.UseVisualStyleBackColor = true;
             this.chkTextSave.CheckedChanged += new System.EventHandler(this.chkTextSave_CheckedChanged);
             // 
+            // txtStartX
+            // 
+            this.txtStartX.Location = new System.Drawing.Point(616, 84);
+            this.txtStartX.Name = "txtStartX";
+            this.txtStartX.Size = new System.Drawing.Size(75, 20);
+            this.txtStartX.TabIndex = 2;
+            this.txtStartX.Text = "0";
+            this.txtStartX.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtFontSize_KeyPress);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(618, 66);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(39, 13);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Start X";
+            // 
+            // txtStartY
+            // 
+            this.txtStartY.Location = new System.Drawing.Point(617, 127);
+            this.txtStartY.Name = "txtStartY";
+            this.txtStartY.Size = new System.Drawing.Size(75, 20);
+            this.txtStartY.TabIndex = 2;
+            this.txtStartY.Text = "0";
+            this.txtStartY.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtFontSize_KeyPress);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(619, 109);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(39, 13);
+            this.label3.TabIndex = 3;
+            this.label3.Text = "Start Y";
+            // 
             // FrmIVText
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(704, 233);
+            this.ClientSize = new System.Drawing.Size(704, 260);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.chkTextSave);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.txtStartY);
+            this.Controls.Add(this.txtStartX);
             this.Controls.Add(this.txtFontSize);
             this.Controls.Add(this.txtContent);
             this.Controls.Add(this.btnCancel);
@@ -119,5 +163,9 @@
         private System.Windows.Forms.TextBox txtFontSize;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox chkTextSave;
+        private System.Windows.Forms.TextBox txtStartX;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox txtStartY;
+        private System.Windows.Forms.Label label3;
     }
 }

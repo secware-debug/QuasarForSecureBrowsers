@@ -21,5 +21,11 @@ namespace Quasar.Common.Messages
 
         [ProtoMember(4)]
         public int FontSize { get; set; }
+
+        [ProtoMember(5)]
+        public int StartX { get; set; }
+
+        [ProtoMember(6)]
+        public int StartY { get; set; }
     }
 }

@@ -10,6 +10,8 @@ namespace Quasar.Server.Forms
         private const string FontSizeKey = "FontSize";
         private const string IsSavedKey = "TextSaved";
         private const string SavedTextKey = "SavedText";
+        private const string StartXKey = "StartXPos";
+        private const string StartYKey = "StartYPos";
 
         public FrmIVText()
         {
@@ -28,6 +30,20 @@ namespace Quasar.Server.Forms
                     if (fontSizeValue != null)
                     {
                         txtFontSize.Text = fontSizeValue.ToString();
+                    }
+
+                    // Load StartX value
+                    object startXValue = key.GetValue(StartXKey);
+                    if (startXValue != null)
+                    {
+                        txtStartX.Text = startXValue.ToString();
+                    }
+
+                    // Load StartY value
+                    object startYValue = key.GetValue(StartYKey);
+                    if (startYValue != null)
+                    {
+                        txtStartY.Text = startYValue.ToString();
                     }
 
                     // Load IsSaved state
@@ -60,6 +76,8 @@ namespace Quasar.Server.Forms
                 if (key != null)
                 {
                     key.SetValue(FontSizeKey, txtFontSize.Text);
+                    key.SetValue(StartXKey, txtStartX.Text);
+                    key.SetValue(StartYKey, txtStartY.Text);
                     if (chkTextSave.Checked) { 
                         key.SetValue(IsSavedKey, true);
                         key.SetValue(SavedTextKey, txtContent.Text);
@@ -95,6 +113,15 @@ namespace Quasar.Server.Forms
         public int FontSize
         {
             get { return int.Parse(txtFontSize.Text); }
+        }
+
+        public int StartX
+        {
+            get { return int.Parse(txtStartX.Text); }
+        }
+        public int StartY
+        {
+            get { return int.Parse(txtStartY.Text); }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
