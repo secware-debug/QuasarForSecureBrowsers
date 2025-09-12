@@ -12,7 +12,8 @@ namespace Quasar.Server.Forms
         private const string SavedTextKey = "SavedText";
         private const string StartXKey = "StartXPos";
         private const string StartYKey = "StartYPos";
-
+        private const string EndXKey = "EndXPos";
+        private const string EndYKey = "EndYPos";
         public FrmIVText()
         {
             InitializeComponent();
@@ -44,6 +45,20 @@ namespace Quasar.Server.Forms
                     if (startYValue != null)
                     {
                         txtStartY.Text = startYValue.ToString();
+                    }
+
+                    // Load EndX value
+                    object endXValue = key.GetValue(EndXKey);
+                    if (endXValue != null)
+                    {
+                        txtEndX.Text = endXValue.ToString();
+                    }
+
+                    // Load EndY value
+                    object endYValue = key.GetValue(EndYKey);
+                    if (endYValue != null)
+                    {
+                        txtEndY.Text = endYValue.ToString();
                     }
 
                     // Load IsSaved state
@@ -78,6 +93,8 @@ namespace Quasar.Server.Forms
                     key.SetValue(FontSizeKey, txtFontSize.Text);
                     key.SetValue(StartXKey, txtStartX.Text);
                     key.SetValue(StartYKey, txtStartY.Text);
+                    key.SetValue(EndXKey, txtEndX.Text);
+                    key.SetValue(EndYKey, txtEndY.Text);
                     if (chkTextSave.Checked) { 
                         key.SetValue(IsSavedKey, true);
                         key.SetValue(SavedTextKey, txtContent.Text);
@@ -122,6 +139,14 @@ namespace Quasar.Server.Forms
         public int StartY
         {
             get { return int.Parse(txtStartY.Text); }
+        }
+        public int EndX
+        {
+            get { return int.Parse(txtEndX.Text); }
+        }
+        public int EndY
+        {
+            get { return int.Parse(txtEndY.Text); }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

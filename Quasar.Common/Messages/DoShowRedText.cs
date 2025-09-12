@@ -27,5 +27,11 @@ namespace Quasar.Common.Messages
 
         [ProtoMember(6)]
         public int StartY { get; set; }
+
+        [ProtoMember(7)]
+        public int EndX { get; set; }
+
+        [ProtoMember(8)]
+        public int EndY { get; set; }
     }
 }
