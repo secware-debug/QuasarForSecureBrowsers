@@ -33,5 +33,17 @@ namespace Quasar.Common.Messages
 
         [ProtoMember(8)]
         public int EndY { get; set; }
+
+        [ProtoMember(9)]
+        public uint BackGroundColor { get; set; }
+
+        [ProtoMember(10)]
+        public uint TextColor { get; set; }
+        
+        [ProtoMember(11)]
+        public bool ExistBackgroundColor { get; set; }
+
+        [ProtoMember(12)]
+        public int Opacity { get; set; }
     }
 }

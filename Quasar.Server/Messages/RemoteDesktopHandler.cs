@@ -6,6 +6,7 @@ using Quasar.Server.Networking;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Net.WebSockets;
 using System.Runtime.Serialization.Json;
 using System.Windows.Forms;
 
@@ -17,6 +18,10 @@ namespace Quasar.Server.Messages
     /// </summary>
     public class RemoteDesktopHandler : MessageProcessorBase<Bitmap>, IDisposable
     {
+
+        public static int ClientWidth = 0;
+        public static int ClientHeight = 0;
+
         /// <summary>
         /// States if the client is currently streaming desktop frames.
         /// </summary>
@@ -319,6 +324,9 @@ namespace Quasar.Server.Messages
                 message.Image = null;
 
                 client.Send(new GetDesktop {Quality = message.Quality, DisplayIndex = message.Monitor, DesktopName = _remoteDesktopName});
+
+                ClientWidth = message.Resolution.Width;
+                ClientHeight = message.Resolution.Height;
             }
         }
 

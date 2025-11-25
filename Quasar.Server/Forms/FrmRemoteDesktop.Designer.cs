@@ -59,6 +59,7 @@ namespace Quasar.Server.Forms
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.picDesktop = new Quasar.Server.Controls.RapidPictureBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.barQuality)).BeginInit();
             this.panelTop.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -121,7 +122,7 @@ namespace Quasar.Server.Forms
             // btnMouse
             // 
             this.btnMouse.Image = global::Quasar.Server.Properties.Resources.mouse_delete;
-            this.btnMouse.Location = new System.Drawing.Point(302, 5);
+            this.btnMouse.Location = new System.Drawing.Point(279, 5);
             this.btnMouse.Name = "btnMouse";
             this.btnMouse.Size = new System.Drawing.Size(28, 28);
             this.btnMouse.TabIndex = 6;
@@ -141,6 +142,7 @@ namespace Quasar.Server.Forms
             this.panelTop.Controls.Add(this.btnUnkernel);
             this.panelTop.Controls.Add(this.btnAutoTypeStart);
             this.panelTop.Controls.Add(this.btnKernel);
+            this.panelTop.Controls.Add(this.button1);
             this.panelTop.Controls.Add(this.btnSetIT);
             this.panelTop.Controls.Add(this.btnKeyboard);
             this.panelTop.Controls.Add(this.cmbBoxDesktops);
@@ -162,7 +164,7 @@ namespace Quasar.Server.Forms
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
             this.groupBox1.Controls.Add(this.btnCustomerKeyBd);
             this.groupBox1.Controls.Add(this.btnCustomerMouse);
-            this.groupBox1.Location = new System.Drawing.Point(374, 2);
+            this.groupBox1.Location = new System.Drawing.Point(351, 2);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(79, 52);
             this.groupBox1.TabIndex = 13;
@@ -278,7 +280,7 @@ namespace Quasar.Server.Forms
             // btnKeyboard
             // 
             this.btnKeyboard.Image = global::Quasar.Server.Properties.Resources.keyboard_delete;
-            this.btnKeyboard.Location = new System.Drawing.Point(336, 5);
+            this.btnKeyboard.Location = new System.Drawing.Point(313, 5);
             this.btnKeyboard.Name = "btnKeyboard";
             this.btnKeyboard.Size = new System.Drawing.Size(28, 28);
             this.btnKeyboard.TabIndex = 9;
@@ -309,7 +311,7 @@ namespace Quasar.Server.Forms
             // 
             // btnHide
             // 
-            this.btnHide.Location = new System.Drawing.Point(308, 35);
+            this.btnHide.Location = new System.Drawing.Point(285, 35);
             this.btnHide.Name = "btnHide";
             this.btnHide.Size = new System.Drawing.Size(54, 19);
             this.btnHide.TabIndex = 7;
@@ -356,6 +358,16 @@ namespace Quasar.Server.Forms
             this.picDesktop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseDown);
             this.picDesktop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseMove);
             this.picDesktop.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseUp);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(440, 8);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(21, 43);
+            this.button1.TabIndex = 10;
+            this.button1.Text = "WH";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.btnGetWHofClient_Click);
             // 
             // FrmRemoteDesktop
             // 
@@ -413,5 +425,6 @@ namespace Quasar.Server.Forms
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.Button btnCustomerKeyBd;
         private System.Windows.Forms.Button btnCustomerMouse;
+        private System.Windows.Forms.Button button1;
     }
 }

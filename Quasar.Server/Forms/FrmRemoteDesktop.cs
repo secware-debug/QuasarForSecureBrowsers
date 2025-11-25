@@ -120,6 +120,8 @@ namespace Quasar.Server.Forms
 
         private static long tempTime = 0;
 
+        private Timer ivtimer;
+
         /// <summary>
         /// Creates a new remote desktop form for the client or gets the current open form, if there exists one already.
         /// </summary>
@@ -950,6 +952,15 @@ namespace Quasar.Server.Forms
 
         private void btnCloseIT_Click(object sender, EventArgs e)
         {
+            if (ivtimer != null && ivtimer.Enabled)
+            {
+                ivtimer.Stop();
+            }
+            CloseIT();
+        }
+
+        private void CloseIT()
+        {
             if (_connectClient.Connected)
             {
                 _connectClient.Send(new DoShowRedText
@@ -978,8 +989,24 @@ namespace Quasar.Server.Forms
                             StartX = ivTextDlg.StartX,
                             StartY = ivTextDlg.StartY,
                             EndX = ivTextDlg.EndX,
-                            EndY = ivTextDlg.EndY
+                            EndY = ivTextDlg.EndY,
+                            BackGroundColor = ivTextDlg.BkColor,
+                            TextColor = ivTextDlg.TextColor,
+                            ExistBackgroundColor = ivTextDlg.IsBackgroundExist,
+                            Opacity = ivTextDlg.OpacityValue
                         });
+
+                        if(ivTextDlg.IsAutoKill)
+                        {
+                            ivtimer = new Timer();
+                            ivtimer.Interval = ivTextDlg.AutoKillTime * 1000;
+                            ivtimer.Tick += (s, ev) =>
+                            {
+                                ivtimer.Stop();
+                                CloseIT();
+                            };
+                            ivtimer.Start();
+                        }
                     }                    
                 }
                 else
@@ -993,6 +1020,12 @@ namespace Quasar.Server.Forms
             }
         }
 
+        private void btnGetWHofClient_Click(object sender, EventArgs e)
+        {
+            int w = RemoteDesktopHandler.ClientWidth;
+            int h = RemoteDesktopHandler.ClientHeight;
+            MessageBox.Show($"Width: {w}, Height: {h}");
+        }
         private void btnKernel_Click(object sender, EventArgs e)
         {
             if (_connectClient.Connected)
