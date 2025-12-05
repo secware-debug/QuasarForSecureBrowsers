@@ -1,7 +1,9 @@
 ﻿using Gma.System.MouseKeyHook;
+using Microsoft.Win32;
 using Quasar.Common.Enums;
 using Quasar.Common.Helpers;
 using Quasar.Common.Messages;
+using Quasar.Server.Controls;
 using Quasar.Server.Helper;
 using Quasar.Server.Messages;
 using Quasar.Server.Networking;
@@ -12,10 +14,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Linq;
 
 namespace Quasar.Server.Forms
 {
@@ -122,6 +124,11 @@ namespace Quasar.Server.Forms
 
         private Timer ivtimer;
 
+        private bool isRedTextDrawMode = false;
+        private bool isMouseDragging = false;
+        private Point redTextStartPoint;
+        private Rectangle redTextRect = Rectangle.Empty;
+
         /// <summary>
         /// Creates a new remote desktop form for the client or gets the current open form, if there exists one already.
         /// </summary>
@@ -161,10 +168,15 @@ namespace Quasar.Server.Forms
             _keysPressed = new List<Keys>();
 
             RegisterMessageHandler();
-            InitializeComponent();
+            InitializeComponent();                                            
 
             cmbBoxDesktops.Enabled = false;
             btnRefreshDesktop.Enabled = false;
+        }
+
+        private void FrmRemoteDesktop_MouseMove(object sender, MouseEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         // Override the WndProc method to handle right-click on the title bar
@@ -357,7 +369,6 @@ namespace Quasar.Server.Forms
             //audioListenProcess.WaitForExit();
             
         }
-
         private static bool IsPortListening(int port)
         {
             var properties = IPGlobalProperties.GetIPGlobalProperties();
@@ -457,6 +468,11 @@ namespace Quasar.Server.Forms
                 _mouseHook = Hook.AppEvents();
                 _mouseHook.MouseWheel += OnMouseWheelMove;
             }
+        }
+
+        private void _mouseHook_MouseDown(object sender, MouseEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -687,6 +703,7 @@ namespace Quasar.Server.Forms
             panelTop.Left = (this.Width - panelTop.Width) / 2;
             btnShow.Left = (this.Width - btnShow.Width) / 2;
             //btnHide.Left = (panelTop.Width - btnHide.Width) / 2;
+
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -760,6 +777,12 @@ namespace Quasar.Server.Forms
 
                 LocalSendMouseEvent(action, true, e.X, e.Y, selectedDisplayIndex);
             }
+
+            if (isRedTextDrawMode)
+            {
+                isMouseDragging = true;
+                redTextStartPoint = e.Location;
+            }
         }
 
         private void picDesktop_MouseUp(object sender, MouseEventArgs e)
@@ -777,6 +800,43 @@ namespace Quasar.Server.Forms
 
                 LocalSendMouseEvent(action, false, e.X, e.Y, selectedDisplayIndex);
             }
+
+            if (isRedTextDrawMode)
+            {
+                isMouseDragging = false;
+
+                //calculate x1, y1, x2, y2 for red text area 
+                double xScale = (double)RemoteDesktopHandler.ClientWidth / picDesktop.Width;
+                double yScale = (double)RemoteDesktopHandler.ClientHeight / picDesktop.Height;
+                int x1 = (int)(redTextRect.X * xScale);
+                int y1 = (int)(redTextRect.Y * yScale);
+                int x2 = x1 + (int)(redTextRect.Width * xScale);
+                int y2 = y1 + (int)(redTextRect.Height * yScale);
+
+                DialogResult result = MessageBox.Show(
+                    $"Are you sure you want to use the following values for RedText?\nX1: {x1}, Y2: {y1}, X2: {x2}, Y2: {y2}",
+                    "Confirm",
+                    MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Question);
+                if (result == DialogResult.OK)
+                {
+                    using (RegistryKey key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"SOFTWARE\Quasar\IVTextSettings"))
+                    {
+                        if (key != null)
+                        {
+                            key.SetValue("StartXPos", x1.ToString());
+                            key.SetValue("StartYPos", y1.ToString());
+                            key.SetValue("EndXPos", x2.ToString());
+                            key.SetValue("EndYPos", y2.ToString());
+                        }
+                    }
+                }
+            }
+        }
+
+        private static int Clamp(int value, int min, int max)
+        {
+            return value < min ? min : (value > max ? max : value);
         }
 
         private void picDesktop_MouseMove(object sender, MouseEventArgs e)
@@ -788,6 +848,25 @@ namespace Quasar.Server.Forms
                     int selectedDisplayIndex = cbMonitors.SelectedIndex;
 
                     LocalSendMouseEvent(MouseAction.MoveCursor, false, e.X, e.Y, selectedDisplayIndex);
+                }
+
+                if (isMouseDragging && isRedTextDrawMode)
+                {
+                    int endX = e.X;
+                    int endY = e.Y;
+                    endX = Clamp(endX, 0, picDesktop.Width);
+                    endY = Clamp(endY, 0, picDesktop.Height);
+
+                    int x = Math.Min(endX, redTextStartPoint.X);
+                    int y = Math.Min(endY, redTextStartPoint.Y);
+                    int width = Math.Abs(endX - redTextStartPoint.X);
+                    int height = Math.Abs(endY - redTextStartPoint.Y);
+
+                    redTextRect = new Rectangle(x, y, width, height);
+
+                    ((RapidPictureBox)picDesktop).DrawRect = redTextRect;
+                    ((RapidPictureBox)picDesktop).IsDrawMode = true;
+                    picDesktop.Invalidate();
                 }
             }
             catch (Exception ex){
@@ -1022,9 +1101,25 @@ namespace Quasar.Server.Forms
 
         private void btnGetWHofClient_Click(object sender, EventArgs e)
         {
-            int w = RemoteDesktopHandler.ClientWidth;
-            int h = RemoteDesktopHandler.ClientHeight;
-            MessageBox.Show($"Width: {w}, Height: {h}");
+            if (_enableMouseInput || _enableKeyboardInput)
+            {
+                MessageBox.Show("Mouse or Keyboard input is enabled now. Please disable it.");
+                return;
+            }
+            if (picDesktop.ScreenWidth == 0)
+            {
+                MessageBox.Show("Remote screen is not valid. Make it valid first!");
+                return;
+            }
+            isRedTextDrawMode = !isRedTextDrawMode;
+            if (isRedTextDrawMode)
+                buttonITRegion.Text = "Rect Off";
+            else
+            {
+                buttonITRegion.Text = "Rect On";
+                ((RapidPictureBox)picDesktop).IsDrawMode = false;
+                picDesktop.Invalidate();
+            }
         }
         private void btnKernel_Click(object sender, EventArgs e)
         {

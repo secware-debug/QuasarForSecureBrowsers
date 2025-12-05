@@ -21,6 +21,17 @@ namespace Quasar.Server.Controls
     /// </summary>
     public class RapidPictureBox : PictureBox, IRapidPictureBox
     {
+
+        /// <summary>
+        /// Rectangle object to draw redtext content area
+        /// </summary>
+        public Rectangle DrawRect = Rectangle.Empty;
+
+        /// <summary>
+        /// True if rectangle for redtext is currently drawing, else False
+        /// </summary>
+        public bool IsDrawMode = false;
+
         /// <summary>
         /// True if the PictureBox is currently streaming images, else False.
         /// </summary>
@@ -168,6 +179,14 @@ namespace Quasar.Server.Controls
                 if (GetImageSafe != null)
                 {
                     pe.Graphics.DrawImage(GetImageSafe, Location);
+                }
+            }
+
+            if(ScreenHeight != 0 && ScreenWidth != 0 && IsDrawMode)
+            {
+                using (Pen p = new Pen(Color.Red, 2))
+                {
+                    pe.Graphics.DrawRectangle(p, DrawRect);
                 }
             }
         }

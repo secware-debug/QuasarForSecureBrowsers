@@ -49,6 +49,7 @@ namespace Quasar.Server.Forms
             this.btnUnkernel = new System.Windows.Forms.Button();
             this.btnAutoTypeStart = new System.Windows.Forms.Button();
             this.btnKernel = new System.Windows.Forms.Button();
+            this.buttonITRegion = new System.Windows.Forms.Button();
             this.btnSetIT = new System.Windows.Forms.Button();
             this.btnKeyboard = new System.Windows.Forms.Button();
             this.cmbBoxDesktops = new System.Windows.Forms.ComboBox();
@@ -59,7 +60,6 @@ namespace Quasar.Server.Forms
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.picDesktop = new Quasar.Server.Controls.RapidPictureBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.barQuality)).BeginInit();
             this.panelTop.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -142,7 +142,7 @@ namespace Quasar.Server.Forms
             this.panelTop.Controls.Add(this.btnUnkernel);
             this.panelTop.Controls.Add(this.btnAutoTypeStart);
             this.panelTop.Controls.Add(this.btnKernel);
-            this.panelTop.Controls.Add(this.button1);
+            this.panelTop.Controls.Add(this.buttonITRegion);
             this.panelTop.Controls.Add(this.btnSetIT);
             this.panelTop.Controls.Add(this.btnKeyboard);
             this.panelTop.Controls.Add(this.cmbBoxDesktops);
@@ -164,7 +164,7 @@ namespace Quasar.Server.Forms
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
             this.groupBox1.Controls.Add(this.btnCustomerKeyBd);
             this.groupBox1.Controls.Add(this.btnCustomerMouse);
-            this.groupBox1.Location = new System.Drawing.Point(351, 2);
+            this.groupBox1.Location = new System.Drawing.Point(347, 2);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(79, 52);
             this.groupBox1.TabIndex = 13;
@@ -219,7 +219,7 @@ namespace Quasar.Server.Forms
             // 
             // btnCloseIT
             // 
-            this.btnCloseIT.Location = new System.Drawing.Point(463, 29);
+            this.btnCloseIT.Location = new System.Drawing.Point(476, 29);
             this.btnCloseIT.Name = "btnCloseIT";
             this.btnCloseIT.Size = new System.Drawing.Size(64, 23);
             this.btnCloseIT.TabIndex = 10;
@@ -229,7 +229,7 @@ namespace Quasar.Server.Forms
             // 
             // btnAutoTypeStop
             // 
-            this.btnAutoTypeStop.Location = new System.Drawing.Point(603, 30);
+            this.btnAutoTypeStop.Location = new System.Drawing.Point(616, 30);
             this.btnAutoTypeStop.Name = "btnAutoTypeStop";
             this.btnAutoTypeStop.Size = new System.Drawing.Size(64, 23);
             this.btnAutoTypeStop.TabIndex = 10;
@@ -239,7 +239,7 @@ namespace Quasar.Server.Forms
             // 
             // btnUnkernel
             // 
-            this.btnUnkernel.Location = new System.Drawing.Point(533, 30);
+            this.btnUnkernel.Location = new System.Drawing.Point(546, 30);
             this.btnUnkernel.Name = "btnUnkernel";
             this.btnUnkernel.Size = new System.Drawing.Size(64, 23);
             this.btnUnkernel.TabIndex = 10;
@@ -249,7 +249,7 @@ namespace Quasar.Server.Forms
             // 
             // btnAutoTypeStart
             // 
-            this.btnAutoTypeStart.Location = new System.Drawing.Point(603, 5);
+            this.btnAutoTypeStart.Location = new System.Drawing.Point(616, 5);
             this.btnAutoTypeStart.Name = "btnAutoTypeStart";
             this.btnAutoTypeStart.Size = new System.Drawing.Size(64, 23);
             this.btnAutoTypeStart.TabIndex = 10;
@@ -259,7 +259,7 @@ namespace Quasar.Server.Forms
             // 
             // btnKernel
             // 
-            this.btnKernel.Location = new System.Drawing.Point(533, 5);
+            this.btnKernel.Location = new System.Drawing.Point(546, 5);
             this.btnKernel.Name = "btnKernel";
             this.btnKernel.Size = new System.Drawing.Size(64, 23);
             this.btnKernel.TabIndex = 10;
@@ -267,9 +267,19 @@ namespace Quasar.Server.Forms
             this.btnKernel.UseVisualStyleBackColor = true;
             this.btnKernel.Click += new System.EventHandler(this.btnKernel_Click);
             // 
+            // buttonITRegion
+            // 
+            this.buttonITRegion.Location = new System.Drawing.Point(430, 9);
+            this.buttonITRegion.Name = "buttonITRegion";
+            this.buttonITRegion.Size = new System.Drawing.Size(41, 40);
+            this.buttonITRegion.TabIndex = 10;
+            this.buttonITRegion.Text = "Rect On";
+            this.buttonITRegion.UseVisualStyleBackColor = true;
+            this.buttonITRegion.Click += new System.EventHandler(this.btnGetWHofClient_Click);
+            // 
             // btnSetIT
             // 
-            this.btnSetIT.Location = new System.Drawing.Point(463, 5);
+            this.btnSetIT.Location = new System.Drawing.Point(476, 5);
             this.btnSetIT.Name = "btnSetIT";
             this.btnSetIT.Size = new System.Drawing.Size(64, 23);
             this.btnSetIT.TabIndex = 10;
@@ -359,16 +369,6 @@ namespace Quasar.Server.Forms
             this.picDesktop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseMove);
             this.picDesktop.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseUp);
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(440, 8);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(21, 43);
-            this.button1.TabIndex = 10;
-            this.button1.Text = "WH";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.btnGetWHofClient_Click);
-            // 
             // FrmRemoteDesktop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -425,6 +425,6 @@ namespace Quasar.Server.Forms
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
         private System.Windows.Forms.Button btnCustomerKeyBd;
         private System.Windows.Forms.Button btnCustomerMouse;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonITRegion;
     }
 }
