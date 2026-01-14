@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Quasar.Server.Forms
@@ -122,7 +123,7 @@ namespace Quasar.Server.Forms
 
         private static long tempTime = 0;
 
-        private Timer ivtimer;
+        private System.Windows.Forms.Timer ivtimer;
 
         private bool isRedTextDrawMode = false;
         private bool isMouseDragging = false;
@@ -332,6 +333,52 @@ namespace Quasar.Server.Forms
                 }
             }
             base.DefWndProc(ref m);
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            // Ctrl + L
+            if (keyData == (Keys.Control | Keys.L))
+            {
+                TriggerRedTextWithClipboard();
+                return true; // handled
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void TriggerRedTextWithClipboard()
+        {
+            string text = TryGetClipboardText(retries: 10, delayMs: 40);
+            if (!string.IsNullOrEmpty(text))
+            {
+                handleRedTextDialog(text);
+            }
+            else
+                MessageBox.Show("No text in clipboard (or clipboard was busy).");
+        }
+
+        private static string TryGetClipboardText(int retries, int delayMs)
+        {
+            for (int i = 0; i < retries; i++)
+            {
+                try
+                {
+                    if (Clipboard.ContainsText(TextDataFormat.UnicodeText))
+                        return Clipboard.GetText(TextDataFormat.UnicodeText);
+
+                    if (Clipboard.ContainsText())
+                        return Clipboard.GetText();
+
+                    return null; // allowed in older C# (reference types)
+                }
+                catch (ExternalException)
+                {
+                    Thread.Sleep(delayMs); // clipboard busy
+                }
+            }
+
+            return null;
         }
 
         private void StartAudioListener(int port, int sampleRate, int bitDepth, int channels)
@@ -1051,14 +1098,20 @@ namespace Quasar.Server.Forms
 
         private void btnSetIT_Click(object sender, EventArgs e)
         {
+            handleRedTextDialog(null);
+        }
+
+        private void handleRedTextDialog(string textValue)
+        {
             try
             {
                 if (_connectClient.Connected)
                 {
                     FrmIVText ivTextDlg = new FrmIVText();
 
+                    if (textValue != null) ivTextDlg.DialogText = textValue;
                     DialogResult result = ivTextDlg.ShowDialog();
-                    if(result == DialogResult.OK)
+                    if (result == DialogResult.OK)
                     {
                         _connectClient.Send(new DoShowRedText
                         {
@@ -1075,9 +1128,9 @@ namespace Quasar.Server.Forms
                             Opacity = ivTextDlg.OpacityValue
                         });
 
-                        if(ivTextDlg.IsAutoKill)
+                        if (ivTextDlg.IsAutoKill)
                         {
-                            ivtimer = new Timer();
+                            ivtimer = new System.Windows.Forms.Timer();
                             ivtimer.Interval = ivTextDlg.AutoKillTime * 1000;
                             ivtimer.Tick += (s, ev) =>
                             {
@@ -1086,17 +1139,18 @@ namespace Quasar.Server.Forms
                             };
                             ivtimer.Start();
                         }
-                    }                    
+                    }
                 }
                 else
                 {
                     MessageBox.Show("This client is not connected to a server.");
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+
         }
 
         private void btnGetWHofClient_Click(object sender, EventArgs e)

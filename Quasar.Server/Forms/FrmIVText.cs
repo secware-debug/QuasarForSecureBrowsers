@@ -232,6 +232,7 @@ namespace Quasar.Server.Forms
         public string DialogText
         {
             get { return txtContent.Text; } // Replace 'myTextBox' with your TextBox's name
+            set { txtContent.Text = value; }
         }
 
         public int FontSize
